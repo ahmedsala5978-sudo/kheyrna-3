@@ -3,276 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>خيرنا | المشتريات</title>
+<title>خيرنا | نظام إدارة الأعمال</title>
 
 <style>
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,Tahoma,sans-serif;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Tahoma,sans-serif;
 }
 
 body{
-    background:#f4f7f5;
-    color:#173b2a;
+  background:#f4f7f5;
+  color:#173b2a;
 }
 
 header{
-    background:linear-gradient(135deg,#176b3a,#259653);
-    color:white;
-    padding:20px 6%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
+  background:linear-gradient(135deg,#176b3a,#259653);
+  color:white;
+  padding:30px 6%;
+  text-align:center;
 }
 
 .logo{
-    font-size:30px;
-    font-weight:bold;
+  font-size:38px;
+  font-weight:bold;
 }
 
-.logo small{
-    display:block;
-    font-size:13px;
-    margin-top:5px;
-    opacity:.9;
-}
-
-.back{
-    color:white;
-    text-decoration:none;
-    border:1px solid rgba(255,255,255,.5);
-    padding:10px 16px;
-    border-radius:10px;
+.subtitle{
+  margin-top:8px;
+  font-size:16px;
+  opacity:.95;
 }
 
 .container{
-    width:92%;
-    max-width:1300px;
-    margin:30px auto;
+  width:92%;
+  max-width:1250px;
+  margin:35px auto;
 }
 
-.page-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    margin-bottom:25px;
+.welcome{
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  border:1px solid #e1e8e3;
+  margin-bottom:25px;
 }
 
-.page-head h1{
-    font-size:27px;
+.welcome h1{
+  font-size:28px;
+  margin-bottom:10px;
 }
 
-.page-head p{
-    color:#6c7972;
-    margin-top:6px;
+.welcome p{
+  color:#68766e;
+  line-height:1.8;
 }
 
-.primary{
-    background:#176b3a;
-    color:white;
-    border:0;
-    padding:13px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:bold;
+.section-title{
+  margin-bottom:18px;
+  font-size:23px;
 }
 
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin-bottom:25px;
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
 }
 
-.stat{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    border:1px solid #e1e8e3;
+.card{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:18px;
+  padding:25px;
+  text-decoration:none;
+  color:#173b2a;
+  transition:.2s;
+  min-height:150px;
 }
 
-.stat span{
-    color:#718078;
-    font-size:13px;
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 20px rgba(23,107,58,.12);
+  border-color:#259653;
 }
 
-.stat strong{
-    display:block;
-    font-size:25px;
-    margin-top:8px;
+.icon{
+  font-size:35px;
+  margin-bottom:12px;
 }
 
-.form-box{
-    display:none;
-    background:white;
-    padding:25px;
-    border-radius:18px;
-    border:1px solid #e1e8e3;
-    margin-bottom:25px;
+.card h3{
+  font-size:18px;
+  margin-bottom:8px;
 }
 
-.form-box.active{
-    display:block;
+.card p{
+  color:#718078;
+  font-size:13px;
+  line-height:1.6;
 }
 
-.form-title{
-    font-size:21px;
-    margin-bottom:20px;
+.quick{
+  margin-top:30px;
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  border:1px solid #e1e8e3;
 }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
+.quick-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:18px;
 }
 
-.field label{
-    display:block;
-    font-size:13px;
-    margin-bottom:7px;
-    font-weight:bold;
-}
-
-.field input,
-.field select,
-.field textarea{
-    width:100%;
-    padding:12px;
-    border:1px solid #d8e1db;
-    border-radius:9px;
-    outline:none;
-    background:#fafcfb;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-    border-color:#259653;
-}
-
-.field textarea{
-    min-height:80px;
-    resize:vertical;
-}
-
-.total{
-    background:#e9f7ef;
-    border-radius:9px;
-    padding:12px;
-    font-weight:bold;
-    color:#176b3a;
-}
-
-.form-actions{
-    margin-top:20px;
-    display:flex;
-    gap:10px;
-}
-
-.cancel{
-    background:#eef1ef;
-    border:0;
-    padding:12px 20px;
-    border-radius:9px;
-    cursor:pointer;
-}
-
-.table-box{
-    background:white;
-    border-radius:18px;
-    border:1px solid #e1e8e3;
-    overflow:hidden;
-}
-
-.table-head{
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    align-items:center;
-}
-
-.search{
-    padding:11px 14px;
-    border:1px solid #d8e1db;
-    border-radius:9px;
-    min-width:250px;
-}
-
-.table-wrap{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1000px;
-}
-
-th,td{
-    padding:14px 12px;
-    text-align:right;
-    border-top:1px solid #edf1ee;
-    font-size:13px;
-}
-
-th{
-    background:#f7faf8;
-    color:#52645a;
-}
-
-.empty{
-    text-align:center;
-    padding:45px;
-    color:#7b8780;
-}
-
-.status{
-    padding:6px 10px;
-    border-radius:20px;
-    background:#e9f7ef;
-    color:#176b3a;
-    font-size:12px;
+.quick-button{
+  background:#e9f7ef;
+  color:#176b3a;
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
 }
 
 footer{
-    text-align:center;
-    padding:30px;
-    color:#7b8780;
+  text-align:center;
+  padding:35px;
+  color:#7b8780;
 }
 
-@media(max-width:900px){
-    .form-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .stats{
-        grid-template-columns:1fr;
-    }
+@media(max-width:1000px){
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 @media(max-width:600px){
-    .page-head{
-        flex-direction:column;
-        align-items:flex-start;
-    }
+  .cards{
+    grid-template-columns:1fr;
+  }
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
+  .logo{
+    font-size:32px;
+  }
 
-    .search{
-        min-width:100%;
-    }
-
-    .table-head{
-        flex-direction:column;
-        align-items:stretch;
-    }
+  .welcome h1{
+    font-size:23px;
+  }
 }
 </style>
 </head>
@@ -280,34 +159,140 @@ footer{
 <body>
 
 <header>
-    <div>
-        <div class="logo">خيرنا</div>
-        <small>دفتر المشتريات</small>
-    </div>
-
-    <a class="back" href="javascript:history.back()">← الرئيسية</a>
+  <div class="logo">خيرنا</div>
+  <div class="subtitle">نظام إدارة الأعمال المتكامل</div>
 </header>
 
 <main class="container">
 
-    <div class="page-head">
-        <div>
-            <h1>🛒 المشتريات</h1>
-            <p>تسجيل ومتابعة عمليات الشراء والموردين والفواتير.</p>
-        </div>
+  <section class="welcome">
+    <h1>أهلاً بك في نظام خيرنا 👋</h1>
+    <p>
+      نظام متكامل لإدارة عمليات الشراء والمخزون والإنتاج
+      والتكلفة والمبيعات والحسابات والخزينة والمستلزمات
+      والإقفال اليومي.
+    </p>
+  </section>
 
-        <button class="primary" onclick="openForm()">
-            + عملية شراء جديدة
-        </button>
+  <h2 class="section-title">الأقسام الرئيسية</h2>
+
+  <section class="cards">
+
+    <!-- المشتريات -->
+    <a class="card" href="purchases.html">
+      <div class="icon">🛒</div>
+      <h3>المشتريات</h3>
+      <p>
+        تسجيل عمليات الشراء والموردين والفواتير
+        ومتابعة حالة العمليات.
+      </p>
+    </a>
+
+    <!-- المخزون -->
+    <a class="card" href="#">
+      <div class="icon">📦</div>
+      <h3>المخزون</h3>
+      <p>
+        متابعة حركة دخول وخروج الأصناف
+        والأرصدة وأماكن التخزين.
+      </p>
+    </a>
+
+    <!-- الإنتاج -->
+    <a class="card" href="#">
+      <div class="icon">🏭</div>
+      <h3>الإنتاج</h3>
+      <p>
+        تسجيل ومتابعة عمليات الإنتاج اليومية
+        وكميات الإنتاج.
+      </p>
+    </a>
+
+    <!-- تكلفة المنتج -->
+    <a class="card" href="#">
+      <div class="icon">🧮</div>
+      <h3>تكلفة المنتج</h3>
+      <p>
+        حساب تكلفة المنتجات وربطها بعمليات الإنتاج
+        والمواد والعمالة.
+      </p>
+    </a>
+
+    <!-- المبيعات -->
+    <a class="card" href="#">
+      <div class="icon">💰</div>
+      <h3>المبيعات</h3>
+      <p>
+        تسجيل المبيعات والعملاء والتحصيل
+        وربطها بالمخزون.
+      </p>
+    </a>
+
+    <!-- الحسابات والخزينة -->
+    <a class="card" href="#">
+      <div class="icon">🏦</div>
+      <h3>الحسابات والخزينة</h3>
+      <p>
+        متابعة المقبوضات والمدفوعات وحركة الخزينة
+        والحسابات.
+      </p>
+    </a>
+
+    <!-- المستلزمات والصيانة -->
+    <a class="card" href="#">
+      <div class="icon">🔧</div>
+      <h3>المستلزمات والصيانة</h3>
+      <p>
+        تسجيل المستلزمات وعمليات الصيانة
+        ومتابعة تكاليفها.
+      </p>
+    </a>
+
+    <!-- الإقفال اليومي -->
+    <a class="card" href="#">
+      <div class="icon">🔐</div>
+      <h3>الإقفال اليومي</h3>
+      <p>
+        مراجعة وإقفال العمليات اليومية
+        وربط المبيعات والمخزون والحسابات.
+      </p>
+    </a>
+
+  </section>
+
+  <section class="quick">
+
+    <h2>الوصول السريع</h2>
+
+    <div class="quick-buttons">
+
+      <a class="quick-button" href="purchases.html">
+        🛒 عملية شراء جديدة
+      </a>
+
+      <a class="quick-button" href="#">
+        📦 حركة مخزون
+      </a>
+
+      <a class="quick-button" href="#">
+        🏭 تسجيل إنتاج
+      </a>
+
+      <a class="quick-button" href="#">
+        💰 تسجيل بيع
+      </a>
+
     </div>
 
-    <section class="stats">
+  </section>
 
-        <div class="stat">
-            <span>عدد عمليات الشراء</span>
-            <strong id="count">0</strong>
-        </div>
+</main>
 
-        <div class="stat">
-            <span>إجمالي قيمة المشتريات</span>
-            <
+<footer>
+  <strong>خيرنا في كل بيت ❤️</strong>
+  <br>
+  نظام إدارة الأعمال المتكامل
+</footer>
+
+</body>
+</html>
