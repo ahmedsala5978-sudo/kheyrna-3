@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>خيرنا | نظام إدارة الأعمال</title>
+<title>خيرنا | المشتريات</title>
 
 <style>
 *{
@@ -18,191 +18,260 @@ body{
     color:#173b2a;
 }
 
-.header{
+header{
     background:linear-gradient(135deg,#176b3a,#259653);
     color:white;
-    padding:22px 6%;
+    padding:20px 6%;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:20px;
-    box-shadow:0 4px 15px rgba(0,0,0,.12);
+    gap:15px;
 }
 
 .logo{
-    font-size:32px;
+    font-size:30px;
     font-weight:bold;
 }
 
-.subtitle{
+.logo small{
+    display:block;
+    font-size:13px;
     margin-top:5px;
     opacity:.9;
 }
 
-.status{
-    background:rgba(255,255,255,.15);
-    border:1px solid rgba(255,255,255,.3);
+.back{
+    color:white;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.5);
     padding:10px 16px;
-    border-radius:30px;
-    white-space:nowrap;
+    border-radius:10px;
 }
 
 .container{
-    width:88%;
-    max-width:1250px;
-    margin:35px auto;
+    width:92%;
+    max-width:1300px;
+    margin:30px auto;
 }
 
-.welcome{
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,.06);
-    margin-bottom:28px;
+.page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
 }
 
-.welcome h1{
-    font-size:28px;
-    margin-bottom:10px;
+.page-head h1{
+    font-size:27px;
 }
 
-.welcome p{
-    color:#66756d;
-    font-size:16px;
+.page-head p{
+    color:#6c7972;
+    margin-top:6px;
 }
 
-.section-title{
-    margin:28px 0 18px;
-    font-size:22px;
+.primary{
+    background:#176b3a;
+    color:white;
+    border:0;
+    padding:13px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-.grid{
+.stats{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:25px;
 }
 
-.card{
+.stat{
     background:white;
-    border-radius:18px;
-    padding:24px;
-    text-decoration:none;
-    color:#173b2a;
-    border:1px solid #e5ebe7;
-    transition:.25s;
-    box-shadow:0 4px 14px rgba(0,0,0,.04);
+    padding:20px;
+    border-radius:15px;
+    border:1px solid #e1e8e3;
 }
 
-.card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 10px 25px rgba(0,0,0,.1);
+.stat span{
+    color:#718078;
+    font-size:13px;
+}
+
+.stat strong{
+    display:block;
+    font-size:25px;
+    margin-top:8px;
+}
+
+.form-box{
+    display:none;
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    border:1px solid #e1e8e3;
+    margin-bottom:25px;
+}
+
+.form-box.active{
+    display:block;
+}
+
+.form-title{
+    font-size:21px;
+    margin-bottom:20px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.field label{
+    display:block;
+    font-size:13px;
+    margin-bottom:7px;
+    font-weight:bold;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #d8e1db;
+    border-radius:9px;
+    outline:none;
+    background:#fafcfb;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
     border-color:#259653;
 }
 
-.icon{
-    font-size:38px;
-    margin-bottom:15px;
+.field textarea{
+    min-height:80px;
+    resize:vertical;
 }
 
-.card h3{
-    margin-bottom:8px;
-    font-size:18px;
+.total{
+    background:#e9f7ef;
+    border-radius:9px;
+    padding:12px;
+    font-weight:bold;
+    color:#176b3a;
 }
 
-.card p{
-    color:#718078;
-    font-size:14px;
-    line-height:1.6;
+.form-actions{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
 }
 
-.actions{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:12px;
-}
-
-.action{
+.cancel{
+    background:#eef1ef;
     border:0;
-    background:#176b3a;
-    color:white;
-    padding:15px 10px;
-    border-radius:12px;
+    padding:12px 20px;
+    border-radius:9px;
     cursor:pointer;
-    font-size:14px;
-    transition:.2s;
 }
 
-.action:hover{
-    background:#12562f;
-    transform:translateY(-2px);
-}
-
-.notifications{
+.table-box{
     background:white;
     border-radius:18px;
-    padding:22px;
-    box-shadow:0 4px 14px rgba(0,0,0,.04);
+    border:1px solid #e1e8e3;
+    overflow:hidden;
 }
 
-.notification{
-    padding:14px;
-    border-bottom:1px solid #edf1ee;
+.table-head{
+    padding:20px;
     display:flex;
-    gap:12px;
+    justify-content:space-between;
+    gap:15px;
     align-items:center;
 }
 
-.notification:last-child{
-    border-bottom:0;
+.search{
+    padding:11px 14px;
+    border:1px solid #d8e1db;
+    border-radius:9px;
+    min-width:250px;
 }
 
-.dot{
-    width:10px;
-    height:10px;
-    background:#259653;
-    border-radius:50%;
-    flex-shrink:0;
+.table-wrap{
+    overflow-x:auto;
 }
 
-.footer{
-    margin-top:45px;
-    background:#173b2a;
-    color:white;
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1000px;
+}
+
+th,td{
+    padding:14px 12px;
+    text-align:right;
+    border-top:1px solid #edf1ee;
+    font-size:13px;
+}
+
+th{
+    background:#f7faf8;
+    color:#52645a;
+}
+
+.empty{
     text-align:center;
-    padding:25px;
-    line-height:1.8;
+    padding:45px;
+    color:#7b8780;
+}
+
+.status{
+    padding:6px 10px;
+    border-radius:20px;
+    background:#e9f7ef;
+    color:#176b3a;
+    font-size:12px;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#7b8780;
 }
 
 @media(max-width:900px){
-    .grid{
+    .form-grid{
         grid-template-columns:repeat(2,1fr);
     }
 
-    .actions{
-        grid-template-columns:repeat(3,1fr);
+    .stats{
+        grid-template-columns:1fr;
     }
 }
 
 @media(max-width:600px){
-    .header{
+    .page-head{
         flex-direction:column;
         align-items:flex-start;
     }
 
-    .container{
-        width:94%;
-    }
-
-    .grid{
+    .form-grid{
         grid-template-columns:1fr;
     }
 
-    .actions{
-        grid-template-columns:repeat(2,1fr);
+    .search{
+        min-width:100%;
     }
 
-    .welcome h1{
-        font-size:23px;
+    .table-head{
+        flex-direction:column;
+        align-items:stretch;
     }
 }
 </style>
@@ -210,124 +279,35 @@ body{
 
 <body>
 
-<header class="header">
+<header>
     <div>
         <div class="logo">خيرنا</div>
-        <div class="subtitle">نظام إدارة الأعمال المتكامل</div>
+        <small>دفتر المشتريات</small>
     </div>
 
-    <div class="status">● النظام يعمل</div>
+    <a class="back" href="javascript:history.back()">← الرئيسية</a>
 </header>
 
 <main class="container">
 
-    <section class="welcome">
-        <h1>أهلاً بك في نظام خيرنا 👋</h1>
-        <p>
-            لوحة التحكم الرئيسية لإدارة عمليات الشراء والمخزون والإنتاج
-            والتكلفة والمبيعات والحسابات والخزينة.
-        </p>
-    </section>
-
-    <h2 class="section-title">أنظمة خيرنا</h2>
-
-    <section class="grid">
-
-        <a class="card" href="#">
-            <div class="icon">🛒</div>
-            <h3>المشتريات</h3>
+    <div class="page-head">
+        <div>
+            <h1>🛒 المشتريات</h1>
             <p>تسجيل ومتابعة عمليات الشراء والموردين والفواتير.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">📦</div>
-            <h3>المخزون</h3>
-            <p>متابعة حركة الأصناف والكميات والأرصدة والمخازن.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">🏭</div>
-            <h3>الإنتاج اليومي</h3>
-            <p>تسجيل عمليات الإنتاج وربطها بالخامات والتكاليف.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">💰</div>
-            <h3>تكلفة المنتج</h3>
-            <p>حساب تكلفة المنتج وربط المواد والعمالة ومصاريف التشغيل.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">🧾</div>
-            <h3>المبيعات</h3>
-            <p>إدارة المبيعات والعملاء والتحصيل وحركات المخزون.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">🔐</div>
-            <h3>الحسابات والخزينة</h3>
-            <p>متابعة الحسابات والمدفوعات والتحصيل وحركة الخزينة.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">🔧</div>
-            <h3>المستلزمات والصيانة</h3>
-            <p>تسجيل المستلزمات وأعمال الصيانة ومتابعة المصروفات.</p>
-        </a>
-
-        <a class="card" href="#">
-            <div class="icon">✅</div>
-            <h3>الإقفال اليومي</h3>
-            <p>مراجعة وربط عمليات اليوم قبل اعتماد الإقفال.</p>
-        </a>
-
-    </section>
-
-    <h2 class="section-title">الوصول السريع</h2>
-
-    <section class="actions">
-        <button class="action" onclick="showMessage('تم اختيار عملية شراء')">➕ عملية شراء</button>
-        <button class="action" onclick="showMessage('تم اختيار حركة مخزون')">📦 حركة مخزون</button>
-        <button class="action" onclick="showMessage('تم اختيار تسجيل إنتاج')">🏭 تسجيل إنتاج</button>
-        <button class="action" onclick="showMessage('تم اختيار تسجيل بيع')">🧾 تسجيل بيع</button>
-        <button class="action" onclick="showMessage('تم اختيار تحصيل دفعة')">💵 تحصيل دفعة</button>
-        <button class="action" onclick="showMessage('تم اختيار إقفال اليوم')">🔒 إقفال اليوم</button>
-    </section>
-
-    <h2 class="section-title">آخر الإشعارات</h2>
-
-    <section class="notifications">
-
-        <div class="notification">
-            <span class="dot"></span>
-            <span>مرحباً بك في لوحة تحكم نظام خيرنا.</span>
         </div>
 
-        <div class="notification">
-            <span class="dot"></span>
-            <span>سيتم ربط الإشعارات بالعمليات والصلاحيات في المراحل القادمة.</span>
+        <button class="primary" onclick="openForm()">
+            + عملية شراء جديدة
+        </button>
+    </div>
+
+    <section class="stats">
+
+        <div class="stat">
+            <span>عدد عمليات الشراء</span>
+            <strong id="count">0</strong>
         </div>
 
-        <div class="notification">
-            <span class="dot"></span>
-            <span>جميع الأنظمة مصممة للعمل ضمن دورة تشغيل واحدة.</span>
-        </div>
-
-    </section>
-
-</main>
-
-<footer class="footer">
-    <strong>خيرنا في كل بيت ❤️</strong>
-    <br>
-    نظام إدارة الأعمال المتكامل
-</footer>
-
-<script>
-function showMessage(message){
-    alert(message + "\n\nسيتم تفعيل هذه الوظيفة بالكامل في المرحلة القادمة.");
-}
-</script>
-
-</body>
-</html>
+        <div class="stat">
+            <span>إجمالي قيمة المشتريات</span>
+            <
