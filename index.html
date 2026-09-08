@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>خيرنا | نظام إدارة الأعمال</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -128,6 +130,10 @@ header{
   font-weight:bold;
 }
 
+.quick-button:hover{
+  background:#d7f0e2;
+}
+
 footer{
   text-align:center;
   padding:35px;
@@ -135,12 +141,15 @@ footer{
 }
 
 @media(max-width:1000px){
+
   .cards{
     grid-template-columns:repeat(2,1fr);
   }
+
 }
 
 @media(max-width:600px){
+
   .cards{
     grid-template-columns:1fr;
   }
@@ -152,147 +161,280 @@ footer{
   .welcome h1{
     font-size:23px;
   }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">خيرنا</div>
-  <div class="subtitle">نظام إدارة الأعمال المتكامل</div>
+
+  <div class="logo">
+    خيرنا
+  </div>
+
+  <div class="subtitle">
+    نظام إدارة الأعمال المتكامل
+  </div>
+
 </header>
+
 
 <main class="container">
 
-  <section class="welcome">
-    <h1>أهلاً بك في نظام خيرنا 👋</h1>
-    <p>
-      نظام متكامل لإدارة عمليات الشراء والمخزون والإنتاج
-      والتكلفة والمبيعات والحسابات والخزينة والمستلزمات
-      والإقفال اليومي.
-    </p>
-  </section>
 
-  <h2 class="section-title">الأقسام الرئيسية</h2>
+<section class="welcome">
 
-  <section class="cards">
+  <h1>
+    أهلاً بك في نظام خيرنا 👋
+  </h1>
 
-    <!-- المشتريات -->
-    <a class="card" href="purchases.html">
-      <div class="icon">🛒</div>
-      <h3>المشتريات</h3>
-      <p>
-        تسجيل عمليات الشراء والموردين والفواتير
-        ومتابعة حالة العمليات.
-      </p>
+  <p>
+    نظام متكامل لإدارة عمليات الشراء والمخزون والإنتاج
+    والتكلفة والمبيعات والحسابات والخزينة والمستلزمات
+    والإقفال اليومي.
+  </p>
+
+</section>
+
+
+<h2 class="section-title">
+  الأقسام الرئيسية
+</h2>
+
+
+<section class="cards">
+
+
+<!-- المشتريات -->
+
+<a class="card" href="purchases.html">
+
+  <div class="icon">
+    🛒
+  </div>
+
+  <h3>
+    المشتريات
+  </h3>
+
+  <p>
+    تسجيل عمليات الشراء والموردين والفواتير
+    ومتابعة حالة العمليات.
+  </p>
+
+</a>
+
+
+<!-- المخزون -->
+
+<a class="card" href="inventory.html">
+
+  <div class="icon">
+    📦
+  </div>
+
+  <h3>
+    المخزون
+  </h3>
+
+  <p>
+    متابعة حركة دخول وخروج الأصناف
+    والأرصدة وأماكن التخزين.
+  </p>
+
+</a>
+
+
+<!-- الإنتاج -->
+
+<a class="card" href="production.html">
+
+  <div class="icon">
+    🏭
+  </div>
+
+  <h3>
+    الإنتاج
+  </h3>
+
+  <p>
+    تسجيل ومتابعة عمليات الإنتاج اليومية
+    وكميات الإنتاج والهالك وحالة العملية.
+  </p>
+
+</a>
+
+
+<!-- تكلفة المنتج -->
+
+<a class="card" href="product-cost.html">
+
+  <div class="icon">
+    🧮
+  </div>
+
+  <h3>
+    تكلفة المنتج
+  </h3>
+
+  <p>
+    حساب تكلفة المنتجات وربطها بعمليات الإنتاج
+    والمواد والعمالة.
+  </p>
+
+</a>
+
+
+<!-- المبيعات -->
+
+<a class="card" href="#">
+
+  <div class="icon">
+    💰
+  </div>
+
+  <h3>
+    المبيعات
+  </h3>
+
+  <p>
+    تسجيل المبيعات والعملاء والتحصيل
+    وربطها بالمخزون.
+  </p>
+
+</a>
+
+
+<!-- الحسابات والخزينة -->
+
+<a class="card" href="#">
+
+  <div class="icon">
+    🏦
+  </div>
+
+  <h3>
+    الحسابات والخزينة
+  </h3>
+
+  <p>
+    متابعة المقبوضات والمدفوعات وحركة الخزينة
+    والحسابات.
+  </p>
+
+</a>
+
+
+<!-- المستلزمات والصيانة -->
+
+<a class="card" href="#">
+
+  <div class="icon">
+    🔧
+  </div>
+
+  <h3>
+    المستلزمات والصيانة
+  </h3>
+
+  <p>
+    تسجيل المستلزمات وعمليات الصيانة
+    ومتابعة تكاليفها.
+  </p>
+
+</a>
+
+
+<!-- الإقفال اليومي -->
+
+<a class="card" href="#">
+
+  <div class="icon">
+    🔐
+  </div>
+
+  <h3>
+    الإقفال اليومي
+  </h3>
+
+  <p>
+    مراجعة وإقفال العمليات اليومية
+    وربط المبيعات والمخزون والحسابات.
+  </p>
+
+</a>
+
+
+</section>
+
+
+<!-- الوصول السريع -->
+
+<section class="quick">
+
+  <h2>
+    الوصول السريع
+  </h2>
+
+
+  <div class="quick-buttons">
+
+
+    <a
+      class="quick-button"
+      href="purchases.html"
+    >
+      🛒 عملية شراء جديدة
     </a>
 
-    <!-- المخزون -->
-    <a class="card" href="inventory.html">
-      <div class="icon">📦</div>
-      <h3>المخزون</h3>
-      <p>
-        متابعة حركة دخول وخروج الأصناف
-        والأرصدة وأماكن التخزين.
-      </p>
+
+    <a
+      class="quick-button"
+      href="inventory.html"
+    >
+      📦 حركة مخزون
     </a>
 
-    <!-- الإنتاج -->
-    <a class="card" href="#">
-      <div class="icon">🏭</div>
-      <h3>الإنتاج</h3>
-      <p>
-        تسجيل ومتابعة عمليات الإنتاج اليومية
-        وكميات الإنتاج.
-      </p>
+
+    <a
+      class="quick-button"
+      href="production.html"
+    >
+      🏭 تسجيل إنتاج
     </a>
 
-    <!-- تكلفة المنتج -->
-    <a class="card" href="product-cost.html">
-      <div class="icon">🧮</div>
-      <h3>تكلفة المنتج</h3>
-      <p>
-        حساب تكلفة المنتجات وربطها بعمليات الإنتاج
-        والمواد والعمالة.
-      </p>
+
+    <a
+      class="quick-button"
+      href="#"
+    >
+      💰 تسجيل بيع
     </a>
 
-    <!-- المبيعات -->
-    <a class="card" href="#">
-      <div class="icon">💰</div>
-      <h3>المبيعات</h3>
-      <p>
-        تسجيل المبيعات والعملاء والتحصيل
-        وربطها بالمخزون.
-      </p>
-    </a>
 
-    <!-- الحسابات والخزينة -->
-    <a class="card" href="#">
-      <div class="icon">🏦</div>
-      <h3>الحسابات والخزينة</h3>
-      <p>
-        متابعة المقبوضات والمدفوعات وحركة الخزينة
-        والحسابات.
-      </p>
-    </a>
+  </div>
 
-    <!-- المستلزمات والصيانة -->
-    <a class="card" href="#">
-      <div class="icon">🔧</div>
-      <h3>المستلزمات والصيانة</h3>
-      <p>
-        تسجيل المستلزمات وعمليات الصيانة
-        ومتابعة تكاليفها.
-      </p>
-    </a>
+</section>
 
-    <!-- الإقفال اليومي -->
-    <a class="card" href="#">
-      <div class="icon">🔐</div>
-      <h3>الإقفال اليومي</h3>
-      <p>
-        مراجعة وإقفال العمليات اليومية
-        وربط المبيعات والمخزون والحسابات.
-      </p>
-    </a>
-
-  </section>
-
-  <section class="quick">
-
-    <h2>الوصول السريع</h2>
-
-    <div class="quick-buttons">
-
-      <a class="quick-button" href="purchases.html">
-        🛒 عملية شراء جديدة
-      </a>
-
-      <a class="quick-button" href="inventory.html">
-        📦 حركة مخزون
-      </a>
-
-      <a class="quick-button" href="#">
-        🏭 تسجيل إنتاج
-      </a>
-
-      <a class="quick-button" href="#">
-        💰 تسجيل بيع
-      </a>
-
-    </div>
-
-  </section>
 
 </main>
 
+
 <footer>
-  <strong>خيرنا في كل بيت ❤️</strong>
+
+  <strong>
+    خيرنا في كل بيت ❤️
+  </strong>
+
   <br>
+
   نظام إدارة الأعمال المتكامل
+
 </footer>
+
 
 </body>
 </html>
