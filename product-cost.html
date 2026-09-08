@@ -275,42 +275,22 @@ tr:hover{
   background:#f8faf9;
 }
 
-.badge{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:15px;
+.delete-btn,
+.edit-btn{
+  border:0;
+  color:white;
+  padding:7px 10px;
+  border-radius:7px;
+  cursor:pointer;
   font-size:12px;
-  font-weight:bold;
-}
-
-.saved{
-  background:#d1e7dd;
-  color:#0f5132;
-}
-
-.draft{
-  background:#fff3cd;
-  color:#664d03;
 }
 
 .delete-btn{
-  border:0;
   background:#dc3545;
-  color:white;
-  padding:7px 10px;
-  border-radius:7px;
-  cursor:pointer;
-  font-size:12px;
 }
 
 .edit-btn{
-  border:0;
   background:#6c757d;
-  color:white;
-  padding:7px 10px;
-  border-radius:7px;
-  cursor:pointer;
-  font-size:12px;
   margin-left:5px;
 }
 
@@ -367,14 +347,12 @@ tr:hover{
   <a class="back" href="index.html">⬅ العودة للرئيسية</a>
 
   <section class="title-box">
-
     <h2>🧮 دفتر تكلفة المنتج</h2>
 
     <p>
       تسجيل وتحليل تكلفة إنتاج المنتجات وربط التكلفة
       بعملية الإنتاج وكميات المواد والعمالة والتكاليف التشغيلية.
     </p>
-
   </section>
 
   <div class="actions">
@@ -420,54 +398,27 @@ tr:hover{
       <div class="form-grid">
 
         <div class="field">
-
           <label>كود تكلفة المنتج</label>
-
-          <input
-            id="costCode"
-            readonly
-          >
-
+          <input id="costCode" readonly>
         </div>
 
         <div class="field">
-
           <label>التاريخ والوقت</label>
-
-          <input
-            type="datetime-local"
-            id="costDate"
-            required
-          >
-
+          <input type="datetime-local" id="costDate" required>
         </div>
 
         <div class="field">
-
           <label>كود عملية الإنتاج</label>
-
-          <input
-            id="productionCode"
-            placeholder="مثال: PRD-2026-0001"
-          >
-
+          <input id="productionCode" placeholder="مثال: PRD-2026-0001">
         </div>
 
         <div class="field">
-
           <label>اسم المنتج</label>
-
-          <input
-            id="product"
-            required
-          >
-
+          <input id="product" required>
         </div>
 
         <div class="field">
-
           <label>كمية الإنتاج</label>
-
           <input
             type="number"
             id="productionQty"
@@ -475,21 +426,17 @@ tr:hover{
             step="0.01"
             required
           >
-
         </div>
 
         <div class="field">
-
           <label>وحدة القياس</label>
 
           <select id="unit">
-
             <option value="كجم">كجم</option>
             <option value="طن">طن</option>
             <option value="عبوة">عبوة</option>
             <option value="كرتونة">كرتونة</option>
             <option value="قطعة">قطعة</option>
-
           </select>
 
         </div>
@@ -499,9 +446,7 @@ tr:hover{
         </div>
 
         <div class="field">
-
           <label>تكلفة المواد الخام</label>
-
           <input
             type="number"
             id="materialsCost"
@@ -509,13 +454,10 @@ tr:hover{
             step="0.01"
             value="0"
           >
-
         </div>
 
         <div class="field">
-
           <label>تكلفة مواد التعبئة والتغليف</label>
-
           <input
             type="number"
             id="packagingCost"
@@ -523,7 +465,6 @@ tr:hover{
             step="0.01"
             value="0"
           >
-
         </div>
 
         <div class="section">
@@ -531,9 +472,7 @@ tr:hover{
         </div>
 
         <div class="field">
-
           <label>تكلفة العمالة</label>
-
           <input
             type="number"
             id="laborCost"
@@ -541,13 +480,10 @@ tr:hover{
             step="0.01"
             value="0"
           >
-
         </div>
 
         <div class="field">
-
           <label>تكلفة التشغيل والطاقة</label>
-
           <input
             type="number"
             id="operationCost"
@@ -555,13 +491,10 @@ tr:hover{
             step="0.01"
             value="0"
           >
-
         </div>
 
         <div class="field">
-
           <label>تكاليف أخرى</label>
-
           <input
             type="number"
             id="otherCost"
@@ -569,51 +502,35 @@ tr:hover{
             step="0.01"
             value="0"
           >
-
         </div>
 
         <div class="total-box">
 
           <div class="total-item">
-
             <span>إجمالي تكلفة الإنتاج</span>
-
             <strong id="liveTotal">0</strong>
-
           </div>
 
           <div class="total-item">
-
             <span>تكلفة الوحدة</span>
-
             <strong id="liveUnitCost">0</strong>
-
           </div>
 
           <div class="total-item">
-
             <span>كمية الإنتاج</span>
-
             <strong id="liveQty">0</strong>
-
           </div>
 
         </div>
 
         <div class="field full">
-
           <label>ملاحظات</label>
-
           <textarea id="notes"></textarea>
-
         </div>
 
         <div class="form-buttons">
 
-          <button
-            type="submit"
-            class="save-btn"
-          >
+          <button type="submit" class="save-btn">
             حفظ
           </button>
 
@@ -649,9 +566,7 @@ tr:hover{
     <table>
 
       <thead>
-
         <tr>
-
           <th>كود التكلفة</th>
           <th>التاريخ والوقت</th>
           <th>كود الإنتاج</th>
@@ -667,9 +582,7 @@ tr:hover{
           <th>تكلفة الوحدة</th>
           <th>ملاحظات</th>
           <th>الإجراء</th>
-
         </tr>
-
       </thead>
 
       <tbody id="costTable"></tbody>
@@ -689,15 +602,11 @@ let editingCode = null;
 function getCosts(){
 
   try{
-
     return JSON.parse(
       localStorage.getItem(COST_KEY)
     ) || [];
-
   }catch(e){
-
     return [];
-
   }
 
 }
@@ -728,7 +637,7 @@ function generateCode(){
 
     if(match){
 
-      const num = parseInt(match[1]);
+      const num = parseInt(match[1],10);
 
       if(num > max){
         max = num;
@@ -739,6 +648,20 @@ function generateCode(){
   });
 
   return `CST-${year}-${String(max + 1).padStart(4,"0")}`;
+
+}
+
+function setCurrentDate(){
+
+  const now = new Date();
+
+  now.setMinutes(
+    now.getMinutes()
+    - now.getTimezoneOffset()
+  );
+
+  document.getElementById("costDate").value =
+    now.toISOString().slice(0,16);
 
 }
 
@@ -757,25 +680,29 @@ function openForm(){
 
   if(!editingCode){
 
-    document
-      .getElementById("costCode")
-      .value = generateCode();
+    document.getElementById("costForm").reset();
 
-    const now = new Date();
+    document.getElementById("costCode").value =
+      generateCode();
 
-    now.setMinutes(
-      now.getMinutes()
-      - now.getTimezoneOffset()
-    );
+    setCurrentDate();
 
-    document
-      .getElementById("costDate")
-      .value =
-        now.toISOString().slice(0,16);
+    document.getElementById("materialsCost").value = 0;
+    document.getElementById("packagingCost").value = 0;
+    document.getElementById("laborCost").value = 0;
+    document.getElementById("operationCost").value = 0;
+    document.getElementById("otherCost").value = 0;
 
   }
 
   calculate();
+
+  document
+    .getElementById("formBox")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
 
 }
 
@@ -800,64 +727,43 @@ function closeForm(){
 
 }
 
+function numberValue(id){
+
+  return Number(
+    document.getElementById(id).value
+  ) || 0;
+
+}
+
 function calculate(){
 
-  const materials =
-    Number(
-      document.getElementById("materialsCost").value
-    ) || 0;
-
-  const packaging =
-    Number(
-      document.getElementById("packagingCost").value
-    ) || 0;
-
-  const labor =
-    Number(
-      document.getElementById("laborCost").value
-    ) || 0;
-
-  const operation =
-    Number(
-      document.getElementById("operationCost").value
-    ) || 0;
-
-  const other =
-    Number(
-      document.getElementById("otherCost").value
-    ) || 0;
-
-  const qty =
-    Number(
-      document.getElementById("productionQty").value
-    ) || 0;
+  const materials = numberValue("materialsCost");
+  const packaging = numberValue("packagingCost");
+  const labor = numberValue("laborCost");
+  const operation = numberValue("operationCost");
+  const other = numberValue("otherCost");
+  const qty = numberValue("productionQty");
 
   const total =
-    materials
-    + packaging
-    + labor
-    + operation
-    + other;
+    materials +
+    packaging +
+    labor +
+    operation +
+    other;
 
   const unitCost =
     qty > 0
     ? total / qty
     : 0;
 
-  document
-    .getElementById("liveTotal")
-    .textContent =
-      formatNumber(total);
+  document.getElementById("liveTotal").textContent =
+    formatNumber(total);
 
-  document
-    .getElementById("liveUnitCost")
-    .textContent =
-      formatNumber(unitCost);
+  document.getElementById("liveUnitCost").textContent =
+    formatNumber(unitCost);
 
-  document
-    .getElementById("liveQty")
-    .textContent =
-      formatNumber(qty);
+  document.getElementById("liveQty").textContent =
+    formatNumber(qty);
 
 }
 
@@ -887,47 +793,28 @@ document
 
       e.preventDefault();
 
-      const materials =
-        Number(
-          document.getElementById("materialsCost").value
-        ) || 0;
-
-      const packaging =
-        Number(
-          document.getElementById("packagingCost").value
-        ) || 0;
-
-      const labor =
-        Number(
-          document.getElementById("laborCost").value
-        ) || 0;
-
-      const operation =
-        Number(
-          document.getElementById("operationCost").value
-        ) || 0;
-
-      const other =
-        Number(
-          document.getElementById("otherCost").value
-        ) || 0;
+      const product =
+        document.getElementById("product")
+          .value.trim();
 
       const qty =
-        Number(
-          document.getElementById("productionQty").value
-        ) || 0;
+        numberValue("productionQty");
 
-      const total =
-        materials
-        + packaging
-        + labor
-        + operation
-        + other;
+      if(!product){
 
-      const unitCost =
-        qty > 0
-        ? total / qty
-        : 0;
+        alert("من فضلك اكتب اسم المنتج.");
+
+        return;
+
+      }
+
+      if(qty <= 0){
+
+        alert("من فضلك أدخل كمية إنتاج أكبر من صفر.");
+
+        return;
+
+      }
 
       const record = {
 
@@ -938,34 +825,47 @@ document
           document.getElementById("costDate").value,
 
         productionCode:
-          document.getElementById("productionCode").value.trim(),
+          document.getElementById("productionCode")
+            .value.trim(),
 
-        product:
-          document.getElementById("product").value.trim(),
+        product: product,
 
         productionQty: qty,
 
         unit:
           document.getElementById("unit").value,
 
-        materialsCost: materials,
+        materialsCost:
+          numberValue("materialsCost"),
 
-        packagingCost: packaging,
+        packagingCost:
+          numberValue("packagingCost"),
 
-        laborCost: labor,
+        laborCost:
+          numberValue("laborCost"),
 
-        operationCost: operation,
+        operationCost:
+          numberValue("operationCost"),
 
-        otherCost: other,
-
-        totalCost: total,
-
-        unitCost: unitCost,
+        otherCost:
+          numberValue("otherCost"),
 
         notes:
-          document.getElementById("notes").value.trim()
+          document.getElementById("notes")
+            .value.trim()
 
       };
+
+      record.totalCost =
+        record.materialsCost +
+        record.packagingCost +
+        record.laborCost +
+        record.operationCost +
+        record.otherCost;
+
+      record.unitCost =
+        record.totalCost /
+        record.productionQty;
 
       let costs = getCosts();
 
@@ -1011,57 +911,59 @@ function editCost(code){
 
   editingCode = code;
 
-  openForm();
+  document
+    .getElementById("formBox")
+    .classList.add("active");
 
   document
-    .getElementById("costCode")
-    .value = item.code;
+    .getElementById("formTitle")
+    .textContent =
+      "تعديل تكلفة المنتج";
 
-  document
-    .getElementById("costDate")
-    .value = item.date;
+  document.getElementById("costCode").value =
+    item.code || "";
 
-  document
-    .getElementById("productionCode")
-    .value = item.productionCode;
+  document.getElementById("costDate").value =
+    item.date || "";
 
-  document
-    .getElementById("product")
-    .value = item.product;
+  document.getElementById("productionCode").value =
+    item.productionCode || "";
 
-  document
-    .getElementById("productionQty")
-    .value = item.productionQty;
+  document.getElementById("product").value =
+    item.product || "";
 
-  document
-    .getElementById("unit")
-    .value = item.unit;
+  document.getElementById("productionQty").value =
+    item.productionQty || 0;
 
-  document
-    .getElementById("materialsCost")
-    .value = item.materialsCost;
+  document.getElementById("unit").value =
+    item.unit || "كجم";
 
-  document
-    .getElementById("packagingCost")
-    .value = item.packagingCost;
+  document.getElementById("materialsCost").value =
+    item.materialsCost || 0;
 
-  document
-    .getElementById("laborCost")
-    .value = item.laborCost;
+  document.getElementById("packagingCost").value =
+    item.packagingCost || 0;
 
-  document
-    .getElementById("operationCost")
-    .value = item.operationCost;
+  document.getElementById("laborCost").value =
+    item.laborCost || 0;
 
-  document
-    .getElementById("otherCost")
-    .value = item.otherCost;
+  document.getElementById("operationCost").value =
+    item.operationCost || 0;
 
-  document
-    .getElementById("notes")
-    .value = item.notes;
+  document.getElementById("otherCost").value =
+    item.otherCost || 0;
+
+  document.getElementById("notes").value =
+    item.notes || "";
 
   calculate();
+
+  document
+    .getElementById("formBox")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
 
 }
 
@@ -1101,12 +1003,10 @@ function render(){
     costs.filter(item => {
 
       const text = [
-
         item.code,
         item.productionCode,
         item.product,
         item.notes
-
       ]
       .join(" ")
       .toLowerCase();
@@ -1117,8 +1017,8 @@ function render(){
 
   filtered.sort(
     (a,b) =>
-      new Date(b.date)
-      - new Date(a.date)
+      new Date(b.date) -
+      new Date(a.date)
   );
 
   const table =
@@ -1141,27 +1041,49 @@ function render(){
 
         <tr>
 
-          <td>${escapeHtml(item.code)}</td>
+          <td>
+            ${escapeHtml(item.code)}
+          </td>
 
-          <td>${escapeHtml(formatDate(item.date))}</td>
+          <td>
+            ${escapeHtml(formatDate(item.date))}
+          </td>
 
-          <td>${escapeHtml(item.productionCode)}</td>
+          <td>
+            ${escapeHtml(item.productionCode)}
+          </td>
 
-          <td>${escapeHtml(item.product)}</td>
+          <td>
+            ${escapeHtml(item.product)}
+          </td>
 
-          <td>${formatNumber(item.productionQty)}</td>
+          <td>
+            ${formatNumber(item.productionQty)}
+          </td>
 
-          <td>${escapeHtml(item.unit)}</td>
+          <td>
+            ${escapeHtml(item.unit)}
+          </td>
 
-          <td>${formatNumber(item.materialsCost)}</td>
+          <td>
+            ${formatNumber(item.materialsCost)}
+          </td>
 
-          <td>${formatNumber(item.packagingCost)}</td>
+          <td>
+            ${formatNumber(item.packagingCost)}
+          </td>
 
-          <td>${formatNumber(item.laborCost)}</td>
+          <td>
+            ${formatNumber(item.laborCost)}
+          </td>
 
-          <td>${formatNumber(item.operationCost)}</td>
+          <td>
+            ${formatNumber(item.operationCost)}
+          </td>
 
-          <td>${formatNumber(item.otherCost)}</td>
+          <td>
+            ${formatNumber(item.otherCost)}
+          </td>
 
           <td>
             <strong>
@@ -1300,6 +1222,7 @@ function escapeJs(value){
 }
 
 render();
+calculate();
 
 </script>
 
