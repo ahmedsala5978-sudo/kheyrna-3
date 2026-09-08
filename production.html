@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>خيرنا | الإنتاج اليومي</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+  background:#f4f7f5;
+  color:#173b2a;
+}
+
+header{
+  background:linear-gradient(135deg,#176b3a,#259653);
+  color:white;
+  padding:25px 6%;
+  text-align:center;
+}
+
+.logo{
+  font-size:36px;
+  font-weight:bold;
+}
+
+.subtitle{
+  margin-top:7px;
+  font-size:15px;
+}
+
+.container{
+  width:92%;
+  max-width:1400px;
+  margin:30px auto;
+}
+
+.back{
+  display:inline-block;
+  margin-bottom:18px;
+  text-decoration:none;
+  color:#176b3a;
+  font-weight:bold;
+}
+
+.title-box,
+.form-box,
+.search-box,
+.table-box{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:18px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.title-box{
+  padding:25px;
+  margin-bottom:20px;
+}
+
+.title-box h2{
+  margin-bottom:10px;
+}
+
+.title-box p{
+  color:#68766e;
+  line-height:1.8;
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.add-btn{
+  border:0;
+  background:#176b3a;
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.add-btn:hover{
+  background:#12562e;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.stat{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
+}
+
+.stat h3{
+  font-size:14px;
+  color:#68766e;
+  margin-bottom:10px;
+}
+
+.stat strong{
+  font-size:24px;
+  color:#176b3a;
+}
+
+.form-box{
+  display:none;
+  padding:25px;
+  margin-bottom:20px;
+}
+
+.form-box.active{
+  display:block;
+}
+
+.form-box h2{
+  margin-bottom:20px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field label{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #d8e0db;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.field textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.section{
+  grid-column:1/-1;
+  margin-top:8px;
+  padding-bottom:8px;
+  border-bottom:1px solid #e5ebe7;
+  color:#176b3a;
+}
+
+.result-box{
+  grid-column:1/-1;
+  background:#e9f7ef;
+  padding:18px;
+  border-radius:12px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.result-item{
+  text-align:center;
+}
+
+.result-item span{
+  display:block;
+  color:#68766e;
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.result-item strong{
+  font-size:22px;
+  color:#176b3a;
+}
+
+.form-buttons{
+  grid-column:1/-1;
+  display:flex;
+  gap:10px;
+  margin-top:5px;
+}
+
+.save-btn,
+.cancel-btn{
+  border:0;
+  padding:12px 20px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.save-btn{
+  background:#176b3a;
+  color:white;
+}
+
+.cancel-btn{
+  background:#6c757d;
+  color:white;
+}
+
+.search-box{
+  padding:15px;
+  margin-bottom:20px;
+}
+
+.search-box input{
+  width:100%;
+  padding:12px;
+  border:1px solid #d8e0db;
+  border-radius:8px;
+  font-size:15px;
+}
+
+.table-box{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  min-width:1500px;
+  border-collapse:collapse;
+}
+
+th{
+  background:#176b3a;
+  color:white;
+  padding:13px;
+  white-space:nowrap;
+}
+
+td{
+  padding:11px;
+  text-align:center;
+  border-bottom:1px solid #edf1ee;
+  white-space:nowrap;
+}
+
+tr:hover{
+  background:#f8faf9;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:15px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.completed{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.progress{
+  background:#fff3cd;
+  color:#664d03;
+}
+
+.cancelled{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.delete-btn,
+.edit-btn{
+  border:0;
+  color:white;
+  padding:7px 10px;
+  border-radius:7px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.delete-btn{
+  background:#dc3545;
+}
+
+.edit-btn{
+  background:#6c757d;
+  margin-left:5px;
+}
+
+.empty{
+  padding:40px;
+  color:#777;
+}
+
+@media(max-width:900px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .result-box{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+
+  .container{
+    width:92%;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .logo{
+    font-size:30px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">خيرنا</div>
+  <div class="subtitle">نظام إدارة الإنتاج</div>
+</header>
+
+<main class="container">
+
+<a class="back" href="index.html">
+  ⬅ العودة للرئيسية
+</a>
+
+<section class="title-box">
+
+  <h2>🏭 دفتر الإنتاج اليومي</h2>
+
+  <p>
+    تسجيل عمليات الإنتاج اليومية وربطها بتكلفة المنتج والمخزون،
+    مع متابعة الكميات المخططة والمنفذة والهالك وحالة العملية.
+  </p>
+
+</section>
+
+<div class="actions">
+
+  <h2>سجلات الإنتاج اليومية</h2>
+
+  <button class="add-btn" onclick="openForm()">
+    + إضافة عملية إنتاج
+  </button>
+
+</div>
+
+<section class="stats">
+
+  <div class="stat">
+    <h3>عدد عمليات الإنتاج</h3>
+    <strong id="recordCount">0</strong>
+  </div>
+
+  <div class="stat">
+    <h3>إجمالي الإنتاج الفعلي</h3>
+    <strong id="totalProduction">0</strong>
+  </div>
+
+  <div class="stat">
+    <h3>إجمالي الهالك</h3>
+    <strong id="totalWaste">0</strong>
+  </div>
+
+  <div class="stat">
+    <h3>العمليات المكتملة</h3>
+    <strong id="completedCount">0</strong>
+  </div>
+
+</section>
+
+<section class="form-box" id="formBox">
+
+<h2 id="formTitle">
+  إضافة عملية إنتاج
+</h2>
+
+<form id="productionForm">
+
+<div class="form-grid">
+
+  <div class="field">
+    <label>كود عملية الإنتاج</label>
+    <input id="productionCode" readonly>
+  </div>
+
+  <div class="field">
+    <label>التاريخ والوقت</label>
+    <input
+      type="datetime-local"
+      id="productionDate"
+      required
+    >
+  </div>
+
+  <div class="field">
+    <label>كود تكلفة المنتج</label>
+    <input
+      id="costCode"
+      placeholder="مثال: COST-2026-0001"
+    >
+  </div>
+
+  <div class="field">
+    <label>اسم المنتج</label>
+    <input id="product" required>
+  </div>
+
+  <div class="field">
+    <label>خط / قسم الإنتاج</label>
+    <input
+      id="productionLine"
+      placeholder="مثال: خط التعبئة 1"
+    >
+  </div>
+
+  <div class="field">
+    <label>الوردية</label>
+
+    <select id="shift">
+
+      <option>صباحية</option>
+      <option>مسائية</option>
+      <option>ليلية</option>
+
+    </select>
+
+  </div>
+
+  <div class="field">
+    <label>الكمية المخططة</label>
+
+    <input
+      type="number"
+      id="plannedQty"
+      min="0"
+      step="0.01"
+      value="0"
+    >
+
+  </div>
+
+  <div class="field">
+    <label>الكمية الفعلية</label>
+
+    <input
+      type="number"
+      id="actualQty"
+      min="0"
+      step="0.01"
+      value="0"
+      required
+    >
+
+  </div>
+
+  <div class="field">
+    <label>وحدة القياس</label>
+
+    <select id="unit">
+
+      <option>كجم</option>
+      <option>طن</option>
+      <option>عبوة</option>
+      <option>كرتونة</option>
+      <option>قطعة</option>
+
+    </select>
+
+  </div>
+
+  <div class="field">
+    <label>كمية الهالك</label>
+
+    <input
+      type="number"
+      id="wasteQty"
+      min="0"
+      step="0.01"
+      value="0"
+    >
+
+  </div>
+
+  <div class="field">
+    <label>حالة الإنتاج</label>
+
+    <select id="status">
+
+      <option value="مكتملة">
+        مكتملة
+      </option>
+
+      <option value="قيد التنفيذ">
+        قيد التنفيذ
+      </option>
+
+      <option value="ملغاة">
+        ملغاة
+      </option>
+
+    </select>
+
+  </div>
+
+  <div class="field">
+    <label>المسؤول عن الإنتاج</label>
+    <input id="responsible" required>
+  </div>
+
+  <div class="section">
+
+    <h3>
+      بيانات الربط
+    </h3>
+
+  </div>
+
+  <div class="field">
+
+    <label>
+      كود حركة مخزون الناتج
+    </label>
+
+    <input
+      id="inventoryCode"
+      readonly
+    >
+
+  </div>
+
+  <div class="field">
+
+    <label>
+      المخزن المستلم
+    </label>
+
+    <input
+      id="storageLocation"
+      value="المخزن الرئيسي"
+    >
+
+  </div>
+
+  <div class="field">
+
+    <label>
+      عدد العمال
+    </label>
+
+    <input
+      type="number"
+      id="workers"
+      min="0"
+      step="1"
+      value="0"
+    >
+
+  </div>
+
+  <div class="field">
+
+    <label>
+      ساعات العمل
+    </label>
+
+    <input
+      type="number"
+      id="workHours"
+      min="0"
+      step="0.25"
+      value="0"
+    >
+
+  </div>
+
+  <div class="result-box">
+
+    <div class="result-item">
+
+      <span>
+        نسبة تحقيق الخطة
+      </span>
+
+      <strong id="liveAchievement">
+        0%
+      </strong>
+
+    </div>
+
+    <div class="result-item">
+
+      <span>
+        صافي الإنتاج بعد الهالك
+      </span>
+
+      <strong id="liveNet">
+        0
+      </strong>
+
+    </div>
+
+    <div class="result-item">
+
+      <span>
+        الهالك
+      </span>
+
+      <strong id="liveWaste">
+        0
+      </strong>
+
+    </div>
+
+  </div>
+
+  <div class="field full">
+
+    <label>
+      ملاحظات
+    </label>
+
+    <textarea id="notes"></textarea>
+
+  </div>
+
+  <div class="form-buttons">
+
+    <button
+      type="submit"
+      class="save-btn"
+    >
+      حفظ العملية
+    </button>
+
+    <button
+      type="button"
+      class="cancel-btn"
+      onclick="closeForm()"
+    >
+      إلغاء
+    </button>
+
+  </div>
+
+</div>
+
+</form>
+
+</section>
+
+<section class="search-box">
+
+  <input
+    id="search"
+    type="text"
+    placeholder="🔎 بحث بكود الإنتاج أو المنتج أو كود التكلفة..."
+    oninput="render()"
+  >
+
+</section>
+
+<section class="table-box">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>كود الإنتاج</th>
+<th>التاريخ والوقت</th>
+<th>كود التكلفة</th>
+<th>المنتج</th>
+<th>خط الإنتاج</th>
+<th>الوردية</th>
+<th>المخطط</th>
+<th>الفعلي</th>
+<th>الوحدة</th>
+<th>الهالك</th>
+<th>الصافي</th>
+<th>الحالة</th>
+<th>المسؤول</th>
+<th>كود المخزون</th>
+<th>المخزن</th>
+<th>العمال</th>
+<th>الساعات</th>
+<th>ملاحظات</th>
+<th>الإجراء</th>
+
+</tr>
+
+</thead>
+
+<tbody id="productionTable"></tbody>
+
+</table>
+
+</section>
+
+</main>
+
+<script>
+
+const KEY = "kheyrna_production";
+
+let editingCode = null;
+
+
+/* جلب البيانات */
+
+function getData(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(KEY)
+    ) || [];
+
+  }catch(e){
+
+    return [];
+
+  }
+
+}
+
+
+/* حفظ البيانات */
+
+function saveData(data){
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* إنشاء كود الإنتاج */
+
+function generateCode(){
+
+  const year =
+    new Date().getFullYear();
+
+  let max = 0;
+
+  getData().forEach(x => {
+
+    const match =
+      (x.code || "").match(
+        /PRD-\d{4}-(\d+)/
+      );
+
+    if(match){
+
+      max = Math.max(
+        max,
+        parseInt(match[1])
+      );
+
+    }
+
+  });
+
+  return `PRD-${year}-${String(
+    max + 1
+  ).padStart(4,"0")}`;
+
+}
+
+
+/* إنشاء كود المخزون */
+
+function generateInventoryCode(){
+
+  const year =
+    new Date().getFullYear();
+
+  let max = 0;
+
+  getData().forEach(x => {
+
+    const match =
+      (x.inventoryCode || "").match(
+        /INV-\d{4}-(\d+)/
+      );
+
+    if(match){
+
+      max = Math.max(
+        max,
+        parseInt(match[1])
+      );
+
+    }
+
+  });
+
+  return `INV-${year}-${String(
+    max + 1
+  ).padStart(4,"0")}`;
+
+}
+
+
+/* الوقت الحالي */
+
+function setNow(){
+
+  const now = new Date();
+
+  now.setMinutes(
+    now.getMinutes()
+    -
+    now.getTimezoneOffset()
+  );
+
+  document.getElementById(
+    "productionDate"
+  ).value =
+    now.toISOString().slice(0,16);
+
+}
+
+
+/* فتح النموذج */
+
+function openForm(){
+
+  editingCode = null;
+
+  document.getElementById(
+    "formBox"
+  ).classList.add("active");
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "إضافة عملية إنتاج";
+
+  document.getElementById(
+    "productionForm"
+  ).reset();
+
+  document.getElementById(
+    "productionCode"
+  ).value =
+    generateCode();
+
+  document.getElementById(
+    "inventoryCode"
+  ).value =
+    generateInventoryCode();
+
+  document.getElementById(
+    "storageLocation"
+  ).value =
+    "المخزن الرئيسي";
+
+  setNow();
+
+  updateLive();
+
+}
+
+
+/* إغلاق النموذج */
+
+function closeForm(){
+
+  document.getElementById(
+    "formBox"
+  ).classList.remove("active");
+
+  editingCode = null;
+
+}
+
+
+/* تحديث النتائج المباشرة */
+
+function updateLive(){
+
+  const plan =
+    Number(
+      document.getElementById(
+        "plannedQty"
+      ).value
+    ) || 0;
+
+  const actual =
+    Number(
+      document.getElementById(
+        "actualQty"
+      ).value
+    ) || 0;
+
+  const waste =
+    Number(
+      document.getElementById(
+        "wasteQty"
+      ).value
+    ) || 0;
+
+  const achievement =
+    plan > 0
+      ? ((actual / plan) * 100).toFixed(1)
+      : 0;
+
+  document.getElementById(
+    "liveAchievement"
+  ).textContent =
+    achievement + "%";
+
+  document.getElementById(
+    "liveNet"
+  ).textContent =
+    Math.max(
+      actual - waste,
+      0
+    );
+
+  document.getElementById(
+    "liveWaste"
+  ).textContent =
+    waste;
+
+}
+
+
+/* تحديث الحسابات أثناء الكتابة */
+
+[
+  "plannedQty",
+  "actualQty",
+  "wasteQty"
+].forEach(id => {
+
+  document.getElementById(id)
+    .addEventListener(
+      "input",
+      updateLive
+    );
+
+});
+
+
+/* حفظ العملية */
+
+document.getElementById(
+  "productionForm"
+).addEventListener(
+  "submit",
+  function(e){
+
+    e.preventDefault();
+
+    const data = getData();
+
+    const item = {
+
+      code:
+        document.getElementById(
+          "productionCode"
+        ).value,
+
+      date:
+        document.getElementById(
+          "productionDate"
+        ).value,
+
+      costCode:
+        document.getElementById(
+          "costCode"
+        ).value.trim(),
+
+      product:
+        document.getElementById(
+          "product"
+        ).value.trim(),
+
+      productionLine:
+        document.getElementById(
+          "productionLine"
+        ).value.trim(),
+
+      shift:
+        document.getElementById(
+          "shift"
+        ).value,
+
+      plannedQty:
+        Number(
+          document.getElementById(
+            "plannedQty"
+          ).value
+        ) || 0,
+
+      actualQty:
+        Number(
+          document.getElementById(
+            "actualQty"
+          ).value
+        ) || 0,
+
+      unit:
+        document.getElementById(
+          "unit"
+        ).value,
+
+      wasteQty:
+        Number(
+          document.getElementById(
+            "wasteQty"
+          ).value
+        ) || 0,
+
+      status:
+        document.getElementById(
+          "status"
+        ).value,
+
+      responsible:
+        document.getElementById(
+          "responsible"
+        ).value.trim(),
+
+      inventoryCode:
+        document.getElementById(
+          "inventoryCode"
+        ).value,
+
+      storageLocation:
+        document.getElementById(
+          "storageLocation"
+        ).value.trim(),
+
+      workers:
+        Number(
+          document.getElementById(
+            "workers"
+          ).value
+        ) || 0,
+
+      workHours:
+        Number(
+          document.getElementById(
+            "workHours"
+          ).value
+        ) || 0,
+
+      notes:
+        document.getElementById(
+          "notes"
+        ).value.trim()
+
+    };
+
+    item.netQty =
+      Math.max(
+        item.actualQty -
+        item.wasteQty,
+        0
+      );
+
+
+    if(editingCode){
+
+      const index =
+        data.findIndex(
+          x =>
+            x.code ===
+            editingCode
+        );
+
+      if(index > -1){
+
+        data[index] =
+          item;
+
+      }
+
+    }else{
+
+      data.push(item);
+
+    }
+
+
+    saveData(data);
+
+    closeForm();
+
+    render();
+
+  }
+);
+
+
+/* تعديل */
+
+function editItem(code){
+
+  const item =
+    getData().find(
+      x =>
+        x.code === code
+    );
+
+  if(!item) return;
+
+  editingCode = code;
+
+  document.getElementById(
+    "formBox"
+  ).classList.add("active");
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "تعديل عملية إنتاج";
+
+  document.getElementById(
+    "productionCode"
+  ).value =
+    item.code;
+
+  document.getElementById(
+    "productionDate"
+  ).value =
+    item.date;
+
+  document.getElementById(
+    "costCode"
+  ).value =
+    item.costCode || "";
+
+  document.getElementById(
+    "product"
+  ).value =
+    item.product || "";
+
+  document.getElementById(
+    "productionLine"
+  ).value =
+    item.productionLine || "";
+
+  document.getElementById(
+    "shift"
+  ).value =
+    item.shift ||
+    "صباحية";
+
+  document.getElementById(
+    "plannedQty"
+  ).value =
+    item.plannedQty || 0;
+
+  document.getElementById(
+    "actualQty"
+  ).value =
+    item.actualQty || 0;
+
+  document.getElementById(
+    "unit"
+  ).value =
+    item.unit || "كجم";
+
+  document.getElementById(
+    "wasteQty"
+  ).value =
+    item.wasteQty || 0;
+
+  document.getElementById(
+    "status"
+  ).value =
+    item.status ||
+    "مكتملة";
+
+  document.getElementById(
+    "responsible"
+  ).value =
+    item.responsible || "";
+
+  document.getElementById(
+    "inventoryCode"
+  ).value =
+    item.inventoryCode || "";
+
+  document.getElementById(
+    "storageLocation"
+  ).value =
+    item.storageLocation ||
+    "المخزن الرئيسي";
+
+  document.getElementById(
+    "workers"
+  ).value =
+    item.workers || 0;
+
+  document.getElementById(
+    "workHours"
+  ).value =
+    item.workHours || 0;
+
+  document.getElementById(
+    "notes"
+  ).value =
+    item.notes || "";
+
+  updateLive();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* حذف */
+
+function deleteItem(code){
+
+  if(
+    !confirm(
+      "هل تريد حذف عملية الإنتاج؟"
+    )
+  ){
+    return;
+  }
+
+  saveData(
+    getData().filter(
+      x =>
+        x.code !== code
+    )
+  );
+
+  render();
+
+}
+
+
+/* حالة العملية */
+
+function badge(status){
+
+  if(status === "مكتملة"){
+
+    return `
+      <span class="badge completed">
+        مكتملة
+      </span>
+    `;
+
+  }
+
+  if(status === "قيد التنفيذ"){
+
+    return `
+      <span class="badge progress">
+        قيد التنفيذ
+      </span>
+    `;
+
+  }
+
+  return `
+    <span class="badge cancelled">
+      ملغاة
+    </span>
+  `;
+
+}
+
+
+/* عرض البيانات */
+
+function render(){
+
+  const q =
+    document.getElementById(
+      "search"
+    ).value
+    .trim()
+    .toLowerCase();
+
+  const data =
+    getData();
+
+  const filtered =
+    data.filter(x =>
+
+      [
+        x.code,
+        x.product,
+        x.costCode,
+        x.inventoryCode,
+        x.productionLine,
+        x.responsible
+      ]
+      .join(" ")
+      .toLowerCase()
+      .includes(q)
+
+    );
+
+
+  const tbody =
+    document.getElementById(
+      "productionTable"
+    );
+
+  tbody.innerHTML = "";
+
+
+  if(!filtered.length){
+
+    tbody.innerHTML = `
+      <tr>
+        <td
+          colspan="19"
+          class="empty"
+        >
+          لا توجد عمليات إنتاج مسجلة
+        </td>
+      </tr>
+    `;
+
+  }else{
+
+    filtered.forEach(x => {
+
+      const tr =
+        document.createElement(
+          "tr"
+        );
+
+      tr.innerHTML = `
+
+        <td>${x.code}</td>
+
+        <td>${x.date || ""}</td>
+
+        <td>${x.costCode || "—"}</td>
+
+        <td>${x.product}</td>
+
+        <td>
+          ${x.productionLine || "—"}
+        </td>
+
+        <td>${x.shift}</td>
+
+        <td>${x.plannedQty}</td>
+
+        <td>${x.actualQty}</td>
+
+        <td>${x.unit}</td>
+
+        <td>${x.wasteQty}</td>
+
+        <td>${x.netQty}</td>
+
+        <td>${badge(x.status)}</td>
+
+        <td>${x.responsible}</td>
+
+        <td>${x.inventoryCode}</td>
+
+        <td>${x.storageLocation}</td>
+
+        <td>${x.workers}</td>
+
+        <td>${x.workHours}</td>
+
+        <td>${x.notes || "—"}</td>
+
+        <td>
+
+          <button
+            class="edit-btn"
+            onclick="editItem('${x.code}')"
+          >
+            تعديل
+          </button>
+
+          <button
+            class="delete-btn"
+            onclick="deleteItem('${x.code}')"
+          >
+            حذف
+          </button>
+
+        </td>
+
+      `;
+
+      tbody.appendChild(tr);
+
+    });
+
+  }
+
+
+  /* الإحصائيات */
+
+  document.getElementById(
+    "recordCount"
+  ).textContent =
+    data.length;
+
+  document.getElementById(
+    "totalProduction"
+  ).textContent =
+    data.reduce(
+      (sum,x) =>
+        sum +
+        (Number(x.actualQty) || 0),
+      0
+    );
+
+  document.getElementById(
+    "totalWaste"
+  ).textContent =
+    data.reduce(
+      (sum,x) =>
+        sum +
+        (Number(x.wasteQty) || 0),
+      0
+    );
+
+  document.getElementById(
+    "completedCount"
+  ).textContent =
+    data.filter(
+      x =>
+        x.status ===
+        "مكتملة"
+    ).length;
+
+}
+
+
+/* تشغيل الصفحة */
+
+render();
+
+</script>
+
+</body>
+</html>
