@@ -81,6 +81,10 @@ header{
   font-weight:bold;
 }
 
+.primary:hover{
+  background:#12552e;
+}
+
 .stats{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -149,7 +153,8 @@ header{
 }
 
 .field input:focus,
-.field select:focus{
+.field select:focus,
+.field textarea:focus{
   border-color:#259653;
 }
 
@@ -164,6 +169,9 @@ header{
   padding:12px;
   font-weight:bold;
   color:#176b3a;
+  min-height:43px;
+  display:flex;
+  align-items:center;
 }
 
 .form-actions{
@@ -178,6 +186,10 @@ header{
   padding:12px 20px;
   border-radius:9px;
   cursor:pointer;
+}
+
+.cancel:hover{
+  background:#e1e6e3;
 }
 
 .table-box{
@@ -200,6 +212,11 @@ header{
   border:1px solid #d8e1db;
   border-radius:9px;
   min-width:250px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:#259653;
 }
 
 .table-wrap{
@@ -209,7 +226,7 @@ header{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:1000px;
+  min-width:1200px;
 }
 
 th,td{
@@ -222,6 +239,7 @@ th,td{
 th{
   background:#f7faf8;
   color:#52645a;
+  white-space:nowrap;
 }
 
 .empty{
@@ -236,6 +254,30 @@ th{
   background:#e9f7ef;
   color:#176b3a;
   font-size:12px;
+  white-space:nowrap;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+}
+
+.btn-edit,
+.btn-delete{
+  border:0;
+  padding:7px 10px;
+  border-radius:7px;
+  cursor:pointer;
+}
+
+.btn-edit{
+  background:#eef5f1;
+  color:#176b3a;
+}
+
+.btn-delete{
+  background:#fff0f0;
+  color:#b42318;
 }
 
 footer{
@@ -246,4 +288,703 @@ footer{
 
 @media(max-width:900px){
   .form-grid{
-    grid-template-columns:repeat(2,1
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  header{
+    padding:16px 4%;
+  }
+
+  .logo{
+    font-size:24px;
+  }
+
+  .container{
+    width:94%;
+    margin:20px auto;
+  }
+
+  .page-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .primary{
+    width:100%;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .table-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .search{
+    min-width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    خيرنا
+    <small>نظام إدارة المشتريات</small>
+  </div>
+
+  <a class="back" href="index.html">العودة للرئيسية</a>
+</header>
+
+<main class="container">
+
+  <section class="page-head">
+    <div>
+      <h1>دفتر المشتريات</h1>
+      <p>تسجيل ومتابعة عمليات الشراء داخل نظام خيرنا</p>
+    </div>
+
+    <button class="primary" onclick="openForm()">
+      + إضافة عملية شراء
+    </button>
+  </section>
+
+  <section class="stats">
+
+    <div class="stat">
+      <span>عدد عمليات الشراء</span>
+      <strong id="operationsCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>إجمالي المشتريات</span>
+      <strong id="purchasesTotal">0.00</strong>
+    </div>
+
+    <div class="stat">
+      <span>عمليات قيد التنفيذ</span>
+      <strong id="pendingCount">0</strong>
+    </div>
+
+  </section>
+
+  <section class="form-box" id="purchaseForm">
+
+    <h2 class="form-title" id="formTitle">
+      إضافة عملية شراء جديدة
+    </h2>
+
+    <form id="form">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>كود الشراء</label>
+          <input type="text" id="purchaseCode" readonly>
+        </div>
+
+        <div class="field">
+          <label>التاريخ والوقت</label>
+          <input type="datetime-local" id="purchaseDate" required>
+        </div>
+
+        <div class="field">
+          <label>المورد</label>
+          <input type="text" id="supplier" placeholder="اسم المورد" required>
+        </div>
+
+        <div class="field">
+          <label>رقم الفاتورة</label>
+          <input type="text" id="invoiceNumber" placeholder="رقم الفاتورة" required>
+        </div>
+
+        <div class="field">
+          <label>الصنف</label>
+          <input type="text" id="item" placeholder="اسم الصنف" required>
+        </div>
+
+        <div class="field">
+          <label>الكمية المشتراة</label>
+          <input type="number" id="quantity" min="0" step="0.01" placeholder="0" required>
+        </div>
+
+        <div class="field">
+          <label>سعر الوحدة</label>
+          <input type="number" id="unitPrice" min="0" step="0.01" placeholder="0.00" required>
+        </div>
+
+        <div class="field">
+          <label>إجمالي الشراء</label>
+          <div class="total" id="totalDisplay">0.00</div>
+        </div>
+
+        <div class="field">
+          <label>طريقة الدفع</label>
+          <select id="paymentMethod" required>
+            <option value="">اختر طريقة الدفع</option>
+            <option value="نقدي">نقدي</option>
+            <option value="تحويل بنكي">تحويل بنكي</option>
+            <option value="شيك">شيك</option>
+            <option value="آجل">آجل</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>تاريخ الاستحقاق</label>
+          <input type="date" id="dueDate">
+        </div>
+
+        <div class="field">
+          <label>حالة العملية</label>
+          <select id="status" required>
+            <option value="">اختر الحالة</option>
+            <option value="مكتملة">مكتملة</option>
+            <option value="قيد التنفيذ">قيد التنفيذ</option>
+            <option value="معلقة">معلقة</option>
+            <option value="ملغاة">ملغاة</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea id="notes" placeholder="أي ملاحظات على عملية الشراء"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary">
+          حفظ العملية
+        </button>
+
+        <button type="button" class="cancel" onclick="closeForm()">
+          إلغاء
+        </button>
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="table-box">
+
+    <div class="table-head">
+      <h2>سجل عمليات الشراء</h2>
+
+      <input
+        class="search"
+        id="searchInput"
+        type="search"
+        placeholder="بحث بالكود أو المورد أو الصنف..."
+        oninput="renderTable()"
+      >
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>كود الشراء</th>
+            <th>التاريخ والوقت</th>
+            <th>المورد</th>
+            <th>رقم الفاتورة</th>
+            <th>الصنف</th>
+            <th>الكمية</th>
+            <th>سعر الوحدة</th>
+            <th>الإجمالي</th>
+            <th>طريقة الدفع</th>
+            <th>تاريخ الاستحقاق</th>
+            <th>حالة العملية</th>
+            <th>ملاحظات</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody id="purchasesTableBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  خيرنا في كل بيت ❤️
+</footer>
+
+<script>
+
+let purchases = JSON.parse(
+  localStorage.getItem("kheyrna_purchases") || "[]"
+);
+
+let editingIndex = -1;
+
+
+/* إنشاء كود شراء متسلسل */
+
+function generatePurchaseCode(){
+
+  let maxNumber = 0;
+
+  purchases.forEach(purchase => {
+
+    const match = String(purchase.code).match(
+      /PUR-\d{4}-(\d+)/
+    );
+
+    if(match){
+      maxNumber = Math.max(
+        maxNumber,
+        Number(match[1])
+      );
+    }
+
+  });
+
+  const year = new Date().getFullYear();
+
+  return `PUR-${year}-${String(maxNumber + 1).padStart(4,"0")}`;
+}
+
+
+/* التاريخ والوقت الحالي */
+
+function currentDateTime(){
+
+  const now = new Date();
+
+  const local = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  );
+
+  return local.toISOString().slice(0,16);
+}
+
+
+/* فتح نموذج الإضافة */
+
+function openForm(){
+
+  editingIndex = -1;
+
+  document.getElementById("formTitle").textContent =
+    "إضافة عملية شراء جديدة";
+
+  document.getElementById("purchaseForm")
+    .classList.add("active");
+
+  document.getElementById("form").reset();
+
+  document.getElementById("purchaseCode").value =
+    generatePurchaseCode();
+
+  document.getElementById("purchaseDate").value =
+    currentDateTime();
+
+  updateTotal();
+
+  window.scrollTo({
+    top:document.getElementById("purchaseForm").offsetTop - 20,
+    behavior:"smooth"
+  });
+}
+
+
+/* إغلاق النموذج */
+
+function closeForm(){
+
+  editingIndex = -1;
+
+  document.getElementById("purchaseForm")
+    .classList.remove("active");
+
+  document.getElementById("form").reset();
+}
+
+
+/* حساب إجمالي الشراء */
+
+function updateTotal(){
+
+  const quantity =
+    Number(document.getElementById("quantity").value) || 0;
+
+  const unitPrice =
+    Number(document.getElementById("unitPrice").value) || 0;
+
+  const total = quantity * unitPrice;
+
+  document.getElementById("totalDisplay")
+    .textContent = total.toFixed(2);
+}
+
+
+/* حفظ العملية */
+
+document.getElementById("form")
+.addEventListener("submit",function(event){
+
+  event.preventDefault();
+
+  const quantity =
+    Number(document.getElementById("quantity").value);
+
+  const unitPrice =
+    Number(document.getElementById("unitPrice").value);
+
+  const total = quantity * unitPrice;
+
+  const purchase = {
+
+    code:
+      document.getElementById("purchaseCode").value,
+
+    date:
+      document.getElementById("purchaseDate").value,
+
+    supplier:
+      document.getElementById("supplier").value.trim(),
+
+    invoiceNumber:
+      document.getElementById("invoiceNumber").value.trim(),
+
+    item:
+      document.getElementById("item").value.trim(),
+
+    quantity: quantity,
+
+    unitPrice: unitPrice,
+
+    total: total,
+
+    paymentMethod:
+      document.getElementById("paymentMethod").value,
+
+    dueDate:
+      document.getElementById("dueDate").value,
+
+    status:
+      document.getElementById("status").value,
+
+    notes:
+      document.getElementById("notes").value.trim()
+
+  };
+
+
+  if(editingIndex === -1){
+
+    purchases.push(purchase);
+
+  }else{
+
+    purchases[editingIndex] = purchase;
+
+  }
+
+
+  localStorage.setItem(
+    "kheyrna_purchases",
+    JSON.stringify(purchases)
+  );
+
+
+  closeForm();
+
+  renderTable();
+
+  updateStats();
+
+});
+
+
+/* عرض العمليات */
+
+function renderTable(){
+
+  const tbody =
+    document.getElementById("purchasesTableBody");
+
+  const search =
+    document.getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    purchases.filter(purchase => {
+
+      const text = [
+
+        purchase.code,
+        purchase.supplier,
+        purchase.invoiceNumber,
+        purchase.item,
+        purchase.status
+
+      ].join(" ").toLowerCase();
+
+      return text.includes(search);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" class="empty">
+          لا توجد عمليات شراء مسجلة حتى الآن
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML = filtered.map(purchase => {
+
+    const realIndex =
+      purchases.indexOf(purchase);
+
+    return `
+
+      <tr>
+
+        <td><strong>${escapeHTML(purchase.code)}</strong></td>
+
+        <td>${formatDateTime(purchase.date)}</td>
+
+        <td>${escapeHTML(purchase.supplier)}</td>
+
+        <td>${escapeHTML(purchase.invoiceNumber)}</td>
+
+        <td>${escapeHTML(purchase.item)}</td>
+
+        <td>${purchase.quantity}</td>
+
+        <td>${Number(purchase.unitPrice).toFixed(2)}</td>
+
+        <td><strong>${Number(purchase.total).toFixed(2)}</strong></td>
+
+        <td>${escapeHTML(purchase.paymentMethod)}</td>
+
+        <td>${purchase.dueDate || "-"}</td>
+
+        <td>
+          <span class="status">
+            ${escapeHTML(purchase.status)}
+          </span>
+        </td>
+
+        <td>${escapeHTML(purchase.notes || "-")}</td>
+
+        <td>
+          <div class="actions">
+
+            <button
+              class="btn-edit"
+              onclick="editPurchase(${realIndex})">
+              تعديل
+            </button>
+
+            <button
+              class="btn-delete"
+              onclick="deletePurchase(${realIndex})">
+              حذف
+            </button>
+
+          </div>
+        </td>
+
+      </tr>
+
+    `;
+
+  }).join("");
+
+}
+
+
+/* تعديل عملية */
+
+function editPurchase(index){
+
+  const purchase = purchases[index];
+
+  editingIndex = index;
+
+  document.getElementById("formTitle").textContent =
+    "تعديل عملية شراء";
+
+  document.getElementById("purchaseForm")
+    .classList.add("active");
+
+  document.getElementById("purchaseCode").value =
+    purchase.code;
+
+  document.getElementById("purchaseDate").value =
+    purchase.date;
+
+  document.getElementById("supplier").value =
+    purchase.supplier;
+
+  document.getElementById("invoiceNumber").value =
+    purchase.invoiceNumber;
+
+  document.getElementById("item").value =
+    purchase.item;
+
+  document.getElementById("quantity").value =
+    purchase.quantity;
+
+  document.getElementById("unitPrice").value =
+    purchase.unitPrice;
+
+  document.getElementById("paymentMethod").value =
+    purchase.paymentMethod;
+
+  document.getElementById("dueDate").value =
+    purchase.dueDate;
+
+  document.getElementById("status").value =
+    purchase.status;
+
+  document.getElementById("notes").value =
+    purchase.notes;
+
+  updateTotal();
+
+  window.scrollTo({
+    top:document.getElementById("purchaseForm").offsetTop - 20,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* حذف عملية */
+
+function deletePurchase(index){
+
+  const purchase = purchases[index];
+
+  const confirmed = confirm(
+    `هل أنت متأكد من حذف العملية ${purchase.code}؟`
+  );
+
+  if(!confirmed) return;
+
+  purchases.splice(index,1);
+
+  localStorage.setItem(
+    "kheyrna_purchases",
+    JSON.stringify(purchases)
+  );
+
+  renderTable();
+
+  updateStats();
+
+}
+
+
+/* تحديث الإحصائيات */
+
+function updateStats(){
+
+  const count = purchases.length;
+
+  const total =
+    purchases.reduce(
+      (sum,purchase) =>
+        sum + Number(purchase.total || 0),
+      0
+    );
+
+  const pending =
+    purchases.filter(
+      purchase => purchase.status === "قيد التنفيذ"
+    ).length;
+
+
+  document.getElementById("operationsCount")
+    .textContent = count;
+
+  document.getElementById("purchasesTotal")
+    .textContent = total.toFixed(2);
+
+  document.getElementById("pendingCount")
+    .textContent = pending;
+
+}
+
+
+/* تنسيق التاريخ */
+
+function formatDateTime(value){
+
+  if(!value) return "-";
+
+  const date = new Date(value);
+
+  if(isNaN(date.getTime())) return value;
+
+  return date.toLocaleString("ar-EG");
+
+}
+
+
+/* حماية عرض النصوص */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* تحديث الإجمالي أثناء الكتابة */
+
+document.getElementById("quantity")
+  .addEventListener("input",updateTotal);
+
+document.getElementById("unitPrice")
+  .addEventListener("input",updateTotal);
+
+
+/* تشغيل الصفحة */
+
+renderTable();
+
+updateStats();
+
+</script>
+
+</body>
+</html>
