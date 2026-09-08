@@ -326,9 +326,10 @@ tr:hover{
 
         <div class="notice">
             <strong>نظام الربط التلقائي:</strong>
-            عند اكتمال عملية شراء في دفتر المشتريات، يتم تسجيل حركة
-            <strong>دخول</strong> تلقائيًا في المخزون، مع الاحتفاظ بكود الشراء
-            كمرجع للحركة.
+            عند اكتمال عملية شراء يتم تسجيل حركة
+            <strong>دخول</strong> تلقائيًا في المخزون، وعند اكتمال عملية إنتاج
+            يتم تسجيل المنتج النهائي كحركة <strong>دخول</strong> تلقائيًا،
+            مع الاحتفاظ بكود العملية كمرجع للحركة.
         </div>
     </div>
 
@@ -364,7 +365,6 @@ tr:hover{
 
     </div>
 
-    <!-- نموذج إضافة حركة -->
     <div class="form-box" id="formBox">
 
         <h2>إضافة حركة مخزون</h2>
@@ -502,25 +502,34 @@ tr:hover{
 const MANUAL_KEY = "kheyrna_inventory_manual";
 const PURCHASE_KEY = "kheyrna_purchases";
 
+
 function getManualMovements(){
 
     try{
-        return JSON.parse(localStorage.getItem(MANUAL_KEY)) || [];
+        return JSON.parse(
+            localStorage.getItem(MANUAL_KEY)
+        ) || [];
     }catch(e){
         return [];
     }
 
 }
+
 
 function getPurchases(){
 
     try{
-        return JSON.parse(localStorage.getItem(PURCHASE_KEY)) || [];
+        return JSON.parse(
+            localStorage.getItem(PURCHASE_KEY)
+        ) || [];
     }catch(e){
         return [];
     }
 
 }
+
+
+/* الحركات التلقائية القادمة من المشتريات */
 
 function getAutomaticMovements(){
 
@@ -533,7 +542,10 @@ function getAutomaticMovements(){
             let code = "";
 
             if(p.code){
-                code = p.code.replace(/^PUR-/,"INV-");
+                code = p.code.replace(
+                    /^PUR-/,
+                    "INV-"
+                );
             }
 
             return {
@@ -554,19 +566,27 @@ function getAutomaticMovements(){
 
                 reference: p.code || "",
 
-                location: p.storageLocation || "المخزن الرئيسي",
+                location:
+                    p.storageLocation ||
+                    "المخزن الرئيسي",
 
-                responsible: p.receiver || "من المشتريات",
+                responsible:
+                    p.receiver ||
+                    "من المشتريات",
 
-                notes: "حركة دخول مرتبطة بعملية شراء مكتملة",
+                notes:
+                    "حركة دخول مرتبطة بعملية شراء مكتملة",
 
-                auto: true
+                auto: true,
+
+                source: "purchase"
 
             };
 
         });
 
 }
+
 
 function getAllMovements(){
 
@@ -577,11 +597,14 @@ function getAllMovements(){
 
 }
 
+
 function generateCode(){
 
-    const currentYear = new Date().getFullYear();
+    const currentYear =
+        new Date().getFullYear();
 
-    const all = getAllMovements();
+    const all =
+        getAllMovements();
 
     let max = 0;
 
@@ -589,11 +612,18 @@ function generateCode(){
 
         if(!m.code) return;
 
-        const match = m.code.match(/INV-\d{4}-(\d+)/);
+        const match =
+            m.code.match(
+                /INV-\d{4}-(\d+)/
+            );
 
         if(match){
 
-            const number = parseInt(match[1]);
+            const number =
+                parseInt(
+                    match[1],
+                    10
+                );
 
             if(number > max){
                 max = number;
@@ -603,99 +633,169 @@ function generateCode(){
 
     });
 
-    return `INV-${currentYear}-${String(max + 1).padStart(4,"0")}`;
+    return `INV-${currentYear}-${String(
+        max + 1
+    ).padStart(4,"0")}`;
 
 }
 
+
 function openForm(){
 
-    document.getElementById("formBox").classList.add("active");
+    document.getElementById(
+        "formBox"
+    ).classList.add("active");
 
-    document.getElementById("movementCode").value = generateCode();
+    document.getElementById(
+        "movementCode"
+    ).value =
+        generateCode();
 
-    const now = new Date();
+    const now =
+        new Date();
 
     now.setMinutes(
-        now.getMinutes() - now.getTimezoneOffset()
+        now.getMinutes()
+        -
+        now.getTimezoneOffset()
     );
 
-    document.getElementById("movementDate").value =
+    document.getElementById(
+        "movementDate"
+    ).value =
         now.toISOString().slice(0,16);
 
 }
 
+
 function closeForm(){
 
-    document.getElementById("formBox").classList.remove("active");
+    document.getElementById(
+        "formBox"
+    ).classList.remove("active");
 
-    document.getElementById("inventoryForm").reset();
+    document.getElementById(
+        "inventoryForm"
+    ).reset();
 
 }
 
+
 document
 .getElementById("inventoryForm")
-.addEventListener("submit", function(e){
+.addEventListener(
+    "submit",
+    function(e){
 
-    e.preventDefault();
+        e.preventDefault();
 
-    const movement = {
+        const movement = {
 
-        code: document.getElementById("movementCode").value,
+            code:
+                document.getElementById(
+                    "movementCode"
+                ).value,
 
-        date: document.getElementById("movementDate").value,
+            date:
+                document.getElementById(
+                    "movementDate"
+                ).value,
 
-        item: document.getElementById("item").value.trim(),
+            item:
+                document.getElementById(
+                    "item"
+                ).value.trim(),
 
-        type: document.getElementById("movementType").value,
+            type:
+                document.getElementById(
+                    "movementType"
+                ).value,
 
-        in: Number(document.getElementById("quantityIn").value) || 0,
+            in:
+                Number(
+                    document.getElementById(
+                        "quantityIn"
+                    ).value
+                ) || 0,
 
-        out: Number(document.getElementById("quantityOut").value) || 0,
+            out:
+                Number(
+                    document.getElementById(
+                        "quantityOut"
+                    ).value
+                ) || 0,
 
-        reason: document.getElementById("reason").value.trim(),
+            reason:
+                document.getElementById(
+                    "reason"
+                ).value.trim(),
 
-        reference:
-            document.getElementById("referenceCode").value.trim(),
+            reference:
+                document.getElementById(
+                    "referenceCode"
+                ).value.trim(),
 
-        location:
-            document.getElementById("storageLocation").value.trim(),
+            location:
+                document.getElementById(
+                    "storageLocation"
+                ).value.trim(),
 
-        responsible:
-            document.getElementById("responsible").value.trim(),
+            responsible:
+                document.getElementById(
+                    "responsible"
+                ).value.trim(),
 
-        notes:
-            document.getElementById("notes").value.trim(),
+            notes:
+                document.getElementById(
+                    "notes"
+                ).value.trim(),
 
-        auto:false
+            auto: false,
 
-    };
+            source: "manual"
 
-    const manual = getManualMovements();
+        };
 
-    manual.push(movement);
+        const manual =
+            getManualMovements();
 
-    localStorage.setItem(
-        MANUAL_KEY,
-        JSON.stringify(manual)
-    );
+        manual.push(movement);
 
-    alert("تم حفظ حركة المخزون بنجاح ✅");
+        localStorage.setItem(
+            MANUAL_KEY,
+            JSON.stringify(manual)
+        );
 
-    closeForm();
+        alert(
+            "تم حفظ حركة المخزون بنجاح ✅"
+        );
 
-    render();
+        closeForm();
 
-});
+        render();
+
+    }
+);
+
 
 function deleteMovement(code){
 
-    if(!confirm("هل أنت متأكد من حذف حركة المخزون؟")){
+    if(
+        !confirm(
+            "هل أنت متأكد من حذف حركة المخزون؟"
+        )
+    ){
         return;
     }
 
-    const manual = getManualMovements();
+    const manual =
+        getManualMovements();
 
-    const updated = manual.filter(m => m.code !== code);
+    const updated =
+        manual.filter(
+            m =>
+                m.code !== code
+        );
 
     localStorage.setItem(
         MANUAL_KEY,
@@ -706,100 +806,138 @@ function deleteMovement(code){
 
 }
 
+
 function getTypeBadge(type){
 
     if(type === "دخول"){
-        return `<span class="badge in">دخول</span>`;
+        return `
+            <span class="badge in">
+                دخول
+            </span>
+        `;
     }
 
     if(type === "خروج"){
-        return `<span class="badge out">خروج</span>`;
+        return `
+            <span class="badge out">
+                خروج
+            </span>
+        `;
     }
 
     if(type === "مرتجع"){
-        return `<span class="badge return">مرتجع</span>`;
+        return `
+            <span class="badge return">
+                مرتجع
+            </span>
+        `;
     }
 
-    return `<span class="badge adjust">تسوية</span>`;
+    return `
+        <span class="badge adjust">
+            تسوية
+        </span>
+    `;
 
 }
 
+
 function render(){
 
-    const all = getAllMovements();
+    const all =
+        getAllMovements();
 
     const search =
-        document.getElementById("search")
+        document.getElementById(
+            "search"
+        )
         .value
         .trim()
         .toLowerCase();
 
-    const filtered = all.filter(m => {
+    const filtered =
+        all.filter(m => {
 
-        const text = [
+            const text = [
 
-            m.code,
-            m.item,
-            m.reference,
-            m.reason,
-            m.location,
-            m.responsible
+                m.code,
+                m.item,
+                m.reference,
+                m.reason,
+                m.location,
+                m.responsible
 
-        ]
-        .join(" ")
-        .toLowerCase();
+            ]
+            .join(" ")
+            .toLowerCase();
 
-        return text.includes(search);
+            return text.includes(
+                search
+            );
 
-    });
+        });
 
-    /*
-       ترتيب الحركات زمنيًا
-    */
+
+    /* ترتيب الحركات زمنيًا */
 
     filtered.sort((a,b) => {
 
-        return new Date(a.date) - new Date(b.date);
+        return new Date(a.date)
+            -
+            new Date(b.date);
 
     });
 
-    /*
-       حساب الرصيد لكل صنف
-    */
+
+    /* حساب الرصيد لكل صنف */
 
     const balances = {};
 
-    const rows = filtered.map(m => {
 
-        const itemKey = m.item || "غير محدد";
+    const rows =
+        filtered.map(m => {
 
-        if(!balances[itemKey]){
-            balances[itemKey] = 0;
-        }
+            const itemKey =
+                m.item ||
+                "غير محدد";
 
-        balances[itemKey] +=
-            (Number(m.in) || 0) -
-            (Number(m.out) || 0);
+            if(!balances[itemKey]){
+                balances[itemKey] = 0;
+            }
 
-        const balance = balances[itemKey];
+            balances[itemKey] +=
+                (Number(m.in) || 0)
+                -
+                (Number(m.out) || 0);
 
-        return {
+            const balance =
+                balances[itemKey];
 
-            ...m,
-            balance
+            return {
 
-        };
+                ...m,
 
-    });
+                balance
+
+            };
+
+        });
+
 
     const table =
-        document.getElementById("inventoryTable");
+        document.getElementById(
+            "inventoryTable"
+        );
+
 
     if(rows.length === 0){
 
         table.innerHTML = `
             <tr>
-                <td colspan="14" class="empty">
+                <td
+                    colspan="14"
+                    class="empty"
+                >
                     لا توجد حركات مخزون حتى الآن
                 </td>
             </tr>
@@ -807,117 +945,229 @@ function render(){
 
     }else{
 
-        table.innerHTML = rows.map(m => {
+        table.innerHTML =
+            rows.map(m => {
 
-            return `
+                let sourceLabel = "";
 
-                <tr class="${m.auto ? "auto-row" : ""}">
+                if(
+                    m.source ===
+                    "production"
+                ){
 
-                    <td>${escapeHtml(m.code)}</td>
+                    sourceLabel =
+                        "تلقائي من الإنتاج";
 
-                    <td>${escapeHtml(formatDate(m.date))}</td>
+                }else if(
+                    m.source ===
+                    "purchase"
+                ){
 
-                    <td>${escapeHtml(m.item)}</td>
+                    sourceLabel =
+                        "تلقائي من المشتريات";
 
-                    <td>${getTypeBadge(m.type)}</td>
+                }else if(
+                    m.auto
+                ){
 
-                    <td>${formatNumber(m.in)}</td>
+                    /*
+                      دعم الحركات القديمة
+                      القادمة من المشتريات
+                    */
 
-                    <td>${formatNumber(m.out)}</td>
+                    sourceLabel =
+                        "تلقائي من المشتريات";
 
-                    <td>
-                        <strong>
-                            ${formatNumber(m.balance)}
-                        </strong>
-                    </td>
+                }else{
 
-                    <td>${escapeHtml(m.reason)}</td>
+                    sourceLabel =
+                        "إضافة يدوية";
 
-                    <td>${escapeHtml(m.reference)}</td>
+                }
 
-                    <td>${escapeHtml(m.location)}</td>
 
-                    <td>${escapeHtml(m.responsible)}</td>
+                return `
 
-                    <td>${escapeHtml(m.notes)}</td>
-
-                    <td>
-
-                        ${
+                    <tr
+                        class="${
                             m.auto
-                            ? `<span class="badge auto-badge">تلقائي من المشتريات</span>`
-                            : `<span class="badge auto-badge">إضافة يدوية</span>`
-                        }
+                            ? "auto-row"
+                            : ""
+                        }"
+                    >
 
-                    </td>
+                        <td>
+                            ${escapeHtml(m.code)}
+                        </td>
 
-                    <td>
+                        <td>
+                            ${escapeHtml(
+                                formatDate(m.date)
+                            )}
+                        </td>
 
-                        ${
-                            m.auto
-                            ? "-"
-                            : `
-                                <button
-                                    class="delete-btn"
-                                    onclick="deleteMovement('${escapeJs(m.code)}')"
-                                >
-                                    حذف
-                                </button>
-                            `
-                        }
+                        <td>
+                            ${escapeHtml(m.item)}
+                        </td>
 
-                    </td>
+                        <td>
+                            ${getTypeBadge(m.type)}
+                        </td>
 
-                </tr>
+                        <td>
+                            ${formatNumber(m.in)}
+                        </td>
 
-            `;
+                        <td>
+                            ${formatNumber(m.out)}
+                        </td>
 
-        }).join("");
+                        <td>
+                            <strong>
+                                ${formatNumber(
+                                    m.balance
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                m.reason
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                m.reference
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                m.location
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                m.responsible
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                m.notes
+                            )}
+                        </td>
+
+                        <td>
+
+                            <span class="badge auto-badge">
+                                ${sourceLabel}
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            ${
+                                m.auto
+                                ? "-"
+                                : `
+                                    <button
+                                        class="delete-btn"
+                                        onclick="deleteMovement('${escapeJs(m.code)}')"
+                                    >
+                                        حذف
+                                    </button>
+                                `
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }).join("");
 
     }
+
 
     updateStats(all);
 
 }
 
+
 function updateStats(all){
 
-    const totalIn = all.reduce(
-        (sum,m) => sum + (Number(m.in) || 0),
-        0
-    );
+    const totalIn =
+        all.reduce(
+            (sum,m) =>
+                sum +
+                (Number(m.in) || 0),
+            0
+        );
 
-    const totalOut = all.reduce(
-        (sum,m) => sum + (Number(m.out) || 0),
-        0
-    );
+    const totalOut =
+        all.reduce(
+            (sum,m) =>
+                sum +
+                (Number(m.out) || 0),
+            0
+        );
 
-    const items = new Set(
-        all.map(m => m.item).filter(Boolean)
-    );
+    const items =
+        new Set(
+            all
+                .map(m => m.item)
+                .filter(Boolean)
+        );
 
-    document.getElementById("movementCount")
-        .textContent = all.length;
 
-    document.getElementById("totalIn")
-        .textContent = formatNumber(totalIn);
+    document.getElementById(
+        "movementCount"
+    ).textContent =
+        all.length;
 
-    document.getElementById("totalOut")
-        .textContent = formatNumber(totalOut);
 
-    document.getElementById("itemCount")
-        .textContent = items.size;
+    document.getElementById(
+        "totalIn"
+    ).textContent =
+        formatNumber(
+            totalIn
+        );
+
+
+    document.getElementById(
+        "totalOut"
+    ).textContent =
+        formatNumber(
+            totalOut
+        );
+
+
+    document.getElementById(
+        "itemCount"
+    ).textContent =
+        items.size;
 
 }
+
 
 function formatNumber(number){
 
-    return Number(number || 0)
-        .toLocaleString("ar-EG", {
+    return Number(
+        number || 0
+    ).toLocaleString(
+        "ar-EG",
+        {
             maximumFractionDigits:2
-        });
+        }
+    );
 
 }
+
 
 function formatDate(date){
 
@@ -928,7 +1178,9 @@ function formatDate(date){
     try{
 
         return new Date(date)
-            .toLocaleString("ar-EG");
+            .toLocaleString(
+                "ar-EG"
+            );
 
     }catch(e){
 
@@ -938,25 +1190,56 @@ function formatDate(date){
 
 }
 
+
 function escapeHtml(value){
 
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
+
 
 function escapeJs(value){
 
-    return String(value ?? "")
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'")
-        .replace(/"/g,'\\"');
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /"/g,
+        '\\"'
+    );
 
 }
+
 
 render();
 
