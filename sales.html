@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>خيرنا | المبيعات</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+  background:#f4f7f5;
+  color:#173b2a;
+}
+
+header{
+  background:linear-gradient(135deg,#176b3a,#259653);
+  color:white;
+  padding:25px 6%;
+  text-align:center;
+}
+
+.logo{
+  font-size:34px;
+  font-weight:bold;
+}
+
+.subtitle{
+  margin-top:7px;
+  font-size:15px;
+}
+
+.container{
+  width:92%;
+  max-width:1250px;
+  margin:30px auto;
+}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.back{
+  background:#e9f7ef;
+  color:#176b3a;
+  text-decoration:none;
+  padding:11px 18px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.back:hover{
+  background:#d7f0e2;
+}
+
+.section{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:22px;
+}
+
+.section h2{
+  margin-bottom:20px;
+  font-size:21px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-weight:bold;
+  font-size:14px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d8e2dc;
+  border-radius:10px;
+  outline:none;
+  background:#fff;
+  color:#173b2a;
+  font-size:14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#259653;
+  box-shadow:0 0 0 3px rgba(37,150,83,.10);
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.total-box{
+  background:#e9f7ef;
+  border:1px solid #cdebd8;
+  border-radius:12px;
+  padding:13px;
+  font-size:18px;
+  font-weight:bold;
+  color:#176b3a;
+}
+
+.invoice-area{
+  border:2px dashed #cbd9d0;
+  border-radius:15px;
+  padding:22px;
+  text-align:center;
+}
+
+.invoice-buttons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.invoice-button{
+  display:inline-block;
+  background:#176b3a;
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.invoice-button.secondary{
+  background:#e9f7ef;
+  color:#176b3a;
+}
+
+.invoice-button:hover{
+  opacity:.9;
+}
+
+#invoiceInput{
+  display:none;
+}
+
+.preview{
+  display:none;
+  margin-top:18px;
+}
+
+.preview img{
+  max-width:100%;
+  max-height:350px;
+  border-radius:12px;
+  border:1px solid #dce6e0;
+  object-fit:contain;
+}
+
+.remove-image{
+  display:none;
+  margin:12px auto 0;
+  border:0;
+  background:#fceaea;
+  color:#a52b2b;
+  padding:10px 16px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+  border-radius:10px;
+  padding:13px 20px;
+}
+
+.save{
+  background:#176b3a;
+  color:white;
+}
+
+.clear{
+  background:#eef2ef;
+  color:#45584d;
+}
+
+.save:hover{
+  background:#125a30;
+}
+
+.clear:hover{
+  background:#e2e8e4;
+}
+
+.search-box{
+  margin-bottom:18px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  min-width:1250px;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  border-bottom:1px solid #e5ebe7;
+  padding:12px 10px;
+  text-align:right;
+  vertical-align:middle;
+}
+
+th{
+  background:#e9f7ef;
+  color:#176b3a;
+  white-space:nowrap;
+}
+
+tr:hover td{
+  background:#fafcfb;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.status.completed{
+  background:#e4f6eb;
+  color:#176b3a;
+}
+
+.status.pending{
+  background:#fff5d9;
+  color:#8a6500;
+}
+
+.status.cancelled{
+  background:#fbe8e8;
+  color:#a52b2b;
+}
+
+.action-btn{
+  padding:7px 10px;
+  margin:2px;
+  font-size:12px;
+}
+
+.edit{
+  background:#eaf3ff;
+  color:#245b9c;
+}
+
+.delete{
+  background:#fceaea;
+  color:#a52b2b;
+}
+
+.view{
+  background:#eeeafa;
+  color:#6548a3;
+}
+
+.empty{
+  text-align:center;
+  color:#7b8780;
+  padding:30px;
+}
+
+.notice{
+  background:#f1f8f4;
+  border-right:4px solid #259653;
+  padding:14px;
+  border-radius:10px;
+  color:#53665b;
+  line-height:1.8;
+  margin-bottom:18px;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  color:#7b8780;
+}
+
+@media(max-width:900px){
+
+  .form-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:600px){
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .field.full{
+    grid-column:auto;
+  }
+
+  .section{
+    padding:18px;
+  }
+
+  .logo{
+    font-size:30px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    خيرنا
+  </div>
+
+  <div class="subtitle">
+    دفتر المبيعات
+  </div>
+
+</header>
+
+
+<main class="container">
+
+
+<div class="top-bar">
+
+  <h1>
+    💰 المبيعات
+  </h1>
+
+  <a class="back" href="index.html">
+    🏠 الرئيسية
+  </a>
+
+</div>
+
+
+<section class="section">
+
+  <h2>
+    🧾 تسجيل عملية بيع
+  </h2>
+
+  <div class="notice">
+    عند تسجيل البيع كمكتمل، سيتم ربط العملية بحركة خروج من المخزون تلقائيًا.
+    ويمكن إرفاق صورة فاتورة البيع عن طريق الكاميرا أو معرض الصور.
+  </div>
+
+
+  <form id="salesForm">
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label>
+          كود البيع
+        </label>
+
+        <input
+          type="text"
+          id="saleCode"
+          readonly
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          التاريخ والوقت
+        </label>
+
+        <input
+          type="datetime-local"
+          id="saleDate"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          العميل
+        </label>
+
+        <input
+          type="text"
+          id="customer"
+          placeholder="اسم العميل"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          المنتج
+        </label>
+
+        <input
+          type="text"
+          id="product"
+          placeholder="اسم المنتج"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          الكمية المباعة
+        </label>
+
+        <input
+          type="number"
+          id="quantity"
+          min="0.01"
+          step="0.01"
+          placeholder="0"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          سعر البيع للوحدة
+        </label>
+
+        <input
+          type="number"
+          id="unitPrice"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          إجمالي البيع
+        </label>
+
+        <div
+          class="total-box"
+          id="totalSale"
+        >
+          0.00
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          طريقة التحصيل
+        </label>
+
+        <select id="paymentMethod">
+
+          <option value="نقدي">
+            نقدي
+          </option>
+
+          <option value="تحويل بنكي">
+            تحويل بنكي
+          </option>
+
+          <option value="آجل">
+            آجل
+          </option>
+
+          <option value="بطاقة">
+            بطاقة
+          </option>
+
+          <option value="أخرى">
+            أخرى
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          تاريخ الاستحقاق
+        </label>
+
+        <input
+          type="date"
+          id="dueDate"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          حالة البيع
+        </label>
+
+        <select id="status">
+
+          <option value="مكتملة">
+            مكتملة
+          </option>
+
+          <option value="قيد التنفيذ">
+            قيد التنفيذ
+          </option>
+
+          <option value="ملغاة">
+            ملغاة
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          كود حركة المخزون
+        </label>
+
+        <input
+          type="text"
+          id="inventoryCode"
+          readonly
+          placeholder="يتولد تلقائيًا عند اعتماد البيع"
+        >
+
+      </div>
+
+
+      <div class="field full">
+
+        <label>
+          ملاحظات
+        </label>
+
+        <textarea
+          id="notes"
+          placeholder="أي ملاحظات إضافية عن عملية البيع..."
+        ></textarea>
+
+      </div>
+
+
+    </div>
+
+
+    <br>
+
+
+    <h2>
+      📷 فاتورة البيع
+    </h2>
+
+
+    <div class="invoice-area">
+
+
+      <div class="invoice-buttons">
+
+
+        <label
+          class="invoice-button"
+          for="cameraInput"
+        >
+          📸 تصوير الفاتورة بالكاميرا
+        </label>
+
+
+        <label
+          class="invoice-button secondary"
+          for="invoiceInput"
+        >
+          🖼️ اختيار من معرض الصور
+        </label>
+
+
+        <input
+          type="file"
+          id="cameraInput"
+          accept="image/*"
+          capture="environment"
+        >
+
+
+        <input
+          type="file"
+          id="invoiceInput"
+          accept="image/*"
+        >
+
+      </div>
+
+
+      <div id="invoiceText">
+        لم يتم إرفاق فاتورة بعد
+      </div>
+
+
+      <div
+        class="preview"
+        id="preview"
+      >
+
+        <img
+          id="invoicePreview"
+          alt="معاينة فاتورة البيع"
+        >
+
+        <button
+          type="button"
+          class="remove-image"
+          id="removeImage"
+        >
+          🗑️ حذف الفاتورة
+        </button>
+
+      </div>
+
+
+    </div>
+
+
+    <br>
+
+
+    <div class="actions">
+
+      <button
+        type="submit"
+        class="save"
+      >
+        💾 حفظ عملية البيع
+      </button>
+
+
+      <button
+        type="button"
+        class="clear"
+        onclick="resetForm()"
+      >
+        ↩️ عملية جديدة
+      </button>
+
+    </div>
+
+
+  </form>
+
+</section>
+
+
+
+<section class="section">
+
+  <h2>
+    📋 سجل المبيعات
+  </h2>
+
+
+  <div class="search-box">
+
+    <input
+      type="search"
+      id="search"
+      placeholder="🔎 ابحث بالكود أو العميل أو المنتج..."
+      oninput="renderSales()"
+    >
+
+  </div>
+
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>كود البيع</th>
+          <th>التاريخ والوقت</th>
+          <th>العميل</th>
+          <th>المنتج</th>
+          <th>الكمية</th>
+          <th>سعر الوحدة</th>
+          <th>الإجمالي</th>
+          <th>طريقة التحصيل</th>
+          <th>الاستحقاق</th>
+          <th>كود المخزون</th>
+          <th>الحالة</th>
+          <th>الفاتورة</th>
+          <th>الإجراءات</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="salesTable">
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+<footer>
+
+  <strong>
+    خيرنا في كل بيت ❤️
+  </strong>
+
+  <br>
+
+  نظام إدارة الأعمال المتكامل
+
+</footer>
+
+
+
+<script>
+
+const SALES_KEY = "kheyrna_sales";
+const INVENTORY_KEY = "kheyrna_inventory_manual";
+
+let sales = [];
+let editingCode = null;
+let invoiceImage = "";
+
+
+
+function loadSales(){
+
+  try{
+
+    sales = JSON.parse(
+      localStorage.getItem(SALES_KEY)
+    ) || [];
+
+  }catch(error){
+
+    sales = [];
+
+  }
+
+}
+
+
+
+function saveSales(){
+
+  localStorage.setItem(
+    SALES_KEY,
+    JSON.stringify(sales)
+  );
+
+}
+
+
+
+function nowLocal(){
+
+  const now = new Date();
+
+  const offset =
+    now.getTimezoneOffset();
+
+  return new Date(
+    now.getTime() - offset * 60000
+  )
+  .toISOString()
+  .slice(0,16);
+
+}
+
+
+
+function generateSaleCode(){
+
+  const year =
+    new Date().getFullYear();
+
+  const prefix =
+    `SAL-${year}-`;
+
+  let max = 0;
+
+  sales.forEach(item => {
+
+    if(
+      item.code &&
+      item.code.startsWith(prefix)
+    ){
+
+      const number =
+        parseInt(
+          item.code.replace(prefix,""),
+          10
+        );
+
+      if(!isNaN(number)){
+        max = Math.max(max,number);
+      }
+
+    }
+
+  });
+
+
+  return (
+    prefix +
+    String(max + 1).padStart(4,"0")
+  );
+
+}
+
+
+
+function generateInventoryCode(){
+
+  let inventory = [];
+
+  try{
+
+    inventory =
+      JSON.parse(
+        localStorage.getItem(INVENTORY_KEY)
+      ) || [];
+
+  }catch(error){
+
+    inventory = [];
+
+  }
+
+
+  const year =
+    new Date().getFullYear();
+
+  const prefix =
+    `INV-${year}-`;
+
+  let max = 0;
+
+
+  inventory.forEach(item => {
+
+    if(
+      item.code &&
+      item.code.startsWith(prefix)
+    ){
+
+      const number =
+        parseInt(
+          item.code.replace(prefix,""),
+          10
+        );
+
+      if(!isNaN(number)){
+        max = Math.max(max,number);
+      }
+
+    }
+
+  });
+
+
+  return (
+    prefix +
+    String(max + 1).padStart(4,"0")
+  );
+
+}
+
+
+
+function calculateTotal(){
+
+  const quantity =
+    Number(
+      document.getElementById("quantity").value
+    ) || 0;
+
+  const unitPrice =
+    Number(
+      document.getElementById("unitPrice").value
+    ) || 0;
+
+
+  const total =
+    quantity * unitPrice;
+
+
+  document.getElementById("totalSale")
+    .textContent =
+    total.toFixed(2);
+
+}
+
+
+
+document.getElementById("quantity")
+  .addEventListener(
+    "input",
+    calculateTotal
+  );
+
+
+document.getElementById("unitPrice")
+  .addEventListener(
+    "input",
+    calculateTotal
+  );
+
+
+
+function handleInvoice(file){
+
+  if(!file){
+    return;
+  }
+
+
+  if(!file.type.startsWith("image/")){
+
+    alert("من فضلك اختر صورة صحيحة للفاتورة.");
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload = function(e){
+
+    invoiceImage =
+      e.target.result;
+
+    document.getElementById(
+      "invoicePreview"
+    ).src =
+      invoiceImage;
+
+
+    document.getElementById(
+      "preview"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "removeImage"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "invoiceText"
+    ).textContent =
+      "تم إرفاق فاتورة البيع ✓";
+
+  };
+
+
+  reader.readAsDataURL(file);
+
+}
+
+
+
+document.getElementById("cameraInput")
+  .addEventListener(
+    "change",
+    function(){
+
+      handleInvoice(
+        this.files[0]
+      );
+
+    }
+  );
+
+
+
+document.getElementById("invoiceInput")
+  .addEventListener(
+    "change",
+    function(){
+
+      handleInvoice(
+        this.files[0]
+      );
+
+    }
+  );
+
+
+
+document.getElementById("removeImage")
+  .addEventListener(
+    "click",
+    function(){
+
+      invoiceImage = "";
+
+      document.getElementById(
+        "invoicePreview"
+      ).src = "";
+
+      document.getElementById(
+        "preview"
+      ).style.display =
+      "none";
+
+      this.style.display =
+      "none";
+
+      document.getElementById(
+        "invoiceText"
+      ).textContent =
+      "لم يتم إرفاق فاتورة بعد";
+
+    }
+  );
+
+
+
+function syncInventory(sale){
+
+  let inventory = [];
+
+  try{
+
+    inventory =
+      JSON.parse(
+        localStorage.getItem(INVENTORY_KEY)
+      ) || [];
+
+  }catch(error){
+
+    inventory = [];
+
+  }
+
+
+  /*
+    حذف أي حركة قديمة مرتبطة
+    بعملية البيع الحالية.
+  */
+
+  inventory =
+    inventory.filter(item => !(
+      item.source === "sale" &&
+      item.reference === sale.code
+    ));
+
+
+  /*
+    البيع المكتمل فقط
+    يخصم من المخزون.
+  */
+
+  if(
+    sale.status !== "مكتملة" ||
+    Number(sale.quantity) <= 0
+  ){
+
+    sale.inventoryCode = "";
+
+    localStorage.setItem(
+      INVENTORY_KEY,
+      JSON.stringify(inventory)
+    );
+
+    return;
+
+  }
+
+
+  const inventoryCode =
+    sale.inventoryCode ||
+    generateInventoryCode();
+
+
+  sale.inventoryCode =
+    inventoryCode;
+
+
+  inventory.push({
+
+    code: inventoryCode,
+
+    date: sale.date,
+
+    item: sale.product,
+
+    type: "خروج",
+
+    in: 0,
+
+    out: Number(sale.quantity),
+
+    reason: "بيع",
+
+    reference: sale.code,
+
+    location: "المخزن الرئيسي",
+
+    responsible: sale.customer,
+
+    notes:
+      `حركة خروج تلقائية ناتجة عن البيع ${sale.code}`,
+
+    auto: true,
+
+    source: "sale",
+
+    saleCode: sale.code
+
+  });
+
+
+  localStorage.setItem(
+    INVENTORY_KEY,
+    JSON.stringify(inventory)
+  );
+
+}
+
+
+
+document.getElementById("salesForm")
+  .addEventListener(
+    "submit",
+    function(e){
+
+      e.preventDefault();
+
+
+      const customer =
+        document.getElementById(
+          "customer"
+        ).value.trim();
+
+
+      const product =
+        document.getElementById(
+          "product"
+        ).value.trim();
+
+
+      const quantity =
+        Number(
+          document.getElementById(
+            "quantity"
+          ).value
+        );
+
+
+      const unitPrice =
+        Number(
+          document.getElementById(
+            "unitPrice"
+          ).value
+        );
+
+
+      if(!customer){
+
+        alert("من فضلك أدخل اسم العميل.");
+
+        return;
+
+      }
+
+
+      if(!product){
+
+        alert("من فضلك أدخل اسم المنتج.");
+
+        return;
+
+      }
+
+
+      if(quantity <= 0){
+
+        alert("الكمية المباعة يجب أن تكون أكبر من صفر.");
+
+        return;
+
+      }
+
+
+      if(unitPrice < 0){
+
+        alert("سعر البيع غير صحيح.");
+
+        return;
+
+      }
+
+
+      const oldSale =
+        sales.find(
+          item =>
+            item.code === editingCode
+        );
+
+
+      const sale = {
+
+        code:
+          document.getElementById(
+            "saleCode"
+          ).value,
+
+        date:
+          document.getElementById(
+            "saleDate"
+          ).value,
+
+        customer,
+
+        product,
+
+        quantity,
+
+        unitPrice,
+
+        total:
+          quantity * unitPrice,
+
+        paymentMethod:
+          document.getElementById(
+            "paymentMethod"
+          ).value,
+
+        dueDate:
+          document.getElementById(
+            "dueDate"
+          ).value,
+
+        inventoryCode:
+          oldSale?.inventoryCode ||
+          document.getElementById(
+            "inventoryCode"
+          ).value,
+
+        status:
+          document.getElementById(
+            "status"
+          ).value,
+
+        invoice:
+          invoiceImage,
+
+        notes:
+          document.getElementById(
+            "notes"
+          ).value.trim(),
+
+        createdAt:
+          oldSale?.createdAt ||
+          new Date().toISOString()
+
+      };
+
+
+      if(editingCode){
+
+        const index =
+          sales.findIndex(
+            item =>
+              item.code === editingCode
+          );
+
+
+        if(index !== -1){
+
+          sales[index] =
+            sale;
+
+        }
+
+      }else{
+
+        sales.push(sale);
+
+      }
+
+
+      /*
+        حفظ البيع أولًا
+        ثم مزامنة المخزون.
+      */
+
+      saveSales();
+
+      syncInventory(sale);
+
+      saveSales();
+
+
+      alert(
+        editingCode
+          ? "تم تعديل عملية البيع بنجاح ✓"
+          : "تم حفظ عملية البيع بنجاح ✓"
+      );
+
+
+      resetForm();
+
+      renderSales();
+
+    }
+  );
+
+
+
+function resetForm(){
+
+  editingCode = null;
+
+  invoiceImage = "";
+
+
+  document.getElementById(
+    "salesForm"
+  ).reset();
+
+
+  document.getElementById(
+    "saleCode"
+  ).value =
+    generateSaleCode();
+
+
+  document.getElementById(
+    "saleDate"
+  ).value =
+    nowLocal();
+
+
+  document.getElementById(
+    "totalSale"
+  ).textContent =
+    "0.00";
+
+
+  document.getElementById(
+    "inventoryCode"
+  ).value =
+    "";
+
+
+  document.getElementById(
+    "invoicePreview"
+  ).src =
+    "";
+
+
+  document.getElementById(
+    "preview"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "removeImage"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "invoiceText"
+  ).textContent =
+    "لم يتم إرفاق فاتورة بعد";
+
+}
+
+
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
+
+}
+
+
+
+function statusClass(status){
+
+  if(status === "مكتملة"){
+    return "completed";
+  }
+
+  if(status === "قيد التنفيذ"){
+    return "pending";
+  }
+
+  return "cancelled";
+
+}
+
+
+
+function renderSales(){
+
+  const tbody =
+    document.getElementById(
+      "salesTable"
+    );
+
+
+  const search =
+    document.getElementById(
+      "search"
+    ).value
+    .trim()
+    .toLowerCase();
+
+
+  const filtered =
+    sales.filter(item => {
+
+      const text =
+        [
+          item.code,
+          item.customer,
+          item.product,
+          item.status
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+      return text.includes(search);
+
+    });
+
+
+  if(filtered.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" class="empty">
+          لا توجد عمليات بيع مسجلة حتى الآن.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    filtered.map(item => `
+
+      <tr>
+
+        <td>
+          <strong>
+            ${escapeHtml(item.code)}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(item.date)}
+        </td>
+
+        <td>
+          ${escapeHtml(item.customer)}
+        </td>
+
+        <td>
+          ${escapeHtml(item.product)}
+        </td>
+
+        <td>
+          ${Number(item.quantity).toFixed(2)}
+        </td>
+
+        <td>
+          ${Number(item.unitPrice).toFixed(2)}
+        </td>
+
+        <td>
+          <strong>
+            ${Number(item.total).toFixed(2)}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(item.paymentMethod)}
+        </td>
+
+        <td>
+          ${escapeHtml(item.dueDate || "-")}
+        </td>
+
+        <td>
+          ${escapeHtml(item.inventoryCode || "-")}
+        </td>
+
+        <td>
+
+          <span
+            class="status ${statusClass(item.status)}"
+          >
+            ${escapeHtml(item.status)}
+          </span>
+
+        </td>
+
+        <td>
+
+          ${
+            item.invoice
+              ? `
+                <button
+                  class="action-btn view"
+                  onclick="viewInvoice('${item.code}')"
+                >
+                  👁️ عرض
+                </button>
+              `
+              : "-"
+          }
+
+        </td>
+
+        <td>
+
+          <button
+            class="action-btn edit"
+            onclick="editSale('${item.code}')"
+          >
+            ✏️ تعديل
+          </button>
+
+          <button
+            class="action-btn delete"
+            onclick="deleteSale('${item.code}')"
+          >
+            🗑️ حذف
+          </button>
+
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+
+
+function editSale(code){
+
+  const item =
+    sales.find(
+      sale =>
+        sale.code === code
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  editingCode =
+    item.code;
+
+
+  document.getElementById(
+    "saleCode"
+  ).value =
+    item.code;
+
+
+  document.getElementById(
+    "saleDate"
+  ).value =
+    item.date;
+
+
+  document.getElementById(
+    "customer"
+  ).value =
+    item.customer;
+
+
+  document.getElementById(
+    "product"
+  ).value =
+    item.product;
+
+
+  document.getElementById(
+    "quantity"
+  ).value =
+    item.quantity;
+
+
+  document.getElementById(
+    "unitPrice"
+  ).value =
+    item.unitPrice;
+
+
+  document.getElementById(
+    "paymentMethod"
+  ).value =
+    item.paymentMethod;
+
+
+  document.getElementById(
+    "dueDate"
+  ).value =
+    item.dueDate || "";
+
+
+  document.getElementById(
+    "inventoryCode"
+  ).value =
+    item.inventoryCode || "";
+
+
+  document.getElementById(
+    "status"
+  ).value =
+    item.status;
+
+
+  document.getElementById(
+    "notes"
+  ).value =
+    item.notes || "";
+
+
+  invoiceImage =
+    item.invoice || "";
+
+
+  if(invoiceImage){
+
+    document.getElementById(
+      "invoicePreview"
+    ).src =
+      invoiceImage;
+
+
+    document.getElementById(
+      "preview"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "removeImage"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "invoiceText"
+    ).textContent =
+      "تم إرفاق فاتورة البيع ✓";
+
+  }else{
+
+    document.getElementById(
+      "preview"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "removeImage"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "invoiceText"
+    ).textContent =
+      "لم يتم إرفاق فاتورة بعد";
+
+  }
+
+
+  calculateTotal();
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+
+function deleteSale(code){
+
+  const item =
+    sales.find(
+      sale =>
+        sale.code === code
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      `هل أنت متأكد من حذف عملية البيع ${code}؟`
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  /*
+    حذف حركة المخزون
+    المرتبطة بالبيع.
+  */
+
+  let inventory = [];
+
+  try{
+
+    inventory =
+      JSON.parse(
+        localStorage.getItem(INVENTORY_KEY)
+      ) || [];
+
+  }catch(error){
+
+    inventory = [];
+
+  }
+
+
+  inventory =
+    inventory.filter(
+      movement => !(
+        movement.source === "sale" &&
+        movement.reference === code
+      )
+    );
+
+
+  localStorage.setItem(
+    INVENTORY_KEY,
+    JSON.stringify(inventory)
+  );
+
+
+  sales =
+    sales.filter(
+      sale =>
+        sale.code !== code
+    );
+
+
+  saveSales();
+
+
+  if(editingCode === code){
+
+    resetForm();
+
+  }
+
+
+  renderSales();
+
+
+  alert(
+    "تم حذف عملية البيع وحركة المخزون المرتبطة بها ✓"
+  );
+
+}
+
+
+
+function viewInvoice(code){
+
+  const item =
+    sales.find(
+      sale =>
+        sale.code === code
+    );
+
+
+  if(
+    !item ||
+    !item.invoice
+  ){
+
+    alert(
+      "لا توجد فاتورة مرفقة بهذه العملية."
+    );
+
+    return;
+
+  }
+
+
+  const win =
+    window.open(
+      "",
+      "_blank"
+    );
+
+
+  if(!win){
+
+    alert(
+      "المتصفح منع فتح نافذة الفاتورة."
+    );
+
+    return;
+
+  }
+
+
+  win.document.write(`
+
+    <!DOCTYPE html>
+
+    <html lang="ar" dir="rtl">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        فاتورة البيع ${escapeHtml(item.code)}
+      </title>
+
+      <style>
+
+        body{
+          margin:0;
+          padding:20px;
+          background:#f4f7f5;
+          text-align:center;
+          font-family:Arial,Tahoma,sans-serif;
+          color:#173b2a;
+        }
+
+        h2{
+          margin-bottom:20px;
+        }
+
+        img{
+          max-width:95%;
+          max-height:85vh;
+          border-radius:12px;
+          border:1px solid #ddd;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <h2>
+        فاتورة البيع — ${escapeHtml(item.code)}
+      </h2>
+
+      <img
+        src="${item.invoice}"
+        alt="فاتورة البيع"
+      >
+
+    </body>
+
+    </html>
+
+  `);
+
+  win.document.close();
+
+}
+
+
+
+loadSales();
+
+resetForm();
+
+renderSales();
+
+</script>
+
+</body>
+</html>
