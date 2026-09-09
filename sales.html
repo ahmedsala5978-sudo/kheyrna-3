@@ -168,7 +168,8 @@ textarea{
   opacity:.9;
 }
 
-#invoiceInput{
+#invoiceInput,
+#cameraInput{
   display:none;
 }
 
@@ -240,7 +241,7 @@ button{
 
 table{
   width:100%;
-  min-width:1250px;
+  min-width:1350px;
   border-collapse:collapse;
 }
 
@@ -484,6 +485,57 @@ footer{
           placeholder="0"
           required
         >
+
+      </div>
+
+
+      <!-- وحدة القياس -->
+
+      <div class="field">
+
+        <label>
+          وحدة القياس
+        </label>
+
+        <select id="unit" required>
+
+          <option value="">
+            اختر وحدة القياس
+          </option>
+
+          <option value="كيلوجرام">
+            كيلوجرام
+          </option>
+
+          <option value="جرام">
+            جرام
+          </option>
+
+          <option value="طن">
+            طن
+          </option>
+
+          <option value="كيس">
+            كيس
+          </option>
+
+          <option value="كرتونة">
+            كرتونة
+          </option>
+
+          <option value="قطعة">
+            قطعة
+          </option>
+
+          <option value="لتر">
+            لتر
+          </option>
+
+          <option value="عبوة">
+            عبوة
+          </option>
+
+        </select>
 
       </div>
 
@@ -765,6 +817,7 @@ footer{
           <th>العميل</th>
           <th>المنتج</th>
           <th>الكمية</th>
+          <th>الوحدة</th>
           <th>سعر الوحدة</th>
           <th>الإجمالي</th>
           <th>طريقة التحصيل</th>
@@ -1191,6 +1244,8 @@ function syncInventory(sale){
 
     out: Number(sale.quantity),
 
+    unit: sale.unit,
+
     reason: "بيع",
 
     reference: sale.code,
@@ -1248,6 +1303,12 @@ document.getElementById("salesForm")
         );
 
 
+      const unit =
+        document.getElementById(
+          "unit"
+        ).value;
+
+
       const unitPrice =
         Number(
           document.getElementById(
@@ -1277,6 +1338,15 @@ document.getElementById("salesForm")
       if(quantity <= 0){
 
         alert("الكمية المباعة يجب أن تكون أكبر من صفر.");
+
+        return;
+
+      }
+
+
+      if(!unit){
+
+        alert("من فضلك اختر وحدة القياس.");
 
         return;
 
@@ -1316,6 +1386,8 @@ document.getElementById("salesForm")
         product,
 
         quantity,
+
+        unit,
 
         unitPrice,
 
@@ -1527,6 +1599,7 @@ function renderSales(){
           item.code,
           item.customer,
           item.product,
+          item.unit,
           item.status
         ]
         .join(" ")
@@ -1542,7 +1615,7 @@ function renderSales(){
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="13" class="empty">
+        <td colspan="14" class="empty">
           لا توجد عمليات بيع مسجلة حتى الآن.
         </td>
       </tr>
@@ -1578,6 +1651,10 @@ function renderSales(){
 
         <td>
           ${Number(item.quantity).toFixed(2)}
+        </td>
+
+        <td>
+          ${escapeHtml(item.unit || "-")}
         </td>
 
         <td>
@@ -1704,6 +1781,12 @@ function editSale(code){
 
 
   document.getElementById(
+    "unit"
+  ).value =
+    item.unit || "";
+
+
+  document.getElementById(
     "unitPrice"
   ).value =
     item.unitPrice;
@@ -1748,44 +1831,44 @@ function editSale(code){
     document.getElementById(
       "invoicePreview"
     ).src =
-      invoiceImage;
+    invoiceImage;
 
 
     document.getElementById(
       "preview"
     ).style.display =
-      "block";
+    "block";
 
 
     document.getElementById(
       "removeImage"
     ).style.display =
-      "block";
+    "block";
 
 
     document.getElementById(
       "invoiceText"
     ).textContent =
-      "تم إرفاق فاتورة البيع ✓";
+    "تم إرفاق فاتورة البيع ✓";
 
   }else{
 
     document.getElementById(
       "preview"
     ).style.display =
-      "none";
+    "none";
 
 
     document.getElementById(
       "removeImage"
     ).style.display =
-      "none";
+    "none";
 
 
     document.getElementById(
       "invoiceText"
     ).textContent =
-      "لم يتم إرفاق فاتورة بعد";
+    "لم يتم إرفاق فاتورة بعد";
 
   }
 
