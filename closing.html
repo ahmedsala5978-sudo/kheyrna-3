@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>خيرنا | الإقفال اليومي</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+  background:#f4f7f5;
+  color:#173b2a;
+}
+
+header{
+  background:linear-gradient(135deg,#176b3a,#259653);
+  color:white;
+  padding:25px 6%;
+  text-align:center;
+}
+
+.logo{
+  font-size:34px;
+  font-weight:bold;
+}
+
+.subtitle{
+  margin-top:8px;
+  font-size:15px;
+}
+
+.container{
+  width:92%;
+  max-width:1250px;
+  margin:30px auto;
+}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.back{
+  text-decoration:none;
+  background:white;
+  color:#176b3a;
+  border:1px solid #dce7df;
+  padding:11px 18px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.status{
+  background:#fff8df;
+  border:1px solid #f0df9b;
+  color:#806500;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+.card{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:20px;
+}
+
+.card h2{
+  margin-bottom:20px;
+  font-size:21px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d9e3dc;
+  border-radius:9px;
+  outline:none;
+  background:#fbfdfb;
+  color:#173b2a;
+}
+
+.field textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+th,td{
+  border:1px solid #dfe7e2;
+  padding:13px;
+  text-align:center;
+}
+
+th{
+  background:#e9f7ef;
+  color:#176b3a;
+}
+
+.summary-value{
+  font-weight:bold;
+}
+
+.ok{
+  color:#16733d;
+  font-weight:bold;
+}
+
+.warn{
+  color:#a87900;
+  font-weight:bold;
+}
+
+.treasury{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.total-box{
+  background:#f7faf8;
+  border:1px solid #e0e8e2;
+  border-radius:12px;
+  padding:18px;
+}
+
+.total-box span{
+  display:block;
+  color:#6f7d75;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.total-box strong{
+  font-size:21px;
+}
+
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+button{
+  border:0;
+  padding:13px 25px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.save{
+  background:#176b3a;
+  color:white;
+}
+
+.save:hover{
+  background:#12582f;
+}
+
+.reset{
+  background:#edf2ee;
+  color:#53635a;
+}
+
+.message{
+  display:none;
+  margin-top:18px;
+  padding:14px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.success{
+  display:block;
+  background:#e9f7ef;
+  color:#176b3a;
+  border:1px solid #bfe0cb;
+}
+
+.code-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.code{
+  background:#f0f7f2;
+  border:1px solid #d5e7da;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:bold;
+  direction:ltr;
+}
+
+.notice{
+  background:#f4f7f5;
+  border-right:4px solid #176b3a;
+  padding:15px;
+  line-height:1.8;
+  color:#526159;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  color:#7b8780;
+}
+
+@media(max-width:900px){
+  .grid,
+  .treasury{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:600px){
+  .grid,
+  .treasury{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  .logo{
+    font-size:29px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">خيرنا</div>
+  <div class="subtitle">دفتر الإقفال اليومي</div>
+</header>
+
+<main class="container">
+
+<div class="top-bar">
+
+  <a class="back" href="index.html">
+    ← العودة للرئيسية
+  </a>
+
+  <div class="status" id="status">
+    🔐 حالة اليوم: لم يتم الإقفال
+  </div>
+
+</div>
+
+
+<!-- بيانات الإقفال -->
+
+<section class="card">
+
+  <h2>🔐 بيانات الإقفال</h2>
+
+  <div class="grid">
+
+    <div class="field">
+      <label>كود الإقفال</label>
+      <input id="closingCode" readonly>
+    </div>
+
+    <div class="field">
+      <label>تاريخ الإقفال</label>
+      <input type="date" id="closingDate">
+    </div>
+
+    <div class="field">
+      <label>وقت الإقفال</label>
+      <input type="time" id="closingTime">
+    </div>
+
+    <div class="field">
+      <label>الفترة</label>
+      <select id="period">
+        <option value="يوم كامل">يوم كامل</option>
+        <option value="الوردية الأولى">الوردية الأولى</option>
+        <option value="الوردية الثانية">الوردية الثانية</option>
+        <option value="الوردية الثالثة">الوردية الثالثة</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>مسؤول الإقفال</label>
+      <input id="closingOfficer" placeholder="اسم المسؤول">
+    </div>
+
+    <div class="field">
+      <label>حالة الإقفال</label>
+      <select id="closingStatus">
+        <option value="مفتوح">مفتوح</option>
+        <option value="يحتاج مراجعة">يحتاج مراجعة</option>
+        <option value="مغلق">مغلق</option>
+      </select>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ملخص العمليات -->
+
+<section class="card">
+
+  <h2>📊 ملخص عمليات اليوم</h2>
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>العملية</th>
+          <th>عدد العمليات</th>
+          <th>الإجمالي</th>
+          <th>المطابقة</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td>🛒 المشتريات</td>
+          <td id="purchasesCount">0</td>
+          <td id="purchasesTotal">0.00</td>
+          <td class="ok">✅ مطابق</td>
+        </tr>
+
+        <tr>
+          <td>📦 المخزون</td>
+          <td id="inventoryCount">0</td>
+          <td>—</td>
+          <td class="ok">✅ مطابق</td>
+        </tr>
+
+        <tr>
+          <td>🏭 الإنتاج</td>
+          <td id="productionCount">0</td>
+          <td id="productionTotal">0.00</td>
+          <td class="ok">✅ مطابق</td>
+        </tr>
+
+        <tr>
+          <td>💰 المبيعات</td>
+          <td id="salesCount">0</td>
+          <td id="salesTotal">0.00</td>
+          <td class="ok">✅ مطابق</td>
+        </tr>
+
+        <tr>
+          <td>🏦 الخزينة</td>
+          <td id="treasuryCount">0</td>
+          <td id="treasuryTotal">0.00</td>
+          <td class="ok">✅ مطابق</td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</section>
+
+
+<!-- الخزينة -->
+
+<section class="card">
+
+  <h2>💰 مطابقة الخزينة</h2>
+
+  <div class="treasury">
+
+    <div class="total-box">
+      <span>الرصيد الافتتاحي</span>
+      <strong id="openingBalance">0.00</strong>
+    </div>
+
+    <div class="total-box">
+      <span>إجمالي المقبوضات</span>
+      <strong id="receipts">0.00</strong>
+    </div>
+
+    <div class="total-box">
+      <span>إجمالي المدفوعات</span>
+      <strong id="payments">0.00</strong>
+    </div>
+
+    <div class="total-box">
+      <span>الرصيد المتوقع</span>
+      <strong id="expectedBalance">0.00</strong>
+    </div>
+
+    <div class="total-box">
+      <span>الرصيد الفعلي</span>
+      <input
+        id="actualBalance"
+        type="number"
+        step="0.01"
+        value="0"
+        style="width:100%;padding:10px;border:1px solid #d9e3dc;border-radius:8px;"
+      >
+    </div>
+
+    <div class="total-box">
+      <span>الفرق</span>
+      <strong id="difference">0.00</strong>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- العمليات المرتبطة -->
+
+<section class="card">
+
+  <h2>🔗 العمليات المرتبطة</h2>
+
+  <div class="code-list" id="linkedCodes">
+
+    <span class="code">PUR-2026-0001</span>
+    <span class="code">INV-2026-0001</span>
+    <span class="code">PRD-2026-0001</span>
+    <span class="code">SAL-2026-0001</span>
+    <span class="code">TRS-2026-0001</span>
+    <span class="code">CLS-2026-0001</span>
+
+  </div>
+
+</section>
+
+
+<!-- الملاحظات -->
+
+<section class="card">
+
+  <h2>📝 ملاحظات الإقفال</h2>
+
+  <div class="field">
+    <label>ملاحظات مسؤول الإقفال</label>
+    <textarea
+      id="notes"
+      placeholder="اكتب أي ملاحظات أو فروق ظهرت أثناء المراجعة..."
+    ></textarea>
+  </div>
+
+</section>
+
+
+<!-- التنبيه -->
+
+<section class="card">
+
+  <div class="notice">
+
+    <strong>🛡️ حماية سجل الإقفال</strong>
+
+    <br>
+
+    المستخدم العادي لا يستطيع تعديل أو حذف الإقفال.
+    صلاحية التعديل والحذف مخصصة للـAdmin فقط.
+    وعند قيام الـAdmin بالتعديل أو الحذف يتم الاحتفاظ بالسجل السابق
+    في سجل التغييرات والمحذوفات مع تسجيل المستخدم والتاريخ والوقت.
+
+  </div>
+
+</section>
+
+
+<!-- الإجراءات -->
+
+<section class="card">
+
+  <div class="actions">
+
+    <button class="save" onclick="completeClosing()">
+      🔒 إتمام الإقفال
+    </button>
+
+    <button class="reset" onclick="resetClosing()">
+      إعادة تعيين
+    </button>
+
+  </div>
+
+  <div id="message" class="message"></div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+  <strong>خيرنا في كل بيت ❤️</strong>
+
+  <br>
+
+  نظام إدارة الأعمال المتكامل
+
+</footer>
+
+
+<script>
+
+const STORAGE_KEY = "kheyrna_closing";
+
+function generateCode(){
+
+  const year = new Date().getFullYear();
+
+  const oldData =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  const number =
+    String(oldData.length + 1).padStart(4,"0");
+
+  return `CLS-${year}-${number}`;
+}
+
+
+function setDateTime(){
+
+  const now = new Date();
+
+  document.getElementById("closingDate").value =
+    now.toISOString().split("T")[0];
+
+  document.getElementById("closingTime").value =
+    now.toTimeString().slice(0,5);
+}
+
+
+function loadClosing(){
+
+  const saved =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  document.getElementById("closingCode").value =
+    generateCode();
+
+  setDateTime();
+
+  if(saved.length > 0){
+
+    const last = saved[saved.length - 1];
+
+    document.getElementById("openingBalance").textContent =
+      Number(last.openingBalance || 0).toFixed(2);
+
+    document.getElementById("receipts").textContent =
+      Number(last.receipts || 0).toFixed(2);
+
+    document.getElementById("payments").textContent =
+      Number(last.payments || 0).toFixed(2);
+
+  }
+
+}
+
+
+function calculateDifference(){
+
+  const expected =
+    Number(document.getElementById("expectedBalance").textContent || 0);
+
+  const actual =
+    Number(document.getElementById("actualBalance").value || 0);
+
+  const difference = actual - expected;
+
+  document.getElementById("difference").textContent =
+    difference.toFixed(2);
+
+}
+
+
+function completeClosing(){
+
+  const code =
+    document.getElementById("closingCode").value;
+
+  const date =
+    document.getElementById("closingDate").value;
+
+  const time =
+    document.getElementById("closingTime").value;
+
+  const officer =
+    document.getElementById("closingOfficer").value.trim();
+
+  if(!date || !time || !officer){
+
+    showMessage(
+      "⚠️ من فضلك أكمل تاريخ ووقت الإقفال ومسؤول الإقفال.",
+      false
+    );
+
+    return;
+  }
+
+
+  const expected =
+    Number(document.getElementById("expectedBalance").textContent || 0);
+
+  const actual =
+    Number(document.getElementById("actualBalance").value || 0);
+
+  const closing = {
+
+    code: code,
+    date: date,
+    time: time,
+    period: document.getElementById("period").value,
+    officer: officer,
+    status: "مغلق",
+
+    openingBalance:
+      Number(document.getElementById("openingBalance").textContent || 0),
+
+    receipts:
+      Number(document.getElementById("receipts").textContent || 0),
+
+    payments:
+      Number(document.getElementById("payments").textContent || 0),
+
+    expectedBalance: expected,
+
+    actualBalance: actual,
+
+    difference: actual - expected,
+
+    notes:
+      document.getElementById("notes").value,
+
+    createdAt:
+      new Date().toISOString()
+
+  };
+
+
+  const saved =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  saved.push(closing);
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(saved)
+  );
+
+
+  document.getElementById("closingStatus").value =
+    "مغلق";
+
+  document.getElementById("status").textContent =
+    "✅ تم إقفال اليوم بنجاح";
+
+  showMessage(
+    `✅ تم حفظ الإقفال بنجاح — ${code}`,
+    true
+  );
+
+}
+
+
+function resetClosing(){
+
+  if(!confirm("هل تريد إعادة تعيين البيانات الحالية؟")){
+    return;
+  }
+
+  document.getElementById("closingOfficer").value = "";
+  document.getElementById("notes").value = "";
+  document.getElementById("actualBalance").value = "0";
+
+  document.getElementById("closingCode").value =
+    generateCode();
+
+  setDateTime();
+
+  document.getElementById("closingStatus").value =
+    "مفتوح";
+
+  document.getElementById("status").textContent =
+    "🔐 حالة اليوم: لم يتم الإقفال";
+
+  document.getElementById("message").style.display =
+    "none";
+
+  calculateDifference();
+
+}
+
+
+function showMessage(text,success){
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+
+  message.className =
+    "message " + (success ? "success" : "");
+
+  message.style.display = "block";
+
+}
+
+
+document.getElementById("actualBalance")
+.addEventListener("input",calculateDifference);
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+  loadClosing();
+
+  const expected =
+    Number(document.getElementById("openingBalance").textContent || 0)
+    +
+    Number(document.getElementById("receipts").textContent || 0)
+    -
+    Number(document.getElementById("payments").textContent || 0);
+
+  document.getElementById("expectedBalance").textContent =
+    expected.toFixed(2);
+
+  calculateDifference();
+
+});
+
+</script>
+
+</body>
+</html>
