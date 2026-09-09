@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خيرنا | الحسابات والخزينة</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f4f7f5;
+    color:#18352b;
+}
+
+header{
+    background:#145a3a;
+    color:white;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.12);
+}
+
+header h1{
+    margin:0;
+    font-size:26px;
+}
+
+header p{
+    margin:8px 0 0;
+    opacity:.9;
+}
+
+.container{
+    width:min(1200px,94%);
+    margin:25px auto;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:18px;
+    background:white;
+    color:#145a3a;
+    padding:10px 16px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    box-shadow:0 2px 7px rgba(0,0,0,.08);
+}
+
+.balance{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.balance-title{
+    font-size:18px;
+    color:#666;
+}
+
+.balance-value{
+    font-size:34px;
+    font-weight:bold;
+    margin-top:10px;
+    color:#145a3a;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.action-btn{
+    border:0;
+    border-radius:14px;
+    padding:16px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+}
+
+.in-btn{background:#16834d;}
+.out-btn{background:#b83232;}
+.transfer-btn{background:#315fa5;}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-top:0;
+    font-size:21px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.field label{
+    font-weight:bold;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccd7d1;
+    border-radius:9px;
+    font-size:15px;
+    background:#fff;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.save-btn{
+    margin-top:18px;
+    width:100%;
+    padding:15px;
+    border:0;
+    border-radius:11px;
+    background:#145a3a;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.document-box{
+    border:2px dashed #b8c9bf;
+    border-radius:12px;
+    padding:18px;
+    text-align:center;
+    background:#fafcfb;
+}
+
+.document-box input{
+    margin-top:10px;
+}
+
+.preview{
+    display:none;
+    margin-top:15px;
+    max-width:100%;
+    max-height:250px;
+    border-radius:10px;
+    border:1px solid #ddd;
+}
+
+.search-row{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+}
+
+th,td{
+    border:1px solid #d7e0db;
+    padding:11px;
+    text-align:center;
+}
+
+th{
+    background:#eaf2ed;
+    color:#145a3a;
+}
+
+.in{
+    color:#16834d;
+    font-weight:bold;
+}
+
+.out{
+    color:#b83232;
+    font-weight:bold;
+}
+
+.transfer{
+    color:#315fa5;
+    font-weight:bold;
+}
+
+.empty{
+    padding:25px;
+    text-align:center;
+    color:#777;
+}
+
+.notice{
+    background:#fff8df;
+    border:1px solid #ead58a;
+    padding:13px;
+    border-radius:10px;
+    margin-bottom:15px;
+    line-height:1.7;
+}
+
+@media(max-width:700px){
+    .actions{
+        grid-template-columns:1fr;
+    }
+
+    .grid,
+    .search-row{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:22px;
+    }
+
+    .balance-value{
+        font-size:28px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>💰 دفتر الحسابات والخزينة</h1>
+    <p>خيرنا | إدارة الحركة المالية والخزينة</p>
+</header>
+
+<div class="container">
+
+<a href="index.html" class="back">⬅ العودة للرئيسية</a>
+
+<div class="balance">
+    <div class="balance-title">رصيد الخزينة الحالي</div>
+    <div class="balance-value" id="balance">0.00 جنيه</div>
+</div>
+
+<div class="actions">
+    <button class="action-btn in-btn" onclick="setType('قبض')">➕ قبض</button>
+    <button class="action-btn out-btn" onclick="setType('صرف')">➖ صرف</button>
+    <button class="action-btn transfer-btn" onclick="setType('تحويل')">🔄 تحويل</button>
+</div>
+
+<div class="card">
+
+<h2>➕ تسجيل حركة مالية</h2>
+
+<div class="notice">
+    الحركة المالية تسجل هنا كأثر مالي للعملية الأصلية.
+    لا نكرر تفاصيل المشتريات أو المبيعات؛ يتم تسجيل كود العملية المرتبطة فقط.
+</div>
+
+<div class="grid">
+
+<div class="field">
+<label>نوع الحركة</label>
+<select id="type">
+<option value="قبض">قبض</option>
+<option value="صرف">صرف</option>
+<option value="تحويل">تحويل</option>
+</select>
+</div>
+
+<div class="field">
+<label>التاريخ والوقت</label>
+<input type="datetime-local" id="datetime">
+</div>
+
+<div class="field">
+<label>المبلغ</label>
+<input type="number" id="amount" min="0" step="0.01" placeholder="مثال: 5000">
+</div>
+
+<div class="field">
+<label>طريقة الدفع</label>
+<select id="method">
+<option>نقدي</option>
+<option>تحويل بنكي</option>
+<option>إيداع بنكي</option>
+<option>سحب بنكي</option>
+<option>شيك</option>
+<option>أخرى</option>
+</select>
+</div>
+
+<div class="field">
+<label>الحساب / الطرف</label>
+<select id="party">
+<option>الخزينة</option>
+<option>البنك</option>
+<option>مورد</option>
+<option>عميل</option>
+<option>مصروف</option>
+<option>أخرى</option>
+</select>
+</div>
+
+<div class="field">
+<label>الحساب المقابل</label>
+<input type="text" id="counterparty" placeholder="مثال: مورد السكر">
+</div>
+
+<div class="field">
+<label>كود العملية المرتبطة</label>
+<input type="text" id="linkedCode" placeholder="مثال: PUR-2026-0001">
+</div>
+
+<div class="field">
+<label>البيان</label>
+<input type="text" id="description" placeholder="سبب القبض أو الصرف">
+</div>
+
+<div class="field full">
+<label>المستند المؤيد</label>
+
+<div class="document-box">
+
+<div>📎 أرفق المستند</div>
+
+<input
+    type="file"
+    id="document"
+    accept="image/*"
+    capture="environment"
+>
+
+<div style="margin-top:8px;color:#777;font-size:13px;">
+من الهاتف يمكنك التصوير بالكاميرا أو اختيار صورة من المعرض.
+</div>
+
+<img id="preview" class="preview">
+
+</div>
+</div>
+
+<div class="field full">
+<label>ملاحظات</label>
+<textarea id="notes" placeholder="أي ملاحظات إضافية"></textarea>
+</div>
+
+</div>
+
+<button class="save-btn" onclick="saveTransaction()">
+💾 حفظ الحركة المالية
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>🔎 البحث في الحركات</h2>
+
+<div class="search-row">
+
+<input
+    type="text"
+    id="search"
+    placeholder="ابحث بالكود أو البيان أو الطرف..."
+    oninput="render()"
+>
+
+<select id="filterType" onchange="render()">
+<option value="">كل الحركات</option>
+<option value="قبض">قبض</option>
+<option value="صرف">صرف</option>
+<option value="تحويل">تحويل</option>
+</select>
+
+<select id="filterMethod" onchange="render()">
+<option value="">كل طرق الدفع</option>
+<option>نقدي</option>
+<option>تحويل بنكي</option>
+<option>إيداع بنكي</option>
+<option>سحب بنكي</option>
+<option>شيك</option>
+<option>أخرى</option>
+</select>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>كود الحركة</th>
+<th>التاريخ والوقت</th>
+<th>النوع</th>
+<th>البيان</th>
+<th>المبلغ</th>
+<th>طريقة الدفع</th>
+<th>الحساب/الطرف</th>
+<th>الكود المرتبط</th>
+<th>الرصيد</th>
+<th>المستند</th>
+</tr>
+</thead>
+
+<tbody id="transactions"></tbody>
+
+</table>
+
+<div id="empty" class="empty" style="display:none;">
+لا توجد حركات مالية مسجلة.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const STORAGE_KEY = "kheyrna_accounts";
+
+let transactions =
+    JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+let sequence =
+    Number(localStorage.getItem("kheyrna_accounts_sequence") || "0");
+
+const year = new Date().getFullYear();
+
+function setNow(){
+
+    const now = new Date();
+
+    now.setMinutes(
+        now.getMinutes() - now.getTimezoneOffset()
+    );
+
+    document.getElementById("datetime").value =
+        now.toISOString().slice(0,16);
+}
+
+setNow();
+
+function setType(type){
+    document.getElementById("type").value = type;
+    document.getElementById("amount").focus();
+}
+
+const documentInput =
+    document.getElementById("document");
+
+documentInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file){
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const preview =
+            document.getElementById("preview");
+
+        preview.src = e.target.result;
+        preview.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+});
+
+function generateCode(){
+
+    sequence++;
+
+    localStorage.setItem(
+        "kheyrna_accounts_sequence",
+        sequence
+    );
+
+    return "TRS-" +
+        year +
+        "-" +
+        String(sequence).padStart(4,"0");
+}
+
+function saveTransaction(){
+
+    const type =
+        document.getElementById("type").value;
+
+    const datetime =
+        document.getElementById("datetime").value;
+
+    const amount =
+        Number(document.getElementById("amount").value);
+
+    const method =
+        document.getElementById("method").value;
+
+    const party =
+        document.getElementById("party").value;
+
+    const counterparty =
+        document.getElementById("counterparty").value.trim();
+
+    const linkedCode =
+        document.getElementById("linkedCode").value.trim();
+
+    const description =
+        document.getElementById("description").value.trim();
+
+    const notes =
+        document.getElementById("notes").value.trim();
+
+    if(!datetime){
+        alert("من فضلك اختر التاريخ والوقت.");
+        return;
+    }
+
+    if(!amount || amount <= 0){
+        alert("من فضلك أدخل مبلغًا صحيحًا.");
+        return;
+    }
+
+    if(!description){
+        alert("من فضلك اكتب البيان.");
+        return;
+    }
+
+    const file =
+        document.getElementById("document").files[0];
+
+    const transaction = {
+
+        id: crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now().toString(),
+
+        code: generateCode(),
+
+        datetime,
+
+        type,
+
+        amount,
+
+        method,
+
+        party,
+
+        counterparty,
+
+        linkedCode,
+
+        description,
+
+        notes,
+
+        documentName:
+            file ? file.name : "",
+
+        documentImage:
+            document.getElementById("preview").src || "",
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+    transactions.push(transaction);
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(transactions)
+    );
+
+    clearForm();
+
+    render();
+
+    alert(
+        "تم حفظ الحركة بنجاح.\n\nكود الحركة: " +
+        transaction.code
+    );
+}
+
+function clearForm(){
+
+    document.getElementById("amount").value = "";
+    document.getElementById("counterparty").value = "";
+    document.getElementById("linkedCode").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("notes").value = "";
+    document.getElementById("document").value = "";
+
+    const preview =
+        document.getElementById("preview");
+
+    preview.src = "";
+    preview.style.display = "none";
+
+    setNow();
+}
+
+function calculateBalance(){
+
+    let balance = 0;
+
+    const sorted =
+        [...transactions].sort(
+            (a,b) =>
+            new Date(a.datetime) -
+            new Date(b.datetime)
+        );
+
+    sorted.forEach(t => {
+
+        if(t.type === "قبض"){
+            balance += Number(t.amount);
+        }
+
+        if(t.type === "صرف"){
+            balance -= Number(t.amount);
+        }
+
+    });
+
+    return balance;
+}
+
+function render(){
+
+    const tbody =
+        document.getElementById("transactions");
+
+    tbody.innerHTML = "";
+
+    const search =
+        document.getElementById("search")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const filterType =
+        document.getElementById("filterType").value;
+
+    const filterMethod =
+        document.getElementById("filterMethod").value;
+
+    let filtered =
+        transactions.filter(t => {
+
+            const text = [
+
+                t.code,
+                t.description,
+                t.party,
+                t.counterparty,
+                t.linkedCode
+
+            ]
+            .join(" ")
+            .toLowerCase();
+
+            const matchesSearch =
+                !search || text.includes(search);
+
+            const matchesType =
+                !filterType ||
+                t.type === filterType;
+
+            const matchesMethod =
+                !filterMethod ||
+                t.method === filterMethod;
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesMethod
+            );
+        });
+
+    filtered.sort(
+        (a,b) =>
+        new Date(b.datetime) -
+        new Date(a.datetime)
+    );
+
+    let runningBalance = 0;
+
+    const chronological =
+        [...transactions].sort(
+            (a,b) =>
+            new Date(a.datetime) -
+            new Date(b.datetime)
+        );
+
+    const balances = {};
+
+    chronological.forEach(t => {
+
+        if(t.type === "قبض"){
+            runningBalance += Number(t.amount);
+        }
+
+        if(t.type === "صرف"){
+            runningBalance -= Number(t.amount);
+        }
+
+        balances[t.id] = runningBalance;
+
+    });
+
+    filtered.forEach(t => {
+
+        const tr =
+            document.createElement("tr");
+
+        let typeClass = "";
+
+        if(t.type === "قبض"){
+            typeClass = "in";
+        }
+
+        if(t.type === "صرف"){
+            typeClass = "out";
+        }
+
+        if(t.type === "تحويل"){
+            typeClass = "transfer";
+        }
+
+        const documentCell =
+            t.documentImage
+            ? `<button onclick="showDocument('${t.id}')">📎 عرض</button>`
+            : "—";
+
+        tr.innerHTML = `
+
+<td>${escapeHtml(t.code)}</td>
+
+<td>${formatDate(t.datetime)}</td>
+
+<td class="${typeClass}">
+${escapeHtml(t.type)}
+</td>
+
+<td>${escapeHtml(t.description)}</td>
+
+<td>${Number(t.amount).toFixed(2)} جنيه</td>
+
+<td>${escapeHtml(t.method)}</td>
+
+<td>
+${escapeHtml(t.party)}
+${t.counterparty
+    ? "<br>" + escapeHtml(t.counterparty)
+    : ""}
+</td>
+
+<td>${escapeHtml(t.linkedCode || "—")}</td>
+
+<td>${Number(balances[t.id] || 0).toFixed(2)} جنيه</td>
+
+<td>${documentCell}</td>
+
+`;
+
+        tbody.appendChild(tr);
+
+    });
+
+    document.getElementById("empty").style.display =
+        filtered.length ? "none" : "block";
+
+    const balance =
+        calculateBalance();
+
+    const balanceElement =
+        document.getElementById("balance");
+
+    balanceElement.textContent =
+        balance.toFixed(2) + " جنيه";
+
+}
+
+function showDocument(id){
+
+    const t =
+        transactions.find(x => x.id === id);
+
+    if(!t || !t.documentImage){
+        alert("لا يوجد مستند مرفق.");
+        return;
+    }
+
+    const win =
+        window.open("");
+
+    win.document.write(`
+        <title>مستند ${t.code}</title>
+        <body style="margin:0;text-align:center;background:#222;">
+        <img
+            src="${t.documentImage}"
+            style="max-width:100%;max-height:100vh;"
+        >
+        </body>
+    `);
+}
+
+function formatDate(value){
+
+    const date =
+        new Date(value);
+
+    return date.toLocaleString(
+        "ar-EG",
+        {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+function escapeHtml(value){
+
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
