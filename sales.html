@@ -231,6 +231,60 @@ button{
   background:#e2e8e4;
 }
 
+/* =========================
+   ملخص المبيعات
+========================= */
+
+.sales-summary{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.summary-card{
+  background:white;
+  border:1px solid #e1e8e3;
+  border-radius:16px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.03);
+}
+
+.summary-icon{
+  font-size:27px;
+  margin-bottom:10px;
+}
+
+.summary-title{
+  color:#6c7971;
+  font-size:14px;
+  margin-bottom:8px;
+  font-weight:bold;
+}
+
+.summary-value{
+  color:#176b3a;
+  font-size:25px;
+  font-weight:bold;
+}
+
+.summary-card.total .summary-value{
+  font-size:23px;
+}
+
+.summary-card.completed .summary-value{
+  color:#176b3a;
+}
+
+.summary-card.pending .summary-value{
+  color:#8a6500;
+}
+
+.summary-card.cancelled .summary-value{
+  color:#a52b2b;
+}
+
 .search-box{
   margin-bottom:18px;
 }
@@ -329,6 +383,14 @@ footer{
   color:#7b8780;
 }
 
+@media(max-width:1050px){
+
+  .sales-summary{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
 @media(max-width:900px){
 
   .form-grid{
@@ -353,6 +415,18 @@ footer{
 
   .logo{
     font-size:30px;
+  }
+
+  .sales-summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .summary-card{
+    padding:16px 10px;
+  }
+
+  .summary-value{
+    font-size:22px;
   }
 
 }
@@ -391,6 +465,114 @@ footer{
 </div>
 
 
+<!-- =========================
+     ملخص المبيعات
+========================= -->
+
+<div class="sales-summary">
+
+  <div class="summary-card">
+
+    <div class="summary-icon">
+      💰
+    </div>
+
+    <div class="summary-title">
+      عدد عمليات البيع
+    </div>
+
+    <div
+      class="summary-value"
+      id="salesCount"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card total">
+
+    <div class="summary-icon">
+      💵
+    </div>
+
+    <div class="summary-title">
+      إجمالي المبيعات
+    </div>
+
+    <div
+      class="summary-value"
+      id="salesTotal"
+    >
+      0.00
+    </div>
+
+  </div>
+
+
+  <div class="summary-card completed">
+
+    <div class="summary-icon">
+      ✅
+    </div>
+
+    <div class="summary-title">
+      عمليات مكتملة
+    </div>
+
+    <div
+      class="summary-value"
+      id="completedCount"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card pending">
+
+    <div class="summary-icon">
+      ⏳
+    </div>
+
+    <div class="summary-title">
+      قيد التنفيذ
+    </div>
+
+    <div
+      class="summary-value"
+      id="pendingCount"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card cancelled">
+
+    <div class="summary-icon">
+      ❌
+    </div>
+
+    <div class="summary-title">
+      عمليات ملغاة
+    </div>
+
+    <div
+      class="summary-value"
+      id="cancelledCount"
+    >
+      0
+    </div>
+
+  </div>
+
+</div>
+
+
 <section class="section">
 
   <h2>
@@ -404,7 +586,6 @@ footer{
 
 
   <form id="salesForm">
-
 
     <div class="form-grid">
 
@@ -488,8 +669,6 @@ footer{
 
       </div>
 
-
-      <!-- وحدة القياس -->
 
       <div class="field">
 
@@ -692,7 +871,6 @@ footer{
 
       <div class="invoice-buttons">
 
-
         <label
           class="invoice-button"
           for="cameraInput"
@@ -831,9 +1009,7 @@ footer{
 
       </thead>
 
-      <tbody id="salesTable">
-
-      </tbody>
+      <tbody id="salesTable"></tbody>
 
     </table>
 
@@ -874,9 +1050,10 @@ function loadSales(){
 
   try{
 
-    sales = JSON.parse(
-      localStorage.getItem(SALES_KEY)
-    ) || [];
+    sales =
+      JSON.parse(
+        localStorage.getItem(SALES_KEY)
+      ) || [];
 
   }catch(error){
 
@@ -940,7 +1117,11 @@ function generateSaleCode(){
         );
 
       if(!isNaN(number)){
-        max = Math.max(max,number);
+        max =
+          Math.max(
+            max,
+            number
+          );
       }
 
     }
@@ -998,7 +1179,11 @@ function generateInventoryCode(){
         );
 
       if(!isNaN(number)){
-        max = Math.max(max,number);
+        max =
+          Math.max(
+            max,
+            number
+          );
       }
 
     }
@@ -1027,13 +1212,12 @@ function calculateTotal(){
       document.getElementById("unitPrice").value
     ) || 0;
 
-
   const total =
     quantity * unitPrice;
 
-
-  document.getElementById("totalSale")
-    .textContent =
+  document.getElementById(
+    "totalSale"
+  ).textContent =
     total.toFixed(2);
 
 }
@@ -1041,17 +1225,17 @@ function calculateTotal(){
 
 
 document.getElementById("quantity")
-  .addEventListener(
-    "input",
-    calculateTotal
-  );
+.addEventListener(
+  "input",
+  calculateTotal
+);
 
 
 document.getElementById("unitPrice")
-  .addEventListener(
-    "input",
-    calculateTotal
-  );
+.addEventListener(
+  "input",
+  calculateTotal
+);
 
 
 
@@ -1064,7 +1248,9 @@ function handleInvoice(file){
 
   if(!file.type.startsWith("image/")){
 
-    alert("من فضلك اختر صورة صحيحة للفاتورة.");
+    alert(
+      "من فضلك اختر صورة صحيحة للفاتورة."
+    );
 
     return;
 
@@ -1075,35 +1261,36 @@ function handleInvoice(file){
     new FileReader();
 
 
-  reader.onload = function(e){
+  reader.onload =
+    function(e){
 
-    invoiceImage =
-      e.target.result;
+      invoiceImage =
+        e.target.result;
 
-    document.getElementById(
-      "invoicePreview"
-    ).src =
-      invoiceImage;
-
-
-    document.getElementById(
-      "preview"
-    ).style.display =
-      "block";
+      document.getElementById(
+        "invoicePreview"
+      ).src =
+        invoiceImage;
 
 
-    document.getElementById(
-      "removeImage"
-    ).style.display =
-      "block";
+      document.getElementById(
+        "preview"
+      ).style.display =
+        "block";
 
 
-    document.getElementById(
-      "invoiceText"
-    ).textContent =
-      "تم إرفاق فاتورة البيع ✓";
+      document.getElementById(
+        "removeImage"
+      ).style.display =
+        "block";
 
-  };
+
+      document.getElementById(
+        "invoiceText"
+      ).textContent =
+        "تم إرفاق فاتورة البيع ✓";
+
+    };
 
 
   reader.readAsDataURL(file);
@@ -1113,59 +1300,59 @@ function handleInvoice(file){
 
 
 document.getElementById("cameraInput")
-  .addEventListener(
-    "change",
-    function(){
+.addEventListener(
+  "change",
+  function(){
 
-      handleInvoice(
-        this.files[0]
-      );
+    handleInvoice(
+      this.files[0]
+    );
 
-    }
-  );
+  }
+);
 
 
 
 document.getElementById("invoiceInput")
-  .addEventListener(
-    "change",
-    function(){
+.addEventListener(
+  "change",
+  function(){
 
-      handleInvoice(
-        this.files[0]
-      );
+    handleInvoice(
+      this.files[0]
+    );
 
-    }
-  );
+  }
+);
 
 
 
 document.getElementById("removeImage")
-  .addEventListener(
-    "click",
-    function(){
+.addEventListener(
+  "click",
+  function(){
 
-      invoiceImage = "";
+    invoiceImage = "";
 
-      document.getElementById(
-        "invoicePreview"
-      ).src = "";
+    document.getElementById(
+      "invoicePreview"
+    ).src = "";
 
-      document.getElementById(
-        "preview"
-      ).style.display =
+    document.getElementById(
+      "preview"
+    ).style.display =
       "none";
 
-      this.style.display =
+    this.style.display =
       "none";
 
-      document.getElementById(
-        "invoiceText"
-      ).textContent =
+    document.getElementById(
+      "invoiceText"
+    ).textContent =
       "لم يتم إرفاق فاتورة بعد";
 
-    }
-  );
+  }
+);
 
 
 
@@ -1187,22 +1374,12 @@ function syncInventory(sale){
   }
 
 
-  /*
-    حذف أي حركة قديمة مرتبطة
-    بعملية البيع الحالية.
-  */
-
   inventory =
     inventory.filter(item => !(
       item.source === "sale" &&
       item.reference === sale.code
     ));
 
-
-  /*
-    البيع المكتمل فقط
-    يخصم من المخزون.
-  */
 
   if(
     sale.status !== "مكتملة" ||
@@ -1275,209 +1452,286 @@ function syncInventory(sale){
 
 
 
+/* =========================
+   تحديث ملخص المبيعات
+========================= */
+
+function updateSalesSummary(){
+
+  const salesCount =
+    sales.length;
+
+
+  const salesTotal =
+    sales.reduce(
+      (sum,item) =>
+        sum + (Number(item.total) || 0),
+      0
+    );
+
+
+  const completed =
+    sales.filter(
+      item =>
+        item.status === "مكتملة"
+    ).length;
+
+
+  const pending =
+    sales.filter(
+      item =>
+        item.status === "قيد التنفيذ"
+    ).length;
+
+
+  const cancelled =
+    sales.filter(
+      item =>
+        item.status === "ملغاة"
+    ).length;
+
+
+  document.getElementById(
+    "salesCount"
+  ).textContent =
+    salesCount;
+
+
+  document.getElementById(
+    "salesTotal"
+  ).textContent =
+    salesTotal.toFixed(2);
+
+
+  document.getElementById(
+    "completedCount"
+  ).textContent =
+    completed;
+
+
+  document.getElementById(
+    "pendingCount"
+  ).textContent =
+    pending;
+
+
+  document.getElementById(
+    "cancelledCount"
+  ).textContent =
+    cancelled;
+
+}
+
+
+
 document.getElementById("salesForm")
-  .addEventListener(
-    "submit",
-    function(e){
+.addEventListener(
+  "submit",
+  function(e){
 
-      e.preventDefault();
+    e.preventDefault();
 
 
-      const customer =
+    const customer =
+      document.getElementById(
+        "customer"
+      ).value.trim();
+
+
+    const product =
+      document.getElementById(
+        "product"
+      ).value.trim();
+
+
+    const quantity =
+      Number(
         document.getElementById(
-          "customer"
-        ).value.trim();
+          "quantity"
+        ).value
+      );
 
 
-      const product =
+    const unit =
+      document.getElementById(
+        "unit"
+      ).value;
+
+
+    const unitPrice =
+      Number(
         document.getElementById(
-          "product"
-        ).value.trim();
+          "unitPrice"
+        ).value
+      );
 
 
-      const quantity =
-        Number(
-          document.getElementById(
-            "quantity"
-          ).value
-        );
+    if(!customer){
+
+      alert(
+        "من فضلك أدخل اسم العميل."
+      );
+
+      return;
+
+    }
 
 
-      const unit =
+    if(!product){
+
+      alert(
+        "من فضلك أدخل اسم المنتج."
+      );
+
+      return;
+
+    }
+
+
+    if(quantity <= 0){
+
+      alert(
+        "الكمية المباعة يجب أن تكون أكبر من صفر."
+      );
+
+      return;
+
+    }
+
+
+    if(!unit){
+
+      alert(
+        "من فضلك اختر وحدة القياس."
+      );
+
+      return;
+
+    }
+
+
+    if(unitPrice < 0){
+
+      alert(
+        "سعر البيع غير صحيح."
+      );
+
+      return;
+
+    }
+
+
+    const oldSale =
+      sales.find(
+        item =>
+          item.code === editingCode
+      );
+
+
+    const sale = {
+
+      code:
         document.getElementById(
-          "unit"
-        ).value;
+          "saleCode"
+        ).value,
+
+      date:
+        document.getElementById(
+          "saleDate"
+        ).value,
+
+      customer,
+
+      product,
+
+      quantity,
+
+      unit,
+
+      unitPrice,
+
+      total:
+        quantity * unitPrice,
+
+      paymentMethod:
+        document.getElementById(
+          "paymentMethod"
+        ).value,
+
+      dueDate:
+        document.getElementById(
+          "dueDate"
+        ).value,
+
+      inventoryCode:
+        oldSale?.inventoryCode ||
+        document.getElementById(
+          "inventoryCode"
+        ).value,
+
+      status:
+        document.getElementById(
+          "status"
+        ).value,
+
+      invoice:
+        invoiceImage,
+
+      notes:
+        document.getElementById(
+          "notes"
+        ).value.trim(),
+
+      createdAt:
+        oldSale?.createdAt ||
+        new Date().toISOString()
+
+    };
 
 
-      const unitPrice =
-        Number(
-          document.getElementById(
-            "unitPrice"
-          ).value
-        );
+    if(editingCode){
 
-
-      if(!customer){
-
-        alert("من فضلك أدخل اسم العميل.");
-
-        return;
-
-      }
-
-
-      if(!product){
-
-        alert("من فضلك أدخل اسم المنتج.");
-
-        return;
-
-      }
-
-
-      if(quantity <= 0){
-
-        alert("الكمية المباعة يجب أن تكون أكبر من صفر.");
-
-        return;
-
-      }
-
-
-      if(!unit){
-
-        alert("من فضلك اختر وحدة القياس.");
-
-        return;
-
-      }
-
-
-      if(unitPrice < 0){
-
-        alert("سعر البيع غير صحيح.");
-
-        return;
-
-      }
-
-
-      const oldSale =
-        sales.find(
+      const index =
+        sales.findIndex(
           item =>
             item.code === editingCode
         );
 
 
-      const sale = {
+      if(index !== -1){
 
-        code:
-          document.getElementById(
-            "saleCode"
-          ).value,
-
-        date:
-          document.getElementById(
-            "saleDate"
-          ).value,
-
-        customer,
-
-        product,
-
-        quantity,
-
-        unit,
-
-        unitPrice,
-
-        total:
-          quantity * unitPrice,
-
-        paymentMethod:
-          document.getElementById(
-            "paymentMethod"
-          ).value,
-
-        dueDate:
-          document.getElementById(
-            "dueDate"
-          ).value,
-
-        inventoryCode:
-          oldSale?.inventoryCode ||
-          document.getElementById(
-            "inventoryCode"
-          ).value,
-
-        status:
-          document.getElementById(
-            "status"
-          ).value,
-
-        invoice:
-          invoiceImage,
-
-        notes:
-          document.getElementById(
-            "notes"
-          ).value.trim(),
-
-        createdAt:
-          oldSale?.createdAt ||
-          new Date().toISOString()
-
-      };
-
-
-      if(editingCode){
-
-        const index =
-          sales.findIndex(
-            item =>
-              item.code === editingCode
-          );
-
-
-        if(index !== -1){
-
-          sales[index] =
-            sale;
-
-        }
-
-      }else{
-
-        sales.push(sale);
+        sales[index] =
+          sale;
 
       }
 
+    }else{
 
-      /*
-        حفظ البيع أولًا
-        ثم مزامنة المخزون.
-      */
-
-      saveSales();
-
-      syncInventory(sale);
-
-      saveSales();
-
-
-      alert(
-        editingCode
-          ? "تم تعديل عملية البيع بنجاح ✓"
-          : "تم حفظ عملية البيع بنجاح ✓"
-      );
-
-
-      resetForm();
-
-      renderSales();
+      sales.push(sale);
 
     }
-  );
+
+
+    saveSales();
+
+    syncInventory(sale);
+
+    saveSales();
+
+
+    alert(
+      editingCode
+        ? "تم تعديل عملية البيع بنجاح ✓"
+        : "تم حفظ عملية البيع بنجاح ✓"
+    );
+
+
+    resetForm();
+
+    renderSales();
+
+  }
+);
 
 
 
@@ -1621,6 +1875,8 @@ function renderSales(){
       </tr>
     `;
 
+    updateSalesSummary();
+
     return;
 
   }
@@ -1728,6 +1984,9 @@ function renderSales(){
 
     `).join("");
 
+
+  updateSalesSummary();
+
 }
 
 
@@ -1831,44 +2090,44 @@ function editSale(code){
     document.getElementById(
       "invoicePreview"
     ).src =
-    invoiceImage;
+      invoiceImage;
 
 
     document.getElementById(
       "preview"
     ).style.display =
-    "block";
+      "block";
 
 
     document.getElementById(
       "removeImage"
     ).style.display =
-    "block";
+      "block";
 
 
     document.getElementById(
       "invoiceText"
     ).textContent =
-    "تم إرفاق فاتورة البيع ✓";
+      "تم إرفاق فاتورة البيع ✓";
 
   }else{
 
     document.getElementById(
       "preview"
     ).style.display =
-    "none";
+      "none";
 
 
     document.getElementById(
       "removeImage"
     ).style.display =
-    "none";
+      "none";
 
 
     document.getElementById(
       "invoiceText"
     ).textContent =
-    "لم يتم إرفاق فاتورة بعد";
+      "لم يتم إرفاق فاتورة بعد";
 
   }
 
@@ -1909,11 +2168,6 @@ function deleteSale(code){
     return;
   }
 
-
-  /*
-    حذف حركة المخزون
-    المرتبطة بالبيع.
-  */
 
   let inventory = [];
 
