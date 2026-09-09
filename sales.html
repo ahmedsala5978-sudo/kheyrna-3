@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -231,49 +233,39 @@ button{
   background:#e2e8e4;
 }
 
+
 /* =========================
-   ملخص المبيعات
+   إحصائيات المبيعات
 ========================= */
 
 .sales-summary{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:15px;
-  margin-bottom:22px;
+  margin-bottom:25px;
 }
 
 .summary-card{
   background:white;
-  border:1px solid #e1e8e3;
-  border-radius:16px;
   padding:20px;
-  text-align:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.03);
-}
-
-.summary-icon{
-  font-size:27px;
-  margin-bottom:10px;
+  border-radius:15px;
+  border:1px solid #e1e8e3;
 }
 
 .summary-title{
-  color:#6c7971;
-  font-size:14px;
-  margin-bottom:8px;
-  font-weight:bold;
+  color:#718078;
+  font-size:13px;
 }
 
 .summary-value{
-  color:#176b3a;
+  display:block;
   font-size:25px;
+  margin-top:8px;
+  color:#173b2a;
   font-weight:bold;
 }
 
 .summary-card.total .summary-value{
-  font-size:23px;
-}
-
-.summary-card.completed .summary-value{
   color:#176b3a;
 }
 
@@ -281,9 +273,10 @@ button{
   color:#8a6500;
 }
 
-.summary-card.cancelled .summary-value{
-  color:#a52b2b;
-}
+
+/* =========================
+   البحث والجدول
+========================= */
 
 .search-box{
   margin-bottom:18px;
@@ -383,13 +376,10 @@ footer{
   color:#7b8780;
 }
 
-@media(max-width:1050px){
 
-  .sales-summary{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-}
+/* =========================
+   الموبايل
+========================= */
 
 @media(max-width:900px){
 
@@ -397,7 +387,12 @@ footer{
     grid-template-columns:repeat(2,1fr);
   }
 
+  .sales-summary{
+    grid-template-columns:1fr;
+  }
+
 }
+
 
 @media(max-width:600px){
 
@@ -418,23 +413,22 @@ footer{
   }
 
   .sales-summary{
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:1fr;
   }
 
   .summary-card{
-    padding:16px 10px;
-  }
-
-  .summary-value{
-    font-size:22px;
+    padding:20px;
   }
 
 }
 
 </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -466,109 +460,59 @@ footer{
 
 
 <!-- =========================
-     ملخص المبيعات
+     إحصائيات المبيعات
 ========================= -->
 
 <div class="sales-summary">
 
-  <div class="summary-card">
 
-    <div class="summary-icon">
-      💰
-    </div>
+  <div class="summary-card">
 
     <div class="summary-title">
       عدد عمليات البيع
     </div>
 
-    <div
+    <strong
       class="summary-value"
       id="salesCount"
     >
       0
-    </div>
+    </strong>
 
   </div>
 
 
   <div class="summary-card total">
 
-    <div class="summary-icon">
-      💵
-    </div>
-
     <div class="summary-title">
       إجمالي المبيعات
     </div>
 
-    <div
+    <strong
       class="summary-value"
       id="salesTotal"
     >
       0.00
-    </div>
-
-  </div>
-
-
-  <div class="summary-card completed">
-
-    <div class="summary-icon">
-      ✅
-    </div>
-
-    <div class="summary-title">
-      عمليات مكتملة
-    </div>
-
-    <div
-      class="summary-value"
-      id="completedCount"
-    >
-      0
-    </div>
+    </strong>
 
   </div>
 
 
   <div class="summary-card pending">
 
-    <div class="summary-icon">
-      ⏳
-    </div>
-
     <div class="summary-title">
-      قيد التنفيذ
+      عمليات قيد التنفيذ
     </div>
 
-    <div
+    <strong
       class="summary-value"
       id="pendingCount"
     >
       0
-    </div>
+    </strong>
 
   </div>
 
-
-  <div class="summary-card cancelled">
-
-    <div class="summary-icon">
-      ❌
-    </div>
-
-    <div class="summary-title">
-      عمليات ملغاة
-    </div>
-
-    <div
-      class="summary-value"
-      id="cancelledCount"
-    >
-      0
-    </div>
-
-  </div>
 
 </div>
 
@@ -1117,11 +1061,13 @@ function generateSaleCode(){
         );
 
       if(!isNaN(number)){
+
         max =
           Math.max(
             max,
             number
           );
+
       }
 
     }
@@ -1179,11 +1125,13 @@ function generateInventoryCode(){
         );
 
       if(!isNaN(number)){
+
         max =
           Math.max(
             max,
             number
           );
+
       }
 
     }
@@ -1453,7 +1401,7 @@ function syncInventory(sale){
 
 
 /* =========================
-   تحديث ملخص المبيعات
+   تحديث إحصائيات المبيعات
 ========================= */
 
 function updateSalesSummary(){
@@ -1470,24 +1418,10 @@ function updateSalesSummary(){
     );
 
 
-  const completed =
-    sales.filter(
-      item =>
-        item.status === "مكتملة"
-    ).length;
-
-
   const pending =
     sales.filter(
       item =>
         item.status === "قيد التنفيذ"
-    ).length;
-
-
-  const cancelled =
-    sales.filter(
-      item =>
-        item.status === "ملغاة"
     ).length;
 
 
@@ -1504,21 +1438,9 @@ function updateSalesSummary(){
 
 
   document.getElementById(
-    "completedCount"
-  ).textContent =
-    completed;
-
-
-  document.getElementById(
     "pendingCount"
   ).textContent =
     pending;
-
-
-  document.getElementById(
-    "cancelledCount"
-  ).textContent =
-    cancelled;
 
 }
 
@@ -2340,5 +2262,7 @@ renderSales();
 
 </script>
 
+
 </body>
+
 </html>
