@@ -83,6 +83,7 @@ header{
   color:#664d03;
   font-weight:bold;
   line-height:1.7;
+  white-space:pre-line;
 }
 
 .connection.ok{
@@ -226,8 +227,6 @@ header{
   margin-top:4px;
 }
 
-/* المواد الخام */
-
 .materials-box{
   grid-column:1/-1;
   background:#f8fbf9;
@@ -311,8 +310,6 @@ header{
   font-size:13px;
   line-height:1.7;
 }
-
-/* النتائج */
 
 .result-box{
   grid-column:1/-1;
@@ -864,6 +861,8 @@ let editingId = null;
 let canCreateProduction = false;
 let isAdminUser = false;
 
+let realtimeChannel = null;
+
 
 /* =====================================================
    التقاط أخطاء JavaScript
@@ -1026,7 +1025,7 @@ async function loadSession(){
 
 
 /* =====================================================
-   فحص صلاحية إنشاء الإنتاج
+   فحص الصلاحيات
 ===================================================== */
 
 async function checkPermissions(){
@@ -1040,10 +1039,6 @@ async function checkPermissions(){
 
   }
 
-
-  /*
-    فحص Admin
-  */
 
   const {
     data:adminResult,
@@ -1071,10 +1066,6 @@ async function checkPermissions(){
   }
 
 
-  /*
-    فحص صلاحية الإنتاج
-  */
-
   const {
     data:permissionResult,
     error:permissionError
@@ -1094,11 +1085,6 @@ async function checkPermissions(){
       "Production permission check:",
       permissionError.message
     );
-
-    /*
-      الـAdmin له صلاحية النظام،
-      لكننا لا نفترض صلاحيات المستخدم العادي.
-    */
 
     canCreateProduction =
       isAdminUser;
@@ -1278,7 +1264,7 @@ async function loadWarehouses(){
 
 
 /* =====================================================
-   اسم المنتج
+   أسماء المنتجات والمخازن
 ===================================================== */
 
 function getProductName(productId){
@@ -1304,10 +1290,6 @@ function getProductName(productId){
 }
 
 
-/* =====================================================
-   اسم المخزن
-===================================================== */
-
 function getWarehouseName(warehouseId){
 
   const warehouse =
@@ -1332,14 +1314,13 @@ function getWarehouseName(warehouseId){
 
 
 /* =====================================================
-   كود الإنتاج المركزي
+   كود الإنتاج
 ===================================================== */
 
 async function generateProductionCode(){
 
   const year =
-    new Date()
-      .getFullYear();
+    new Date().getFullYear();
 
 
   const {
@@ -1412,8 +1393,7 @@ async function generateProductionCode(){
 async function generateInventoryCode(){
 
   const year =
-    new Date()
-      .getFullYear();
+    new Date().getFullYear();
 
 
   const {
@@ -1607,10 +1587,7 @@ function addMaterialRow(material = {}){
   `;
 
 
-  container.appendChild(
-    row
-  );
-
+  container.appendChild(row);
 
   ensureMaterialMessage();
 
@@ -1667,9 +1644,7 @@ function ensureMaterialMessage(){
       message.textContent =
         "لم تتم إضافة خامات بعد — اضغط «+ إضافة خامة»";
 
-      container.appendChild(
-        message
-      );
+      container.appendChild(message);
 
     }
 
@@ -1840,7 +1815,6 @@ async function openForm(){
 
 
   loadMaterials([]);
-
 
   setNow();
 
@@ -2035,10 +2009,6 @@ function buildMeta(item){
 }
 
 
-/* =====================================================
-   قراءة البيانات الإضافية
-===================================================== */
-
 function parseMeta(notes){
 
   if(!notes)
@@ -2078,7 +2048,7 @@ function parseMeta(notes){
 
 
 /* =====================================================
-   تسجيل سجل التغيير
+   سجل التغيير
 ===================================================== */
 
 async function writeHistory({
@@ -2092,15 +2062,6 @@ async function writeHistory({
 
   if(!currentUser)
     return;
-
-
-  /*
-    لا نسجل CREATE هنا.
-    الإنشاء يسجل في audit_log.
-    record_change_history مخصص
-    للتعديلات والحذف التي تحتاج
-    نسخة سابقة وسبب العملية.
-  */
 
   if(operation === "create")
     return;
@@ -2302,12 +2263,6 @@ async function saveCentralProduction(item){
     }
 
 
-    /*
-      الإنشاء يسجل في Audit فقط.
-      لا نعطل العملية بسبب سجل تاريخ
-      CREATE غير مدعوم في النظام الحالي.
-    */
-
     await writeAudit({
 
       action:
@@ -2331,11 +2286,6 @@ async function saveCentralProduction(item){
     });
 
 
-    /*
-      إنشاء حركات المخزون
-      فقط عند اكتمال العملية.
-    */
-
     if(
       item.status === "مكتملة"
     ){
@@ -2354,7 +2304,7 @@ async function saveCentralProduction(item){
 
 
   /* =========================
-     تعديل
+     تعديل Admin فقط
   ========================= */
 
   if(!isAdminUser){
@@ -2453,7 +2403,7 @@ async function saveCentralProduction(item){
 
 
 /* =====================================================
-   حركات المخزون المركزية
+   حركات المخزون
 ===================================================== */
 
 async function createInventoryMovements(
@@ -2500,10 +2450,6 @@ async function createInventoryMovements(
     item.inventoryCode ||
     await generateInventoryCode();
 
-
-  /*
-    المنتج النهائي
-  */
 
   if(
     Number(item.netQty) > 0
@@ -2748,6 +2694,305 @@ async function loadProductions(){
 
 
 /* =====================================================
+   Realtime — النظام المركزي
+===================================================== */
+
+function startCentralRealtime(){
+
+  if(!currentUser){
+
+    console.warn(
+      "Realtime skipped: no authenticated user."
+    );
+
+    return;
+
+  }
+
+
+  if(realtimeChannel){
+
+    supabase.removeChannel(
+      realtimeChannel
+    );
+
+    realtimeChannel =
+      null;
+
+  }
+
+
+  realtimeChannel =
+    supabase
+      .channel(
+        "khayrna-production-central"
+      )
+
+
+      /* =========================================
+         production_batches
+      ========================================= */
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"production_batches"
+        },
+        async () => {
+
+          console.log(
+            "Realtime: production_batches changed"
+          );
+
+          try{
+
+            await loadProductions();
+
+            setConnectionStatus(
+              "متصل بالنظام المركزي — تم تحديث بيانات الإنتاج تلقائيًا ✅",
+              "ok"
+            );
+
+          }catch(error){
+
+            console.error(
+              "Realtime production refresh:",
+              error
+            );
+
+            setConnectionStatus(
+              "تم اكتشاف تحديث في الإنتاج، لكن تعذر إعادة تحميل البيانات.",
+              "error"
+            );
+
+          }
+
+        }
+      )
+
+
+      /* =========================================
+         production_inputs
+      ========================================= */
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"production_inputs"
+        },
+        async () => {
+
+          console.log(
+            "Realtime: production_inputs changed"
+          );
+
+          try{
+
+            await loadProductions();
+
+          }catch(error){
+
+            console.error(
+              "Realtime production inputs:",
+              error
+            );
+
+          }
+
+        }
+      )
+
+
+      /* =========================================
+         products
+      ========================================= */
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"products"
+        },
+        async () => {
+
+          console.log(
+            "Realtime: products changed"
+          );
+
+          try{
+
+            await loadProducts();
+
+            updatePageReadiness();
+
+          }catch(error){
+
+            console.error(
+              "Realtime products:",
+              error
+            );
+
+          }
+
+        }
+      )
+
+
+      /* =========================================
+         warehouses
+      ========================================= */
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"warehouses"
+        },
+        async () => {
+
+          console.log(
+            "Realtime: warehouses changed"
+          );
+
+          try{
+
+            await loadWarehouses();
+
+            updatePageReadiness();
+
+          }catch(error){
+
+            console.error(
+              "Realtime warehouses:",
+              error
+            );
+
+          }
+
+        }
+      )
+
+
+      /* =========================================
+         inventory_movements
+      ========================================= */
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"inventory_movements"
+        },
+        async () => {
+
+          console.log(
+            "Realtime: inventory_movements changed"
+          );
+
+          try{
+
+            if(
+              document.getElementById(
+                "connectionStatus"
+              )
+            ){
+
+              /*
+                لا نعيد تحميل الإنتاج هنا
+                لأن حركة المخزون لا تغيّر
+                سجل الإنتاج نفسه.
+              */
+
+              console.log(
+                "Central inventory movement synchronized."
+              );
+
+            }
+
+          }catch(error){
+
+            console.error(
+              "Realtime inventory:",
+              error
+            );
+
+          }
+
+        }
+      )
+
+
+      .subscribe(
+        (status) => {
+
+          console.log(
+            "Central realtime status:",
+            status
+          );
+
+
+          if(
+            status === "SUBSCRIBED"
+          ){
+
+            setConnectionStatus(
+              "متصل بالنظام المركزي والمزامنة اللحظية مفعّلة ✅",
+              "ok"
+            );
+
+            updatePageReadiness();
+
+          }
+
+
+          if(
+            status === "CHANNEL_ERROR"
+          ){
+
+            setConnectionStatus(
+              "قاعدة البيانات متصلة، لكن المزامنة اللحظية بها مشكلة. سيتم الاعتماد على التحميل العادي.",
+              "error"
+            );
+
+          }
+
+
+          if(
+            status === "TIMED_OUT"
+          ){
+
+            setConnectionStatus(
+              "انتهت مهلة المزامنة اللحظية. جاري محاولة الاتصال مرة أخرى...",
+              "error"
+            );
+
+          }
+
+
+          if(
+            status === "CLOSED"
+          ){
+
+            console.warn(
+              "Central realtime channel closed."
+            );
+
+          }
+
+        }
+      );
+
+}
+
+
+/* =====================================================
    تعديل
 ===================================================== */
 
@@ -2804,9 +3049,7 @@ async function editItem(id){
 
   document.getElementById(
     "formBox"
-  ).classList.add(
-    "active"
-  );
+  ).classList.add("active");
 
 
   document.getElementById(
@@ -3433,8 +3676,6 @@ function render(){
   }
 
 
-  /* الإحصائيات */
-
   document.getElementById(
     "recordCount"
   ).textContent =
@@ -3791,11 +4032,6 @@ document.getElementById(
         );
 
 
-      /*
-        لو العملية جديدة
-        نضمن وجود الأكواد
-      */
-
       if(!editingId){
 
         if(
@@ -3821,18 +4057,10 @@ document.getElementById(
       }
 
 
-      /*
-        الحفظ المركزي
-      */
-
       await saveCentralProduction(
         item
       );
 
-
-      /*
-        إعادة تحميل من Supabase
-      */
 
       await loadProductions();
 
@@ -3841,7 +4069,7 @@ document.getElementById(
 
 
       setConnectionStatus(
-        "تم حفظ عملية الإنتاج في النظام المركزي بنجاح ✅",
+        "تم حفظ عملية الإنتاج في النظام المركزي بنجاح — والمزامنة اللحظية مفعّلة ✅",
         "ok"
       );
 
@@ -4006,15 +4234,9 @@ async function init(){
 
 
     setConnectionStatus(
-      "تم فحص الصلاحيات، جاري تحميل المنتجات..."
+      "تم فحص الصلاحيات، جاري تحميل البيانات المركزية..."
     );
 
-
-    /*
-      كل تحميل مستقل نسبيًا.
-      لو منتج فشل أو مخزن فشل
-      يظهر الخطأ بدل التعليق.
-    */
 
     let productsError = null;
     let warehousesError = null;
@@ -4068,11 +4290,6 @@ async function init(){
 
     }
 
-
-    /*
-      لو حصل خطأ حقيقي
-      في تحميل البيانات
-    */
 
     if(
       productsError ||
@@ -4133,6 +4350,15 @@ async function init(){
     updatePageReadiness();
 
 
+    /*
+      تشغيل المزامنة اللحظية
+      بعد نجاح تسجيل الدخول
+      وتحميل البيانات الأساسية.
+    */
+
+    startCentralRealtime();
+
+
   }catch(error){
 
     console.error(
@@ -4181,6 +4407,29 @@ async function init(){
   }
 
 }
+
+
+/* =====================================================
+   تنظيف قناة Realtime عند مغادرة الصفحة
+===================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    if(realtimeChannel){
+
+      supabase.removeChannel(
+        realtimeChannel
+      );
+
+      realtimeChannel =
+        null;
+
+    }
+
+  }
+);
 
 
 /* =====================================================
