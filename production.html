@@ -823,10 +823,6 @@ tr:hover{
 
 <script>
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
 const SUPABASE_URL =
   "https://xvmgbmwlepiftspgazga.supabase.co";
 
@@ -846,11 +842,6 @@ const supabase =
     }
   );
 
-
-/* =========================================================
-   الحالة
-========================================================= */
-
 let currentUser = null;
 let currentAppUser = null;
 let editingId = null;
@@ -858,11 +849,6 @@ let editingId = null;
 let products = [];
 let warehouses = [];
 let productions = [];
-
-
-/* =========================================================
-   أدوات عامة
-========================================================= */
 
 function escapeHtml(value){
 
@@ -890,9 +876,7 @@ function showNotice(message,type="warning"){
 
 function clearNotice(){
 
-  document.getElementById(
-    "notice"
-  ).innerHTML = "";
+  document.getElementById("notice").innerHTML = "";
 
 }
 
@@ -901,8 +885,7 @@ function localDateTimeValue(){
   const now = new Date();
 
   now.setMinutes(
-    now.getMinutes()
-    -
+    now.getMinutes() -
     now.getTimezoneOffset()
   );
 
@@ -916,17 +899,16 @@ function formatDate(value){
 
   try{
 
-    return new Date(value)
-      .toLocaleString(
-        "ar-EG",
-        {
-          year:"numeric",
-          month:"2-digit",
-          day:"2-digit",
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      );
+    return new Date(value).toLocaleString(
+      "ar-EG",
+      {
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit",
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
 
   }catch{
 
@@ -936,27 +918,17 @@ function formatDate(value){
 
 }
 
-
-/* =========================================================
-   تسجيل الدخول
-========================================================= */
-
 async function loginWithGoogle(){
 
   const redirectTo =
     window.location.href.split("#")[0];
 
-  const {
-    error
-  } =
+  const {error} =
     await supabase.auth.signInWithOAuth({
-
       provider:"google",
-
       options:{
         redirectTo:redirectTo
       }
-
     });
 
   if(error){
@@ -971,11 +943,6 @@ async function loginWithGoogle(){
 
 }
 
-
-/* =========================================================
-   التحقق من المستخدم
-========================================================= */
-
 async function loadCurrentUser(){
 
   const userNameEl =
@@ -989,21 +956,14 @@ async function loadCurrentUser(){
     userNameEl.textContent =
       "جاري التحقق من تسجيل الدخول...";
 
-    userRoleEl.textContent =
-      "—";
+    userRoleEl.textContent = "—";
 
-    const {
-      data,
-      error
-    } =
+    const {data,error} =
       await supabase.auth.getSession();
 
     if(error){
 
-      console.error(
-        "Auth session error:",
-        error
-      );
+      console.error("Auth session error:",error);
 
       currentUser = null;
       currentAppUser = null;
@@ -1011,8 +971,7 @@ async function loadCurrentUser(){
       userNameEl.textContent =
         "تعذر التحقق من تسجيل الدخول";
 
-      userRoleEl.textContent =
-        "—";
+      userRoleEl.textContent = "—";
 
       showNotice(
         "تعذر التحقق من جلسة تسجيل الدخول: " +
@@ -1041,10 +1000,7 @@ async function loadCurrentUser(){
 
     }
 
-    const {
-      data:appUser,
-      error:appError
-    } =
+    const {data:appUser,error:appError} =
       await supabase
         .from("app_users")
         .select(`
@@ -1054,18 +1010,12 @@ async function loadCurrentUser(){
           role,
           is_active
         `)
-        .eq(
-          "auth_user_id",
-          currentUser.id
-        )
+        .eq("auth_user_id",currentUser.id)
         .maybeSingle();
 
     if(appError){
 
-      console.error(
-        "App user error:",
-        appError
-      );
+      console.error("App user error:",appError);
 
       currentAppUser = null;
 
@@ -1091,8 +1041,7 @@ async function loadCurrentUser(){
       userNameEl.textContent =
         "حساب غير مسجل بالنظام";
 
-      userRoleEl.textContent =
-        "—";
+      userRoleEl.textContent = "—";
 
       showNotice(
         "حساب Google موجود، لكنه غير مسجل داخل مستخدمي نظام خيرنا.",
@@ -1123,8 +1072,7 @@ async function loadCurrentUser(){
 
     }
 
-    currentAppUser =
-      appUser;
+    currentAppUser = appUser;
 
     userNameEl.textContent =
       appUser.full_name ||
@@ -1138,10 +1086,7 @@ async function loadCurrentUser(){
 
   }catch(error){
 
-    console.error(
-      "Unexpected auth error:",
-      error
-    );
+    console.error("Unexpected auth error:",error);
 
     currentUser = null;
     currentAppUser = null;
@@ -1149,8 +1094,7 @@ async function loadCurrentUser(){
     userNameEl.textContent =
       "حدث خطأ أثناء التحقق";
 
-    userRoleEl.textContent =
-      "—";
+    userRoleEl.textContent = "—";
 
     showNotice(
       error?.message ||
@@ -1164,33 +1108,15 @@ async function loadCurrentUser(){
 
 }
 
-
-/* =========================================================
-   المنتجات
-========================================================= */
-
 async function loadProducts(){
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabase
       .from("products")
-      .select(
-        "id,product_code,name,unit,status"
-      )
-      .is(
-        "deleted_at",
-        null
-      )
-      .eq(
-        "status",
-        "active"
-      )
-      .order(
-        "name"
-      );
+      .select("id,product_code,name,unit,status")
+      .is("deleted_at",null)
+      .eq("status","active")
+      .order("name");
 
   if(error){
 
@@ -1202,13 +1128,10 @@ async function loadProducts(){
 
   }
 
-  products =
-    data || [];
+  products = data || [];
 
   const select =
-    document.getElementById(
-      "productId"
-    );
+    document.getElementById("productId");
 
   select.innerHTML =
     `<option value="">اختر المنتج</option>`;
@@ -1216,51 +1139,30 @@ async function loadProducts(){
   products.forEach(product => {
 
     const option =
-      document.createElement(
-        "option"
-      );
+      document.createElement("option");
 
-    option.value =
-      product.id;
+    option.value = product.id;
 
     option.textContent =
       `${product.name} — ${product.unit}`;
 
-    select.appendChild(
-      option
-    );
+    select.appendChild(option);
 
   });
 
 }
 
-
-/* =========================================================
-   المخازن
-========================================================= */
-
 async function loadWarehouses(){
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabase
       .from("warehouses")
       .select(
         "id,warehouse_code,name,location,status"
       )
-      .is(
-        "deleted_at",
-        null
-      )
-      .eq(
-        "status",
-        "active"
-      )
-      .order(
-        "name"
-      );
+      .is("deleted_at",null)
+      .eq("status","active")
+      .order("name");
 
   if(error){
 
@@ -1272,13 +1174,10 @@ async function loadWarehouses(){
 
   }
 
-  warehouses =
-    data || [];
+  warehouses = data || [];
 
   const select =
-    document.getElementById(
-      "warehouseId"
-    );
+    document.getElementById("warehouseId");
 
   select.innerHTML =
     `<option value="">اختر المخزن</option>`;
@@ -1286,28 +1185,18 @@ async function loadWarehouses(){
   warehouses.forEach(warehouse => {
 
     const option =
-      document.createElement(
-        "option"
-      );
+      document.createElement("option");
 
-    option.value =
-      warehouse.id;
+    option.value = warehouse.id;
 
     option.textContent =
       warehouse.name;
 
-    select.appendChild(
-      option
-    );
+    select.appendChild(option);
 
   });
 
 }
-
-
-/* =========================================================
-   اختيار المنتج
-========================================================= */
 
 document.getElementById(
   "productId"
@@ -1317,24 +1206,16 @@ document.getElementById(
 
     const product =
       products.find(
-        x =>
-          x.id === this.value
+        x => x.id === this.value
       );
 
     document.getElementById(
       "productUnit"
     ).value =
-      product
-        ? product.unit
-        : "";
+      product ? product.unit : "";
 
   }
 );
-
-
-/* =========================================================
-   المواد الخام
-========================================================= */
 
 function addMaterialRow(material={}){
 
@@ -1344,20 +1225,16 @@ function addMaterialRow(material={}){
     );
 
   const row =
-    document.createElement(
-      "div"
-    );
+    document.createElement("div");
 
-  row.className =
-    "material-row";
+  row.className = "material-row";
 
   const options =
     products
       .map(product => {
 
         const selected =
-          product.id ===
-          material.product_id
+          product.id === material.product_id
             ? "selected"
             : "";
 
@@ -1377,7 +1254,6 @@ function addMaterialRow(material={}){
   row.innerHTML = `
 
     <div class="material-field">
-
       <label>الخامة</label>
 
       <select
@@ -1392,11 +1268,9 @@ function addMaterialRow(material={}){
         ${options}
 
       </select>
-
     </div>
 
     <div class="material-field">
-
       <label>الكمية</label>
 
       <input
@@ -1407,11 +1281,9 @@ function addMaterialRow(material={}){
         value="${material.quantity || ""}"
         oninput="updateMaterialCost(this)"
       >
-
     </div>
 
     <div class="material-field">
-
       <label>تكلفة الوحدة</label>
 
       <input
@@ -1422,7 +1294,6 @@ function addMaterialRow(material={}){
         value="${material.unit_cost ?? ""}"
         oninput="updateMaterialCost(this)"
       >
-
     </div>
 
     <button
@@ -1441,31 +1312,22 @@ function addMaterialRow(material={}){
 
 }
 
-
 function removeMaterialRow(button){
 
   const row =
-    button.closest(
-      ".material-row"
-    );
+    button.closest(".material-row");
 
   if(row){
-
     row.remove();
-
   }
 
   updateMaterialSummary();
 
 }
 
-
 function updateMaterialCost(){
-
   updateMaterialSummary();
-
 }
-
 
 function getMaterialRows(){
 
@@ -1476,7 +1338,6 @@ function getMaterialRows(){
   ];
 
 }
-
 
 function getMaterials(){
 
@@ -1506,22 +1367,12 @@ function getMaterials(){
         ).value
       ) || 0;
 
-    if(
-      productId &&
-      quantity > 0
-    ){
+    if(productId && quantity > 0){
 
       materials.push({
-
-        product_id:
-          productId,
-
-        quantity:
-          quantity,
-
-        unit_cost:
-          unitCost
-
+        product_id:productId,
+        quantity:quantity,
+        unit_cost:unitCost
       });
 
     }
@@ -1531,7 +1382,6 @@ function getMaterials(){
   return materials;
 
 }
-
 
 function updateMaterialSummary(){
 
@@ -1563,14 +1413,10 @@ function updateMaterialSummary(){
       ).value;
 
     if(productId){
-
       count++;
-
     }
 
-    total +=
-      quantity *
-      unitCost;
+    total += quantity * unitCost;
 
   });
 
@@ -1591,7 +1437,6 @@ function updateMaterialSummary(){
 
 }
 
-
 document.getElementById(
   "quantity"
 ).addEventListener(
@@ -1606,16 +1451,9 @@ document.getElementById(
   }
 );
 
-
-/* =========================================================
-   فتح النموذج
-========================================================= */
-
 function openForm(){
 
-  if(
-    !currentAppUser
-  ){
+  if(!currentAppUser){
 
     showNotice(
       "يجب تسجيل الدخول أولًا.",
@@ -1639,8 +1477,7 @@ function openForm(){
 
   document.getElementById(
     "productionCode"
-  ).value =
-    "";
+  ).value = "";
 
   document.getElementById(
     "productionDate"
@@ -1663,29 +1500,23 @@ function openForm(){
 
   document.getElementById(
     "materialsTotal"
-  ).textContent =
-    "0.00";
+  ).textContent = "0.00";
 
   document.getElementById(
     "liveQuantity"
-  ).textContent =
-    "0";
+  ).textContent = "0";
 
   document.getElementById(
     "liveMaterialsCount"
-  ).textContent =
-    "0";
+  ).textContent = "0";
 
   document.getElementById(
     "liveMaterialCost"
-  ).textContent =
-    "0.00";
+  ).textContent = "0.00";
 
   document.getElementById(
     "formBox"
-  ).classList.add(
-    "active"
-  );
+  ).classList.add("active");
 
   window.scrollTo({
     top:0,
@@ -1694,34 +1525,19 @@ function openForm(){
 
 }
 
-
-/* =========================================================
-   إغلاق النموذج
-========================================================= */
-
 function closeForm(){
 
   document.getElementById(
     "formBox"
-  ).classList.remove(
-    "active"
-  );
+  ).classList.remove("active");
 
   editingId = null;
 
 }
 
-
-/* =========================================================
-   تحميل الإنتاج
-========================================================= */
-
 async function loadProductions(){
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabase
       .from("production_batches")
       .select(`
@@ -1762,10 +1578,7 @@ async function loadProductions(){
           )
         )
       `)
-      .is(
-        "deleted_at",
-        null
-      )
+      .is("deleted_at",null)
       .order(
         "produced_at",
         {
@@ -1783,8 +1596,7 @@ async function loadProductions(){
 
   }
 
-  productions =
-    data || [];
+  productions = data || [];
 
   await attachCostCodes();
 
@@ -1792,17 +1604,10 @@ async function loadProductions(){
 
 }
 
-
-/* =========================================================
-   ربط كود التكلفة
-========================================================= */
-
 async function attachCostCodes(){
 
   if(!productions.length){
-
     return;
-
   }
 
   const ids =
@@ -1810,10 +1615,7 @@ async function attachCostCodes(){
       x => x.id
     );
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await supabase
       .from("product_costs")
       .select(
@@ -1849,17 +1651,26 @@ async function attachCostCodes(){
 
   (data || []).forEach(cost => {
 
-    if(
-      !costMap[cost.production_id]
-    ){
+    if(!costMap[cost.production_id]){
 
-      costMap[
-        cost.production_id
-      ] =
+      costMap[cost.production_id] =
         cost;
 
     }
 
+  });
+
+  productions =
+    productions.map(item => ({
+
+      ...item,
+
+      cost:
+        costMap[item.id] || null
+
+    }));
+
+}
 /* =========================================================
    حفظ أمر الإنتاج
 ========================================================= */
@@ -1874,9 +1685,7 @@ document.getElementById(
 
     clearNotice();
 
-    if(
-      !currentAppUser
-    ){
+    if(!currentAppUser){
 
       showNotice(
         "يجب تسجيل الدخول أولًا.",
@@ -1930,10 +1739,7 @@ document.getElementById(
 
     }
 
-    if(
-      !quantity ||
-      quantity <= 0
-    ){
+    if(!quantity || quantity <= 0){
 
       showNotice(
         "أدخل كمية إنتاج أكبر من صفر.",
@@ -1950,10 +1756,7 @@ document.getElementById(
     const rows =
       getMaterialRows();
 
-    if(
-      rows.length !==
-      materials.length
-    ){
+    if(rows.length !== materials.length){
 
       showNotice(
         "تأكد من أن كل خامة لها منتج وكمية صحيحة.",
@@ -1964,9 +1767,7 @@ document.getElementById(
 
     }
 
-    if(
-      materials.length === 0
-    ){
+    if(materials.length === 0){
 
       showNotice(
         "أضف خامة واحدة على الأقل لأمر الإنتاج.",
@@ -1977,28 +1778,45 @@ document.getElementById(
 
     }
 
-    const submitButton =
-      this.querySelector(
-        ".save-btn"
+    /*
+      منع المستخدم غير الـAdmin من اختيار
+      مكتملة قبل إنشاء السجل أصلًا.
+    */
+
+    if(
+      status === "completed" &&
+      currentAppUser.role !== "admin"
+    ){
+
+      showNotice(
+        "إتمام أمر الإنتاج مسموح للـ Admin فقط.",
+        "warning"
       );
 
-    submitButton.disabled =
-      true;
+      document.getElementById(
+        "status"
+      ).value = "draft";
 
-    submitButton.textContent =
-      "جاري الحفظ...";
+      return;
+
+    }
+
+    const submitButton =
+      this.querySelector(".save-btn");
+
+    submitButton.disabled = true;
+    submitButton.textContent = "جاري الحفظ...";
 
     try{
 
       /* =========================
-         تعديل
+         تعديل أمر إنتاج
       ========================= */
 
       if(editingId){
 
         if(
-          currentAppUser.role !==
-          "admin"
+          currentAppUser.role !== "admin"
         ){
 
           throw new Error(
@@ -2013,19 +1831,12 @@ document.getElementById(
         } =
           await supabase
             .from("production_batches")
-            .select(
-              "id,status"
-            )
-            .eq(
-              "id",
-              editingId
-            )
+            .select("id,status")
+            .eq("id",editingId)
             .maybeSingle();
 
         if(existingError){
-
           throw existingError;
-
         }
 
         if(!existingItem){
@@ -2036,10 +1847,7 @@ document.getElementById(
 
         }
 
-        if(
-          existingItem.status ===
-          "completed"
-        ){
+        if(existingItem.status === "completed"){
 
           throw new Error(
             "لا يمكن تعديل أمر إنتاج مكتمل."
@@ -2081,9 +1889,7 @@ document.getElementById(
             );
 
         if(updateError){
-
           throw updateError;
-
         }
 
         closeForm();
@@ -2101,7 +1907,7 @@ document.getElementById(
 
 
       /* =========================
-         إنشاء أمر إنتاج
+         إنشاء أمر إنتاج جديد
       ========================= */
 
       const {
@@ -2109,9 +1915,7 @@ document.getElementById(
         error:createError
       } =
         await supabase
-          .from(
-            "production_batches"
-          )
+          .from("production_batches")
           .insert({
 
             produced_at:
@@ -2144,19 +1948,16 @@ document.getElementById(
           .single();
 
       if(createError){
-
         throw createError;
-
       }
 
       /*
-        إضافة الخامات من خلال دالة
-        Supabase المعتمدة.
+        إضافة الخامات من خلال
+        دالة Supabase المعتمدة.
       */
 
       for(
-        const material
-        of materials
+        const material of materials
       ){
 
         const {
@@ -2183,9 +1984,7 @@ document.getElementById(
           );
 
         if(inputError){
-
           throw inputError;
-
         }
 
       }
@@ -2195,17 +1994,6 @@ document.getElementById(
       */
 
       if(status === "completed"){
-
-        if(
-          currentAppUser.role !==
-          "admin"
-        ){
-
-          throw new Error(
-            "إتمام أمر الإنتاج مسموح للـ Admin فقط."
-          );
-
-        }
 
         const {
           error:completeError
@@ -2219,9 +2007,7 @@ document.getElementById(
           );
 
         if(completeError){
-
           throw completeError;
-
         }
 
       }
@@ -2249,8 +2035,7 @@ document.getElementById(
 
     }finally{
 
-      submitButton.disabled =
-        false;
+      submitButton.disabled = false;
 
       submitButton.textContent =
         "حفظ أمر الإنتاج";
@@ -2269,8 +2054,7 @@ async function completeProduction(id){
 
   if(
     !currentAppUser ||
-    currentAppUser.role !==
-    "admin"
+    currentAppUser.role !== "admin"
   ){
 
     showNotice(
@@ -2307,15 +2091,12 @@ async function completeProduction(id){
       await supabase.rpc(
         "complete_production",
         {
-          p_production_id:
-            id
+          p_production_id:id
         }
       );
 
     if(error){
-
       throw error;
-
     }
 
     await loadProductions();
@@ -2348,8 +2129,7 @@ async function editItem(id){
 
   if(
     !currentAppUser ||
-    currentAppUser.role !==
-    "admin"
+    currentAppUser.role !== "admin"
   ){
 
     showNotice(
@@ -2363,20 +2143,14 @@ async function editItem(id){
 
   const item =
     productions.find(
-      x =>
-        x.id === id
+      x => x.id === id
     );
 
   if(!item){
-
     return;
-
   }
 
-  if(
-    item.status ===
-    "completed"
-  ){
+  if(item.status === "completed"){
 
     showNotice(
       "هذا الإنتاج مكتمل بالفعل. لن نسمح بتعديل بياناته من الشاشة حتى لا نغيّر نتيجة المخزون والقيد المحاسبي.",
@@ -2387,8 +2161,7 @@ async function editItem(id){
 
   }
 
-  editingId =
-    id;
+  editingId = id;
 
   document.getElementById(
     "formTitle"
@@ -2460,8 +2233,7 @@ async function editItem(id){
       "materialsContainer"
     );
 
-  container.innerHTML =
-    "";
+  container.innerHTML = "";
 
   (item.production_inputs || [])
     .filter(
@@ -2491,9 +2263,7 @@ async function editItem(id){
 
   document.getElementById(
     "formBox"
-  ).classList.add(
-    "active"
-  );
+  ).classList.add("active");
 
   window.scrollTo({
     top:0,
@@ -2511,8 +2281,7 @@ async function deleteItem(id){
 
   if(
     !currentAppUser ||
-    currentAppUser.role !==
-    "admin"
+    currentAppUser.role !== "admin"
   ){
 
     showNotice(
@@ -2526,20 +2295,14 @@ async function deleteItem(id){
 
   const item =
     productions.find(
-      x =>
-        x.id === id
+      x => x.id === id
     );
 
   if(!item){
-
     return;
-
   }
 
-  if(
-    item.status ===
-    "completed"
-  ){
+  if(item.status === "completed"){
 
     showNotice(
       "هذا الإنتاج مكتمل وله حركات مخزون وقيد محاسبي. لن نحذفه من الشاشة بهذه الطريقة حتى لا نفصل السجلات المرتبطة.",
@@ -2604,9 +2367,7 @@ async function deleteItem(id){
         );
 
     if(error){
-
       throw error;
-
     }
 
     await loadProductions();
@@ -2637,10 +2398,7 @@ async function deleteItem(id){
 
 function statusBadge(status){
 
-  if(
-    status ===
-    "completed"
-  ){
+  if(status === "completed"){
 
     return `
       <span class="badge completed">
@@ -2666,9 +2424,7 @@ function statusBadge(status){
 function render(){
 
   const searchEl =
-    document.getElementById(
-      "search"
-    );
+    document.getElementById("search");
 
   const q =
     searchEl
@@ -2694,19 +2450,12 @@ function render(){
           : "";
 
       return [
-
         item.production_code,
-
         productName,
-
         warehouseName,
-
         item.status,
-
         costCode,
-
         item.notes
-
       ]
       .join(" ")
       .toLowerCase()
@@ -2719,8 +2468,7 @@ function render(){
       "productionTable"
     );
 
-  tbody.innerHTML =
-    "";
+  tbody.innerHTML = "";
 
   if(!filtered.length){
 
@@ -2744,9 +2492,7 @@ function render(){
     filtered.forEach(item => {
 
       const tr =
-        document.createElement(
-          "tr"
-        );
+        document.createElement("tr");
 
       const productName =
         item.products
@@ -2771,13 +2517,14 @@ function render(){
       const inputs =
         item.production_inputs || [];
 
+      const visibleInputs =
+        inputs.filter(
+          x => !x.deleted_at
+        );
+
       const inputText =
-        inputs.length
-          ? inputs
-              .filter(
-                x =>
-                  !x.deleted_at
-              )
+        visibleInputs.length
+          ? visibleInputs
               .map(
                 x =>
                   `${x.products ? x.products.name : "خامة"} (${x.quantity})`
@@ -2787,21 +2534,12 @@ function render(){
 
       let actions = "";
 
-      /*
-        جميع الإجراءات التي تغيّر حالة
-        أمر الإنتاج أصبحت للـAdmin فقط.
-      */
-
       if(
         currentAppUser &&
-        currentAppUser.role ===
-        "admin"
+        currentAppUser.role === "admin"
       ){
 
-        if(
-          item.status ===
-          "draft"
-        ){
+        if(item.status === "draft"){
 
           actions += `
 
@@ -2902,9 +2640,7 @@ function render(){
 
       `;
 
-      tbody.appendChild(
-        tr
-      );
+      tbody.appendChild(tr);
 
     });
 
@@ -2932,8 +2668,7 @@ function render(){
   ).textContent =
     productions.filter(
       item =>
-        item.status ===
-        "completed"
+        item.status === "completed"
     ).length;
 
   document.getElementById(
@@ -2941,8 +2676,7 @@ function render(){
   ).textContent =
     productions.filter(
       item =>
-        item.status ===
-        "draft"
+        item.status === "draft"
     ).length;
 
 }
@@ -3052,9 +2786,7 @@ async function init(){
 
       setTimeout(
         function(){
-
           init();
-
         },
         0
       );
@@ -3071,7 +2803,7 @@ async function init(){
 ========================================================= */
 
 supabase.auth.onAuthStateChange(
-  function(event, session){
+  function(event,session){
 
     console.log(
       "Auth state changed:",
@@ -3080,9 +2812,7 @@ supabase.auth.onAuthStateChange(
 
     setTimeout(
       function(){
-
         init();
-
       },
       0
     );
@@ -3101,16 +2831,3 @@ init();
 
 </body>
 </html>
-  });
-
-  productions =
-    productions.map(item => ({
-
-      ...item,
-
-      cost:
-        costMap[item.id] || null
-
-    }));
-
-}
