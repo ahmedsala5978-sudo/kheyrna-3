@@ -82,6 +82,7 @@ header{
   background:#fff3cd;
   color:#664d03;
   font-weight:bold;
+  line-height:1.7;
 }
 
 .connection.ok{
@@ -92,6 +93,11 @@ header{
 .connection.error{
   background:#f8d7da;
   color:#842029;
+}
+
+.connection.info{
+  background:#cff4fc;
+  color:#055160;
 }
 
 .actions{
@@ -683,8 +689,9 @@ tr:hover{
     <div id="materialsContainer"></div>
 
     <div class="materials-note">
-      سيتم تسجيل المواد الخام في النظام المركزي،
-      ويتم إنشاء حركات المخزون عند اكتمال الإنتاج فقط.
+      سيتم تسجيل المواد الخام داخل بيانات عملية الإنتاج،
+      ويتم إنشاء حركات المخزون عند اكتمال الإنتاج فقط
+      عندما تكون الخامات مرتبطة بمنتجات مركزية صحيحة.
     </div>
 
   </div>
@@ -854,6 +861,58 @@ let productionRecords = [];
 
 let editingId = null;
 
+let canCreateProduction = false;
+let isAdminUser = false;
+
+
+/* =====================================================
+   التقاط أخطاء JavaScript
+===================================================== */
+
+window.addEventListener(
+  "error",
+  function(event){
+
+    console.error(
+      "Global JavaScript error:",
+      event.error || event.message
+    );
+
+    const message =
+      event?.error?.message ||
+      event?.message ||
+      "خطأ JavaScript غير معروف";
+
+    setConnectionStatus(
+      "حدث خطأ في الصفحة: " + message,
+      "error"
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "unhandledrejection",
+  function(event){
+
+    console.error(
+      "Unhandled promise rejection:",
+      event.reason
+    );
+
+    const message =
+      event?.reason?.message ||
+      String(event.reason || "خطأ غير معروف");
+
+    setConnectionStatus(
+      "حدث خطأ أثناء تنفيذ عملية بالنظام المركزي: " + message,
+      "error"
+    );
+
+  }
+);
+
 
 /* =====================================================
    الحالة
@@ -865,6 +924,9 @@ function setConnectionStatus(message,type=""){
     document.getElementById(
       "connectionStatus"
     );
+
+  if(!box)
+    return;
 
   box.textContent =
     message;
@@ -907,6 +969,7 @@ function dbStatusFromArabic(status){
 
 }
 
+
 function arabicStatus(status){
 
   if(status === "completed")
@@ -932,17 +995,14 @@ async function loadSession(){
   } =
     await supabase.auth.getSession();
 
-  if(error){
-
+  if(error)
     throw error;
 
-  }
-
   currentSession =
-    data.session;
+    data?.session || null;
 
   currentUser =
-    data.session?.user || null;
+    data?.session?.user || null;
 
 
   if(!currentUser){
@@ -960,12 +1020,97 @@ async function loadSession(){
 
   }
 
-  setConnectionStatus(
-    "متصل بالنظام المركزي ✅",
-    "ok"
-  );
-
   return true;
+
+}
+
+
+/* =====================================================
+   فحص صلاحية إنشاء الإنتاج
+===================================================== */
+
+async function checkPermissions(){
+
+  if(!currentUser){
+
+    canCreateProduction = false;
+    isAdminUser = false;
+
+    return;
+
+  }
+
+
+  /*
+    فحص Admin
+  */
+
+  const {
+    data:adminResult,
+    error:adminError
+  } =
+    await supabase.rpc(
+      "is_system_admin"
+    );
+
+
+  if(adminError){
+
+    console.warn(
+      "Admin check:",
+      adminError.message
+    );
+
+    isAdminUser = false;
+
+  }else{
+
+    isAdminUser =
+      adminResult === true;
+
+  }
+
+
+  /*
+    فحص صلاحية الإنتاج
+  */
+
+  const {
+    data:permissionResult,
+    error:permissionError
+  } =
+    await supabase.rpc(
+      "has_permission",
+      {
+        p_permission:
+          "production.create"
+      }
+    );
+
+
+  if(permissionError){
+
+    console.warn(
+      "Production permission check:",
+      permissionError.message
+    );
+
+    /*
+      الـAdmin له صلاحية النظام،
+      لكننا لا نفترض صلاحيات المستخدم العادي.
+    */
+
+    canCreateProduction =
+      isAdminUser;
+
+    return;
+
+  }
+
+
+  canCreateProduction =
+    permissionResult === true ||
+    isAdminUser;
 
 }
 
@@ -976,6 +1121,17 @@ async function loadSession(){
 
 async function loadProducts(){
 
+  products = [];
+
+  const select =
+    document.getElementById(
+      "product"
+    );
+
+  select.innerHTML =
+    `<option value="">جاري تحميل المنتجات...</option>`;
+
+
   const {
     data,
     error
@@ -985,9 +1141,16 @@ async function loadProducts(){
       .select("*")
       .order("name");
 
+
   if(error){
 
-    console.error(error);
+    console.error(
+      "Products error:",
+      error
+    );
+
+    select.innerHTML =
+      `<option value="">تعذر تحميل المنتجات</option>`;
 
     throw new Error(
       "تعذر تحميل المنتجات: " +
@@ -996,16 +1159,14 @@ async function loadProducts(){
 
   }
 
+
   products =
     data || [];
 
-  const select =
-    document.getElementById(
-      "product"
-    );
 
   select.innerHTML =
     `<option value="">اختر المنتج</option>`;
+
 
   products.forEach(product => {
 
@@ -1021,6 +1182,7 @@ async function loadProducts(){
       product.name ||
       product.product_name ||
       product.code ||
+      product.product_code ||
       "منتج";
 
     option.dataset.unit =
@@ -1042,6 +1204,17 @@ async function loadProducts(){
 
 async function loadWarehouses(){
 
+  warehouses = [];
+
+  const select =
+    document.getElementById(
+      "storageLocation"
+    );
+
+  select.innerHTML =
+    `<option value="">جاري تحميل المخازن...</option>`;
+
+
   const {
     data,
     error
@@ -1051,9 +1224,16 @@ async function loadWarehouses(){
       .select("*")
       .order("name");
 
+
   if(error){
 
-    console.error(error);
+    console.error(
+      "Warehouses error:",
+      error
+    );
+
+    select.innerHTML =
+      `<option value="">تعذر تحميل المخازن</option>`;
 
     throw new Error(
       "تعذر تحميل المخازن: " +
@@ -1062,16 +1242,14 @@ async function loadWarehouses(){
 
   }
 
+
   warehouses =
     data || [];
 
-  const select =
-    document.getElementById(
-      "storageLocation"
-    );
 
   select.innerHTML =
     `<option value="">اختر المخزن</option>`;
+
 
   warehouses.forEach(warehouse => {
 
@@ -1087,6 +1265,7 @@ async function loadWarehouses(){
       warehouse.name ||
       warehouse.warehouse_name ||
       warehouse.code ||
+      warehouse.warehouse_code ||
       "مخزن";
 
     select.appendChild(
@@ -1118,6 +1297,7 @@ function getProductName(productId){
     product.name ||
     product.product_name ||
     product.code ||
+    product.product_code ||
     ""
   );
 
@@ -1144,6 +1324,7 @@ function getWarehouseName(warehouseId){
     warehouse.name ||
     warehouse.warehouse_name ||
     warehouse.code ||
+    warehouse.warehouse_code ||
     ""
   );
 
@@ -1159,6 +1340,7 @@ async function generateProductionCode(){
   const year =
     new Date()
       .getFullYear();
+
 
   const {
     data,
@@ -1179,10 +1361,16 @@ async function generateProductionCode(){
       )
       .limit(1);
 
+
   if(error)
-    throw error;
+    throw new Error(
+      "تعذر قراءة آخر كود إنتاج: " +
+      error.message
+    );
+
 
   let max = 0;
+
 
   if(data && data.length){
 
@@ -1192,6 +1380,7 @@ async function generateProductionCode(){
       ).match(
         /PRD-\d{4}-(\d+)/
       );
+
 
     if(match){
 
@@ -1204,6 +1393,7 @@ async function generateProductionCode(){
     }
 
   }
+
 
   return (
     `PRD-${year}-` +
@@ -1225,6 +1415,7 @@ async function generateInventoryCode(){
     new Date()
       .getFullYear();
 
+
   const {
     data,
     error
@@ -1244,10 +1435,16 @@ async function generateInventoryCode(){
       )
       .limit(1);
 
+
   if(error)
-    throw error;
+    throw new Error(
+      "تعذر قراءة آخر كود مخزون: " +
+      error.message
+    );
+
 
   let max = 0;
+
 
   if(data && data.length){
 
@@ -1257,6 +1454,7 @@ async function generateInventoryCode(){
       ).match(
         /INV-\d{4}-(\d+)/
       );
+
 
     if(match){
 
@@ -1269,6 +1467,7 @@ async function generateInventoryCode(){
     }
 
   }
+
 
   return (
     `INV-${year}-` +
@@ -1315,13 +1514,16 @@ function addMaterialRow(material = {}){
       "materialsContainer"
     );
 
+
   const row =
     document.createElement(
       "div"
     );
 
+
   row.className =
     "material-row";
+
 
   row.innerHTML = `
 
@@ -1404,7 +1606,13 @@ function addMaterialRow(material = {}){
 
   `;
 
-  container.appendChild(row);
+
+  container.appendChild(
+    row
+  );
+
+
+  ensureMaterialMessage();
 
 }
 
@@ -1431,15 +1639,18 @@ function ensureMaterialMessage(){
       "materialsContainer"
     );
 
+
   const rows =
     container.querySelectorAll(
       ".material-row"
     );
 
+
   const oldMessage =
     container.querySelector(
       ".no-materials"
     );
+
 
   if(!rows.length){
 
@@ -1479,7 +1690,9 @@ function getMaterials(){
       "#materialsContainer .material-row"
     );
 
+
   const materials = [];
+
 
   rows.forEach(row => {
 
@@ -1488,6 +1701,7 @@ function getMaterials(){
         ".material-item"
       ).value.trim();
 
+
     const quantity =
       Number(
         row.querySelector(
@@ -1495,10 +1709,12 @@ function getMaterials(){
         ).value
       ) || 0;
 
+
     const unit =
       row.querySelector(
         ".material-unit"
       ).value;
+
 
     if(item && quantity > 0){
 
@@ -1512,6 +1728,7 @@ function getMaterials(){
 
   });
 
+
   return materials;
 
 }
@@ -1524,7 +1741,9 @@ function loadMaterials(materials){
       "materialsContainer"
     );
 
+
   container.innerHTML = "";
+
 
   if(
     Array.isArray(materials)
@@ -1538,6 +1757,7 @@ function loadMaterials(materials){
     );
 
   }
+
 
   ensureMaterialMessage();
 
@@ -1560,36 +1780,72 @@ async function openForm(){
 
   }
 
+
+  if(!canCreateProduction){
+
+    alert(
+      "هذا المستخدم لا يملك صلاحية إنشاء عملية إنتاج.\n\n" +
+      "الصلاحية المطلوبة: production.create"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !products.length ||
+    !warehouses.length
+  ){
+
+    alert(
+      "لا يمكن إنشاء عملية إنتاج حاليًا.\n\n" +
+      "يجب أن يكون هناك منتج ومخزن مسجلان في النظام المركزي أولًا."
+    );
+
+    return;
+
+  }
+
+
   editingId = null;
+
 
   document.getElementById(
     "formBox"
   ).classList.add("active");
+
 
   document.getElementById(
     "formTitle"
   ).textContent =
     "إضافة عملية إنتاج";
 
+
   document.getElementById(
     "productionForm"
   ).reset();
+
 
   document.getElementById(
     "productionCode"
   ).value =
     "جاري إنشاء الكود...";
 
+
   document.getElementById(
     "inventoryCode"
   ).value =
     "";
 
+
   loadMaterials([]);
+
 
   setNow();
 
   updateLive();
+
 
   try{
 
@@ -1598,19 +1854,23 @@ async function openForm(){
     ).value =
       await generateProductionCode();
 
+
     document.getElementById(
       "inventoryCode"
     ).value =
       await generateInventoryCode();
 
+
   }catch(error){
 
     console.error(error);
+
 
     alert(
       "تعذر إنشاء أكواد العملية المركزية.\n\n" +
       error.message
     );
+
 
     closeForm();
 
@@ -1647,6 +1907,7 @@ function updateLive(){
       ).value
     ) || 0;
 
+
   const actual =
     Number(
       document.getElementById(
@@ -1654,12 +1915,14 @@ function updateLive(){
       ).value
     ) || 0;
 
+
   const waste =
     Number(
       document.getElementById(
         "wasteQty"
       ).value
     ) || 0;
+
 
   const achievement =
     plan > 0
@@ -1669,21 +1932,25 @@ function updateLive(){
         ).toFixed(1)
       : 0;
 
+
   const net =
     Math.max(
       actual - waste,
       0
     );
 
+
   document.getElementById(
     "liveAchievement"
   ).textContent =
     achievement + "%";
 
+
   document.getElementById(
     "liveNet"
   ).textContent =
     net;
+
 
   document.getElementById(
     "liveWaste"
@@ -1715,6 +1982,7 @@ function updateLive(){
 function buildMeta(item){
 
   return {
+
     __kheyrna_production_meta:true,
 
     costCode:
@@ -1761,6 +2029,7 @@ function buildMeta(item){
 
     userNotes:
       item.notes
+
   };
 
 }
@@ -1775,10 +2044,12 @@ function parseMeta(notes){
   if(!notes)
     return {};
 
+
   try{
 
     const parsed =
       JSON.parse(notes);
+
 
     if(
       parsed &&
@@ -1789,7 +2060,15 @@ function parseMeta(notes){
 
     }
 
-  }catch(e){}
+  }catch(e){
+
+    console.warn(
+      "Meta parse warning:",
+      e
+    );
+
+  }
+
 
   return {
     userNotes:notes
@@ -1814,20 +2093,48 @@ async function writeHistory({
   if(!currentUser)
     return;
 
+
+  /*
+    لا نسجل CREATE هنا.
+    الإنشاء يسجل في audit_log.
+    record_change_history مخصص
+    للتعديلات والحذف التي تحتاج
+    نسخة سابقة وسبب العملية.
+  */
+
+  if(operation === "create")
+    return;
+
+
   const {
     error
   } =
     await supabase
       .from("record_change_history")
       .insert({
-        table_name:tableName,
-        record_id:recordId,
+
+        table_name:
+          tableName,
+
+        record_id:
+          recordId,
+
         operation,
-        changed_by:currentUser.id,
-        reason:reason || null,
-        old_data:oldData || null,
-        new_data:newData || null
+
+        changed_by:
+          currentUser.id,
+
+        reason:
+          reason || null,
+
+        old_data:
+          oldData || null,
+
+        new_data:
+          newData || null
+
       });
+
 
   if(error){
 
@@ -1857,21 +2164,39 @@ async function writeAudit({
   if(!currentUser)
     return;
 
+
   const {
     error
   } =
     await supabase
       .from("audit_log")
       .insert({
-        user_id:currentUser.id,
+
+        user_id:
+          currentUser.id,
+
         action,
-        table_name:"production_batches",
-        record_id:recordId,
-        reference_code:referenceCode,
-        old_data:oldData || null,
-        new_data:newData || null,
-        notes:notes || null
+
+        table_name:
+          "production_batches",
+
+        record_id:
+          recordId,
+
+        reference_code:
+          referenceCode,
+
+        old_data:
+          oldData || null,
+
+        new_data:
+          newData || null,
+
+        notes:
+          notes || null
+
       });
+
 
   if(error){
 
@@ -1895,6 +2220,15 @@ async function saveCentralProduction(item){
 
     throw new Error(
       "لا يوجد مستخدم مسجل الدخول."
+    );
+
+  }
+
+
+  if(!canCreateProduction && !editingId){
+
+    throw new Error(
+      "ليس لديك صلاحية إنشاء عمليات الإنتاج."
     );
 
   }
@@ -1957,69 +2291,25 @@ async function saveCentralProduction(item){
         .select("*")
         .single();
 
-    if(error)
-      throw error;
 
+    if(error){
 
-    /*
-      تسجيل المواد الخام
-    */
-
-    if(
-      item.materials.length
-    ){
-
-      const inputRows =
-        [];
-
-      for(
-        const material
-        of item.materials
-      ){
-
-        /*
-          لا يوجد لدينا بعد
-          product_id للخامة بالاسم فقط.
-          لذلك لا نخزنها في
-          production_inputs
-          بشكل خاطئ.
-        */
-
-      }
-
-
-      /*
-        يتم حفظ تفاصيل الخامات
-        داخل metadata حاليًا،
-        إلى أن تكون الخامات
-        مرتبطة بمنتجاتها المركزية.
-      */
+      throw new Error(
+        "فشل حفظ عملية الإنتاج في النظام المركزي:\n" +
+        error.message
+      );
 
     }
 
 
-    await writeHistory({
-      tableName:
-        "production_batches",
-
-      recordId:
-        data.id,
-
-      operation:
-        "create",
-
-      reason:
-        "إنشاء عملية إنتاج",
-
-      oldData:
-        null,
-
-      newData:
-        data
-    });
-
+    /*
+      الإنشاء يسجل في Audit فقط.
+      لا نعطل العملية بسبب سجل تاريخ
+      CREATE غير مدعوم في النظام الحالي.
+    */
 
     await writeAudit({
+
       action:
         "create",
 
@@ -2037,6 +2327,7 @@ async function saveCentralProduction(item){
 
       notes:
         "إنشاء عملية إنتاج مركزية"
+
     });
 
 
@@ -2066,6 +2357,15 @@ async function saveCentralProduction(item){
      تعديل
   ========================= */
 
+  if(!isAdminUser){
+
+    throw new Error(
+      "التعديل مسموح للـAdmin فقط."
+    );
+
+  }
+
+
   const {
     data:oldData,
     error:oldError
@@ -2073,8 +2373,12 @@ async function saveCentralProduction(item){
     await supabase
       .from("production_batches")
       .select("*")
-      .eq("id",editingId)
+      .eq(
+        "id",
+        editingId
+      )
       .single();
+
 
   if(oldError)
     throw oldError;
@@ -2087,15 +2391,20 @@ async function saveCentralProduction(item){
     await supabase
       .from("production_batches")
       .update(payload)
-      .eq("id",editingId)
+      .eq(
+        "id",
+        editingId
+      )
       .select("*")
       .single();
+
 
   if(error)
     throw error;
 
 
   await writeHistory({
+
     tableName:
       "production_batches",
 
@@ -2109,11 +2418,15 @@ async function saveCentralProduction(item){
       "تعديل عملية إنتاج",
 
     oldData,
-    newData:data
+
+    newData:
+      data
+
   });
 
 
   await writeAudit({
+
     action:
       "update",
 
@@ -2124,19 +2437,15 @@ async function saveCentralProduction(item){
       item.code,
 
     oldData,
-    newData:data,
+
+    newData:
+      data,
 
     notes:
       "تعديل عملية إنتاج مركزية"
+
   });
 
-
-  /*
-    إعادة بناء حركات المخزون
-    ليست آمنة للمستخدم العادي.
-    لذلك يتم تحديثها فقط بواسطة
-    صلاحيات النظام المركزية.
-  */
 
   return data;
 
@@ -2152,13 +2461,9 @@ async function createInventoryMovements(
   item
 ){
 
-  /*
-    لا ننفذ الحركات إذا لم توجد
-    صلاحية المخزون.
-  */
-
   const {
-    data:permissionCheck
+    data:permissionCheck,
+    error:permissionError
   } =
     await supabase.rpc(
       "has_permission",
@@ -2169,23 +2474,27 @@ async function createInventoryMovements(
     );
 
 
-  /*
-    في حالة عدم القدرة على فحص
-    الصلاحية، نترك RLS يمنع العملية.
-  */
-
-  if(permissionCheck === false){
+  if(permissionError){
 
     throw new Error(
-      "ليس لديك صلاحية إنشاء حركات المخزون."
+      "تعذر التحقق من صلاحية حركة المخزون:\n" +
+      permissionError.message
     );
 
   }
 
 
-  /*
-    كود حركة المنتج النهائي
-  */
+  if(
+    permissionCheck !== true &&
+    !isAdminUser
+  ){
+
+    throw new Error(
+      "تم حفظ الإنتاج، لكن لا توجد صلاحية لإنشاء حركة المخزون."
+    );
+
+  }
+
 
   const inventoryCode =
     item.inventoryCode ||
@@ -2250,6 +2559,7 @@ async function createInventoryMovements(
 
         });
 
+
     if(error){
 
       throw new Error(
@@ -2260,17 +2570,6 @@ async function createInventoryMovements(
     }
 
   }
-
-
-  /*
-    المواد الخام:
-    لن ننشئ حركة خروج باسم الخامة فقط،
-    لأن inventory_movements يحتاج product_id
-    مركزي صحيح.
-
-    ده مقصود حتى لا نسجل حركة مخزون
-    على خامة غير موجودة في النظام المركزي.
-  */
 
 }
 
@@ -2311,9 +2610,13 @@ async function loadProductions(){
         }
       );
 
+
   if(error){
 
-    console.error(error);
+    console.error(
+      "Production records error:",
+      error
+    );
 
     throw new Error(
       "تعذر تحميل سجلات الإنتاج: " +
@@ -2322,6 +2625,7 @@ async function loadProductions(){
 
   }
 
+
   productionRecords =
     (data || []).map(row => {
 
@@ -2329,6 +2633,7 @@ async function loadProductions(){
         parseMeta(
           row.notes
         );
+
 
       return {
 
@@ -2454,14 +2759,10 @@ async function editItem(id){
         x.id === id
     );
 
+
   if(!item)
     return;
 
-
-  /*
-    التعديل للـAdmin فقط.
-    نحاول التحقق من الوظيفة المركزية.
-  */
 
   const {
     data:isAdmin,
@@ -2471,15 +2772,18 @@ async function editItem(id){
       "is_system_admin"
     );
 
+
   if(error){
 
     alert(
-      "تعذر التحقق من صلاحية التعديل."
+      "تعذر التحقق من صلاحية التعديل:\n" +
+      error.message
     );
 
     return;
 
   }
+
 
   if(!isAdmin){
 
@@ -2492,14 +2796,18 @@ async function editItem(id){
   }
 
 
+  isAdminUser = true;
+
   editingId =
     item.id;
+
 
   document.getElementById(
     "formBox"
   ).classList.add(
     "active"
   );
+
 
   document.getElementById(
     "formTitle"
@@ -2518,11 +2826,13 @@ async function editItem(id){
       item.date
     );
 
+
   localDate.setMinutes(
     localDate.getMinutes()
     -
     localDate.getTimezoneOffset()
   );
+
 
   document.getElementById(
     "productionDate"
@@ -2650,13 +2960,10 @@ async function deleteItem(id){
         x.id === id
     );
 
+
   if(!item)
     return;
 
-
-  /*
-    Admin فقط
-  */
 
   const {
     data:isAdmin,
@@ -2666,15 +2973,18 @@ async function deleteItem(id){
       "is_system_admin"
     );
 
+
   if(adminError){
 
     alert(
-      "تعذر التحقق من صلاحية الحذف."
+      "تعذر التحقق من صلاحية الحذف:\n" +
+      adminError.message
     );
 
     return;
 
   }
+
 
   if(!isAdmin){
 
@@ -2692,8 +3002,10 @@ async function deleteItem(id){
       "اكتب سبب حذف عملية الإنتاج:"
     );
 
+
   if(reason === null)
     return;
+
 
   if(!reason.trim()){
 
@@ -2724,8 +3036,12 @@ async function deleteItem(id){
     await supabase
       .from("production_batches")
       .select("*")
-      .eq("id",id)
+      .eq(
+        "id",
+        id
+      )
       .single();
+
 
   if(oldError){
 
@@ -2738,6 +3054,10 @@ async function deleteItem(id){
   }
 
 
+  const deletionTime =
+    new Date().toISOString();
+
+
   const {
     error
   } =
@@ -2746,7 +3066,7 @@ async function deleteItem(id){
       .update({
 
         deleted_at:
-          new Date().toISOString(),
+          deletionTime,
 
         deleted_by:
           currentUser.id,
@@ -2794,7 +3114,7 @@ async function deleteItem(id){
         ...oldData,
 
         deleted_at:
-          new Date().toISOString(),
+          deletionTime,
 
         deleted_by:
           currentUser.id,
@@ -2819,7 +3139,8 @@ async function deleteItem(id){
 
     oldData,
 
-    newData:null,
+    newData:
+      null,
 
     notes:
       reason.trim()
@@ -2828,6 +3149,7 @@ async function deleteItem(id){
 
 
   await loadProductions();
+
 
   alert(
     "تم حذف العملية منطقيًا مع الاحتفاظ بسجلها التاريخي ✅"
@@ -2852,6 +3174,7 @@ function badge(status){
 
   }
 
+
   if(status === "قيد التنفيذ"){
 
     return `
@@ -2861,6 +3184,7 @@ function badge(status){
     `;
 
   }
+
 
   return `
     <span class="badge cancelled">
@@ -2877,12 +3201,18 @@ function badge(status){
 
 function render(){
 
-  const q =
+  const searchElement =
     document.getElementById(
       "search"
-    ).value
-    .trim()
-    .toLowerCase();
+    );
+
+
+  const q =
+    searchElement
+      ? searchElement.value
+          .trim()
+          .toLowerCase()
+      : "";
 
 
   const filtered =
@@ -2925,6 +3255,7 @@ function render(){
     document.getElementById(
       "productionTable"
     );
+
 
   tbody.innerHTML = "";
 
@@ -3092,6 +3423,7 @@ function render(){
 
       `;
 
+
       tbody.appendChild(
         tr
       );
@@ -3174,13 +3506,43 @@ document.getElementById(
     }
 
 
+    if(!editingId && !canCreateProduction){
+
+      alert(
+        "ليس لديك صلاحية إنشاء عملية إنتاج."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      !editingId &&
+      (
+        !products.length ||
+        !warehouses.length
+      )
+    ){
+
+      alert(
+        "لا يمكن الحفظ لأن المنتجات أو المخازن المركزية غير متاحة."
+      );
+
+      return;
+
+    }
+
+
     const saveButton =
       document.getElementById(
         "saveButton"
       );
 
+
     saveButton.disabled =
       true;
+
 
     saveButton.textContent =
       "جاري الحفظ المركزي...";
@@ -3247,10 +3609,6 @@ document.getElementById(
         getMaterials();
 
 
-      /*
-        التحقق من صفوف الخامات
-      */
-
       const materialRows =
         document.querySelectorAll(
           "#materialsContainer .material-row"
@@ -3267,6 +3625,7 @@ document.getElementById(
           row.querySelector(
             ".material-item"
           ).value.trim();
+
 
         const qty =
           Number(
@@ -3481,6 +3840,12 @@ document.getElementById(
       closeForm();
 
 
+      setConnectionStatus(
+        "تم حفظ عملية الإنتاج في النظام المركزي بنجاح ✅",
+        "ok"
+      );
+
+
       alert(
         "تم حفظ عملية الإنتاج في النظام المركزي بنجاح ✅"
       );
@@ -3493,6 +3858,7 @@ document.getElementById(
         error
       );
 
+
       alert(
         "تعذر حفظ عملية الإنتاج.\n\n" +
         (
@@ -3501,10 +3867,12 @@ document.getElementById(
         )
       );
 
+
     }finally{
 
       saveButton.disabled =
         false;
+
 
       saveButton.textContent =
         "حفظ العملية";
@@ -3512,6 +3880,85 @@ document.getElementById(
     }
 
   });
+
+
+/* =====================================================
+   تحديد حالة الجاهزية
+===================================================== */
+
+function updatePageReadiness(){
+
+  const addButton =
+    document.getElementById(
+      "addButton"
+    );
+
+
+  if(!currentUser){
+
+    addButton.disabled =
+      true;
+
+    return;
+
+  }
+
+
+  if(!canCreateProduction){
+
+    addButton.disabled =
+      true;
+
+    setConnectionStatus(
+      "تم الاتصال، لكن هذا المستخدم لا يملك صلاحية إنشاء عمليات الإنتاج.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(!products.length){
+
+    addButton.disabled =
+      true;
+
+    setConnectionStatus(
+      "متصل بالنظام المركزي، لكن لا توجد منتجات مسجلة ومتاحة لهذا المستخدم.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if(!warehouses.length){
+
+    addButton.disabled =
+      true;
+
+    setConnectionStatus(
+      "متصل بالنظام المركزي، لكن لا توجد مخازن مسجلة ومتاحة لهذا المستخدم.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  addButton.disabled =
+    false;
+
+
+  setConnectionStatus(
+    "متصل بالنظام المركزي وجاهز لإضافة عمليات الإنتاج ✅",
+    "ok"
+  );
+
+}
 
 
 /* =====================================================
@@ -3550,45 +3997,141 @@ async function init(){
     }
 
 
-    await loadProducts();
+    setConnectionStatus(
+      "تم تسجيل الدخول، جاري فحص صلاحيات الإنتاج..."
+    );
 
-    await loadWarehouses();
 
-    await loadProductions();
+    await checkPermissions();
+
+
+    setConnectionStatus(
+      "تم فحص الصلاحيات، جاري تحميل المنتجات..."
+    );
 
 
     /*
-      لا نسمح بإضافة العملية
-      إلا إذا كان هناك منتج ومخزن
-      مركزيان.
+      كل تحميل مستقل نسبيًا.
+      لو منتج فشل أو مخزن فشل
+      يظهر الخطأ بدل التعليق.
     */
 
-    const ready =
-      products.length > 0 &&
-      warehouses.length > 0;
+    let productsError = null;
+    let warehousesError = null;
+    let productionsError = null;
 
 
-    document.getElementById(
-      "addButton"
-    ).disabled =
-      !ready;
+    try{
 
+      await loadProducts();
 
-    if(!ready){
+    }catch(error){
 
-      setConnectionStatus(
-        "متصل بالنظام المركزي، لكن لا توجد منتجات أو مخازن مسجلة بعد. لن يتم إنشاء بيانات وهمية.",
-        "error"
-      );
+      productsError =
+        error;
 
-    }else{
-
-      setConnectionStatus(
-        "متصل بالنظام المركزي وجاهز للإنتاج ✅",
-        "ok"
+      console.error(
+        error
       );
 
     }
+
+
+    try{
+
+      await loadWarehouses();
+
+    }catch(error){
+
+      warehousesError =
+        error;
+
+      console.error(
+        error
+      );
+
+    }
+
+
+    try{
+
+      await loadProductions();
+
+    }catch(error){
+
+      productionsError =
+        error;
+
+      console.error(
+        error
+      );
+
+    }
+
+
+    /*
+      لو حصل خطأ حقيقي
+      في تحميل البيانات
+    */
+
+    if(
+      productsError ||
+      warehousesError ||
+      productionsError
+    ){
+
+      const errors = [];
+
+
+      if(productsError){
+
+        errors.push(
+          "المنتجات: " +
+          productsError.message
+        );
+
+      }
+
+
+      if(warehousesError){
+
+        errors.push(
+          "المخازن: " +
+          warehousesError.message
+        );
+
+      }
+
+
+      if(productionsError){
+
+        errors.push(
+          "الإنتاج: " +
+          productionsError.message
+        );
+
+      }
+
+
+      document.getElementById(
+        "addButton"
+      ).disabled = true;
+
+
+      setConnectionStatus(
+        "تم الاتصال بالنظام، لكن حدث خطأ أثناء تحميل بعض البيانات:\n" +
+        errors.join(" | "),
+        "error"
+      );
+
+
+      return;
+
+    }
+
+
+    updatePageReadiness();
+
 
   }catch(error){
 
@@ -3597,11 +4140,22 @@ async function init(){
       error
     );
 
+
     setConnectionStatus(
-      "حدث خطأ أثناء الاتصال بالنظام المركزي: " +
-      error.message,
+      "حدث خطأ أثناء تشغيل دفتر الإنتاج: " +
+      (
+        error?.message ||
+        "خطأ غير معروف"
+      ),
       "error"
     );
+
+
+    document.getElementById(
+      "addButton"
+    ).disabled =
+      true;
+
 
     document.getElementById(
       "productionTable"
@@ -3609,7 +4163,16 @@ async function init(){
 
       <tr>
         <td colspan="20" class="empty">
+
           تعذر تحميل دفتر الإنتاج من النظام المركزي.
+
+          <br><br>
+
+          ${escapeHtml(
+            error?.message ||
+            "خطأ غير معروف"
+          )}
+
         </td>
       </tr>
 
@@ -3619,6 +4182,12 @@ async function init(){
 
 }
 
+
+/* =====================================================
+   بدء التشغيل
+===================================================== */
+
+loadMaterials([]);
 
 init();
 
