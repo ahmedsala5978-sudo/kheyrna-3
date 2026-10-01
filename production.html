@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>خيرنا | الإنتاج اليومي</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase: المصدر الأساسي + بديل تلقائي -->
+<script
+  src="https://unpkg.com/@supabase/supabase-js@2"
+  onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';">
+</script>
 
 <style>
 *{
@@ -530,7 +534,7 @@ tr:hover{
   </p>
 
   <div id="connectionStatus" class="connection">
-    جاري الاتصال بالنظام المركزي...
+    جاري تشغيل النظام المركزي...
   </div>
 
 </section>
@@ -686,9 +690,8 @@ tr:hover{
     <div id="materialsContainer"></div>
 
     <div class="materials-note">
-      سيتم تسجيل المواد الخام داخل بيانات عملية الإنتاج،
-      ويتم إنشاء حركات المخزون عند اكتمال الإنتاج فقط
-      عندما تكون الخامات مرتبطة بمنتجات مركزية صحيحة.
+      يتم حفظ المواد الخام داخل بيانات عملية الإنتاج،
+      مع الحفاظ على ربط العملية بالمخزون المركزي.
     </div>
 
   </div>
@@ -829,7 +832,7 @@ tr:hover{
 <script>
 
 /* =====================================================
-   إعداد Supabase
+   إعداد Supabase بأمان
 ===================================================== */
 
 const SUPABASE_URL =
@@ -837,6 +840,48 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_0QcrQbx1u92isBbfYS6zTg_zigmJKNl";
+
+
+/* =====================================================
+   فحص مكتبة Supabase قبل إنشاء الاتصال
+===================================================== */
+
+function setConnectionStatus(message,type=""){
+
+  const box =
+    document.getElementById(
+      "connectionStatus"
+    );
+
+  if(!box)
+    return;
+
+  box.textContent =
+    message;
+
+  box.className =
+    "connection " + type;
+
+}
+
+
+if(
+  !window.supabase ||
+  typeof window.supabase.createClient !== "function"
+){
+
+  setConnectionStatus(
+    "تعذر تحميل مكتبة الاتصال بالنظام المركزي.\n" +
+    "تأكد من اتصال الإنترنت ثم أعد تحميل الصفحة.",
+    "error"
+  );
+
+  throw new Error(
+    "Supabase JS library was not loaded."
+  );
+
+}
+
 
 const supabase =
   window.supabase.createClient(
@@ -865,7 +910,7 @@ let realtimeChannel = null;
 
 
 /* =====================================================
-   التقاط أخطاء JavaScript
+   أخطاء JavaScript
 ===================================================== */
 
 window.addEventListener(
@@ -883,7 +928,7 @@ window.addEventListener(
       "خطأ JavaScript غير معروف";
 
     setConnectionStatus(
-      "حدث خطأ في الصفحة: " + message,
+      "حدث خطأ في الصفحة:\n" + message,
       "error"
     );
 
@@ -902,38 +947,19 @@ window.addEventListener(
 
     const message =
       event?.reason?.message ||
-      String(event.reason || "خطأ غير معروف");
+      String(
+        event.reason ||
+        "خطأ غير معروف"
+      );
 
     setConnectionStatus(
-      "حدث خطأ أثناء تنفيذ عملية بالنظام المركزي: " + message,
+      "حدث خطأ أثناء الاتصال بالنظام المركزي:\n" +
+      message,
       "error"
     );
 
   }
 );
-
-
-/* =====================================================
-   الحالة
-===================================================== */
-
-function setConnectionStatus(message,type=""){
-
-  const box =
-    document.getElementById(
-      "connectionStatus"
-    );
-
-  if(!box)
-    return;
-
-  box.textContent =
-    message;
-
-  box.className =
-    "connection " + type;
-
-}
 
 
 /* =====================================================
@@ -953,7 +979,7 @@ function escapeHtml(value){
 
 
 /* =====================================================
-   تحويل الحالة
+   الحالات
 ===================================================== */
 
 function dbStatusFromArabic(status){
@@ -988,14 +1014,43 @@ function arabicStatus(status){
 
 async function loadSession(){
 
+  setConnectionStatus(
+    "جاري التحقق من تسجيل الدخول..."
+  );
+
+
+  const sessionPromise =
+    supabase.auth.getSession();
+
+
+  const timeoutPromise =
+    new Promise(
+      (_,reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                "انتهت مهلة الاتصال بخدمة تسجيل الدخول."
+              )
+            ),
+          15000
+        )
+    );
+
+
   const {
     data,
     error
   } =
-    await supabase.auth.getSession();
+    await Promise.race([
+      sessionPromise,
+      timeoutPromise
+    ]);
+
 
   if(error)
     throw error;
+
 
   currentSession =
     data?.session || null;
@@ -1019,13 +1074,14 @@ async function loadSession(){
 
   }
 
+
   return true;
 
 }
 
 
 /* =====================================================
-   فحص الصلاحيات
+   الصلاحيات
 ===================================================== */
 
 async function checkPermissions(){
@@ -1109,10 +1165,12 @@ async function loadProducts(){
 
   products = [];
 
+
   const select =
     document.getElementById(
       "product"
     );
+
 
   select.innerHTML =
     `<option value="">جاري تحميل المنتجات...</option>`;
@@ -1161,8 +1219,10 @@ async function loadProducts(){
         "option"
       );
 
+
     option.value =
       product.id;
+
 
     option.textContent =
       product.name ||
@@ -1171,9 +1231,11 @@ async function loadProducts(){
       product.product_code ||
       "منتج";
 
+
     option.dataset.unit =
       product.unit ||
       "";
+
 
     select.appendChild(
       option
@@ -1192,10 +1254,12 @@ async function loadWarehouses(){
 
   warehouses = [];
 
+
   const select =
     document.getElementById(
       "storageLocation"
     );
+
 
   select.innerHTML =
     `<option value="">جاري تحميل المخازن...</option>`;
@@ -1221,6 +1285,7 @@ async function loadWarehouses(){
     select.innerHTML =
       `<option value="">تعذر تحميل المخازن</option>`;
 
+
     throw new Error(
       "تعذر تحميل المخازن: " +
       error.message
@@ -1244,8 +1309,10 @@ async function loadWarehouses(){
         "option"
       );
 
+
     option.value =
       warehouse.id;
+
 
     option.textContent =
       warehouse.name ||
@@ -1253,6 +1320,7 @@ async function loadWarehouses(){
       warehouse.code ||
       warehouse.warehouse_code ||
       "مخزن";
+
 
     select.appendChild(
       option
@@ -1276,8 +1344,10 @@ function getProductName(productId){
         String(productId)
     );
 
+
   if(!product)
     return "";
+
 
   return (
     product.name ||
@@ -1299,8 +1369,10 @@ function getWarehouseName(warehouseId){
         String(warehouseId)
     );
 
+
   if(!warehouse)
     return "";
+
 
   return (
     warehouse.name ||
@@ -1387,7 +1459,7 @@ async function generateProductionCode(){
 
 
 /* =====================================================
-   كود حركة المخزون
+   كود المخزون
 ===================================================== */
 
 async function generateInventoryCode(){
@@ -1468,11 +1540,13 @@ function setNow(){
   const now =
     new Date();
 
+
   now.setMinutes(
     now.getMinutes()
     -
     now.getTimezoneOffset()
   );
+
 
   document.getElementById(
     "productionDate"
@@ -1601,8 +1675,10 @@ function removeMaterialRow(button){
       ".material-row"
     );
 
+
   if(row)
     row.remove();
+
 
   ensureMaterialMessage();
 
@@ -1638,13 +1714,18 @@ function ensureMaterialMessage(){
           "div"
         );
 
+
       message.className =
         "no-materials";
+
 
       message.textContent =
         "لم تتم إضافة خامات بعد — اضغط «+ إضافة خامة»";
 
-      container.appendChild(message);
+
+      container.appendChild(
+        message
+      );
 
     }
 
@@ -1863,6 +1944,7 @@ function closeForm(){
     "formBox"
   ).classList.remove("active");
 
+
   editingId = null;
 
 }
@@ -1950,7 +2032,7 @@ function updateLive(){
 
 
 /* =====================================================
-   البيانات الإضافية
+   بيانات العملية
 ===================================================== */
 
 function buildMeta(item){
@@ -2048,7 +2130,7 @@ function parseMeta(notes){
 
 
 /* =====================================================
-   سجل التغيير
+   سجل التغييرات
 ===================================================== */
 
 async function writeHistory({
@@ -2062,6 +2144,7 @@ async function writeHistory({
 
   if(!currentUser)
     return;
+
 
   if(operation === "create")
     return;
@@ -2110,7 +2193,7 @@ async function writeHistory({
 
 
 /* =====================================================
-   Audit Log
+   Audit
 ===================================================== */
 
 async function writeAudit({
@@ -2172,7 +2255,7 @@ async function writeAudit({
 
 
 /* =====================================================
-   حفظ العملية في النظام المركزي
+   حفظ الإنتاج
 ===================================================== */
 
 async function saveCentralProduction(item){
@@ -2236,10 +2319,6 @@ async function saveCentralProduction(item){
   };
 
 
-  /* =========================
-     إضافة
-  ========================= */
-
   if(!editingId){
 
     const {
@@ -2302,10 +2381,6 @@ async function saveCentralProduction(item){
 
   }
 
-
-  /* =========================
-     تعديل Admin فقط
-  ========================= */
 
   if(!isAdminUser){
 
@@ -2403,7 +2478,7 @@ async function saveCentralProduction(item){
 
 
 /* =====================================================
-   حركات المخزون
+   حركة المخزون
 ===================================================== */
 
 async function createInventoryMovements(
@@ -2694,7 +2769,7 @@ async function loadProductions(){
 
 
 /* =====================================================
-   Realtime — النظام المركزي
+   Realtime
 ===================================================== */
 
 function startCentralRealtime(){
@@ -2729,10 +2804,6 @@ function startCentralRealtime(){
       )
 
 
-      /* =========================================
-         production_batches
-      ========================================= */
-
       .on(
         "postgres_changes",
         {
@@ -2741,10 +2812,6 @@ function startCentralRealtime(){
           table:"production_batches"
         },
         async () => {
-
-          console.log(
-            "Realtime: production_batches changed"
-          );
 
           try{
 
@@ -2762,20 +2829,11 @@ function startCentralRealtime(){
               error
             );
 
-            setConnectionStatus(
-              "تم اكتشاف تحديث في الإنتاج، لكن تعذر إعادة تحميل البيانات.",
-              "error"
-            );
-
           }
 
         }
       )
 
-
-      /* =========================================
-         production_inputs
-      ========================================= */
 
       .on(
         "postgres_changes",
@@ -2785,10 +2843,6 @@ function startCentralRealtime(){
           table:"production_inputs"
         },
         async () => {
-
-          console.log(
-            "Realtime: production_inputs changed"
-          );
 
           try{
 
@@ -2807,10 +2861,6 @@ function startCentralRealtime(){
       )
 
 
-      /* =========================================
-         products
-      ========================================= */
-
       .on(
         "postgres_changes",
         {
@@ -2819,10 +2869,6 @@ function startCentralRealtime(){
           table:"products"
         },
         async () => {
-
-          console.log(
-            "Realtime: products changed"
-          );
 
           try{
 
@@ -2843,10 +2889,6 @@ function startCentralRealtime(){
       )
 
 
-      /* =========================================
-         warehouses
-      ========================================= */
-
       .on(
         "postgres_changes",
         {
@@ -2855,10 +2897,6 @@ function startCentralRealtime(){
           table:"warehouses"
         },
         async () => {
-
-          console.log(
-            "Realtime: warehouses changed"
-          );
 
           try{
 
@@ -2879,10 +2917,6 @@ function startCentralRealtime(){
       )
 
 
-      /* =========================================
-         inventory_movements
-      ========================================= */
-
       .on(
         "postgres_changes",
         {
@@ -2893,37 +2927,8 @@ function startCentralRealtime(){
         async () => {
 
           console.log(
-            "Realtime: inventory_movements changed"
+            "Central inventory movement synchronized."
           );
-
-          try{
-
-            if(
-              document.getElementById(
-                "connectionStatus"
-              )
-            ){
-
-              /*
-                لا نعيد تحميل الإنتاج هنا
-                لأن حركة المخزون لا تغيّر
-                سجل الإنتاج نفسه.
-              */
-
-              console.log(
-                "Central inventory movement synchronized."
-              );
-
-            }
-
-          }catch(error){
-
-            console.error(
-              "Realtime inventory:",
-              error
-            );
-
-          }
 
         }
       )
@@ -2957,7 +2962,7 @@ function startCentralRealtime(){
           ){
 
             setConnectionStatus(
-              "قاعدة البيانات متصلة، لكن المزامنة اللحظية بها مشكلة. سيتم الاعتماد على التحميل العادي.",
+              "قاعدة البيانات متصلة، لكن المزامنة اللحظية بها مشكلة.",
               "error"
             );
 
@@ -2969,19 +2974,8 @@ function startCentralRealtime(){
           ){
 
             setConnectionStatus(
-              "انتهت مهلة المزامنة اللحظية. جاري محاولة الاتصال مرة أخرى...",
+              "انتهت مهلة المزامنة اللحظية. جاري المحاولة مرة أخرى...",
               "error"
-            );
-
-          }
-
-
-          if(
-            status === "CLOSED"
-          ){
-
-            console.warn(
-              "Central realtime channel closed."
             );
 
           }
@@ -3402,7 +3396,7 @@ async function deleteItem(id){
 
 
 /* =====================================================
-   حالة العملية
+   الحالة
 ===================================================== */
 
 function badge(status){
@@ -3929,7 +3923,7 @@ document.getElementById(
       }
 
 
-      const code =
+      let code =
         document.getElementById(
           "productionCode"
         ).value;
@@ -4035,10 +4029,8 @@ document.getElementById(
       if(!editingId){
 
         if(
-          !item.code ||
-          item.code.includes(
-            "جاري"
-          )
+          !code ||
+          code.includes("جاري")
         ){
 
           item.code =
@@ -4111,7 +4103,7 @@ document.getElementById(
 
 
 /* =====================================================
-   تحديد حالة الجاهزية
+   جاهزية الصفحة
 ===================================================== */
 
 function updatePageReadiness(){
@@ -4350,12 +4342,6 @@ async function init(){
     updatePageReadiness();
 
 
-    /*
-      تشغيل المزامنة اللحظية
-      بعد نجاح تسجيل الدخول
-      وتحميل البيانات الأساسية.
-    */
-
     startCentralRealtime();
 
 
@@ -4368,7 +4354,7 @@ async function init(){
 
 
     setConnectionStatus(
-      "حدث خطأ أثناء تشغيل دفتر الإنتاج: " +
+      "حدث خطأ أثناء تشغيل دفتر الإنتاج:\n" +
       (
         error?.message ||
         "خطأ غير معروف"
@@ -4410,7 +4396,7 @@ async function init(){
 
 
 /* =====================================================
-   تنظيف قناة Realtime عند مغادرة الصفحة
+   تنظيف Realtime
 ===================================================== */
 
 window.addEventListener(
@@ -4433,7 +4419,7 @@ window.addEventListener(
 
 
 /* =====================================================
-   بدء التشغيل
+   البداية
 ===================================================== */
 
 loadMaterials([]);
