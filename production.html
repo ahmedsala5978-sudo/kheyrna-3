@@ -6,9 +6,6 @@
 
 <title>خيرنا | الإنتاج اليومي</title>
 
-<!-- =====================================================
-     تحميل Supabase من مصدر أساسي
-====================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -57,6 +54,94 @@ body{
   font-size:14px;
   line-height:1.7;
 }
+
+/* ===============================
+   تسجيل الدخول
+================================ */
+
+.auth-box{
+  background:#fff;
+  border-radius:16px;
+  padding:25px;
+  margin-bottom:15px;
+  box-shadow:0 3px 15px rgba(0,0,0,.06);
+  text-align:center;
+  display:none;
+}
+
+.auth-box h2{
+  color:#176b45;
+  margin-bottom:10px;
+}
+
+.auth-box p{
+  color:#666;
+  margin-bottom:18px;
+  line-height:1.8;
+}
+
+.google-btn{
+  background:#176b45;
+  color:#fff;
+  width:100%;
+  max-width:400px;
+  padding:14px 20px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.google-btn:hover{
+  background:#125638;
+}
+
+.user-box{
+  margin-top:12px;
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.user-info{
+  font-size:13px;
+  color:#fff;
+  opacity:.95;
+}
+
+.logout-btn{
+  background:#fff;
+  color:#176b45;
+  padding:8px 14px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+/* ===============================
+   Debug
+================================ */
+
+.debug-box{
+  display:none;
+  background:#111;
+  color:#d7ffd7;
+  border-radius:10px;
+  padding:12px;
+  margin-top:10px;
+  font-family:monospace;
+  direction:ltr;
+  text-align:left;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:12px;
+  max-height:220px;
+  overflow:auto;
+}
+
+/* ===============================
+   Cards
+================================ */
 
 .card{
   background:#fff;
@@ -274,24 +359,6 @@ tr:nth-child(even){
   color:#164b8a;
 }
 
-/* شاشة التشخيص */
-.debug-box{
-  display:none;
-  background:#111;
-  color:#d7ffd7;
-  border-radius:10px;
-  padding:12px;
-  margin-top:10px;
-  font-family:monospace;
-  direction:ltr;
-  text-align:left;
-  white-space:pre-wrap;
-  word-break:break-word;
-  font-size:12px;
-  max-height:220px;
-  overflow:auto;
-}
-
 @media(max-width:900px){
 
   .grid{
@@ -329,6 +396,15 @@ tr:nth-child(even){
   .material-row{
     grid-template-columns:1fr;
   }
+
+  .user-box{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .logout-btn{
+    width:100%;
+  }
 }
 </style>
 </head>
@@ -336,6 +412,10 @@ tr:nth-child(even){
 <body>
 
 <div class="container">
+
+  <!-- ===============================
+       رأس الصفحة
+  ================================= -->
 
   <div class="header">
 
@@ -347,15 +427,58 @@ tr:nth-child(even){
       جاري تشغيل النظام المركزي...
     </div>
 
+    <div class="user-box" id="userBox">
+
+      <div class="user-info" id="userInfo">
+        تم تسجيل الدخول
+      </div>
+
+      <button
+        type="button"
+        class="logout-btn"
+        onclick="logoutUser()">
+        تسجيل الخروج
+      </button>
+
+    </div>
+
     <div class="debug-box" id="debugBox"></div>
 
   </div>
 
+
+  <!-- ===============================
+       تسجيل الدخول
+  ================================= -->
+
+  <div class="auth-box" id="authBox">
+
+    <h2>تسجيل الدخول إلى خيرنا</h2>
+
+    <p>
+      يجب تسجيل الدخول أولاً حتى تتمكن من استخدام دفتر الإنتاج
+      والاتصال بالنظام المركزي.
+    </p>
+
+    <button
+      type="button"
+      class="google-btn"
+      id="googleLoginBtn"
+      onclick="loginWithGoogle()">
+
+      🔐 تسجيل الدخول باستخدام Google
+
+    </button>
+
+  </div>
+
+
   <div id="notice" class="notice"></div>
 
-  <!-- =====================================================
+
+  <!-- ===============================
        إضافة عملية إنتاج
-  ====================================================== -->
+  ================================= -->
 
   <div class="card">
 
@@ -465,9 +588,10 @@ tr:nth-child(even){
 
   </div>
 
-  <!-- =====================================================
+
+  <!-- ===============================
        مواد الإنتاج
-  ====================================================== -->
+  ================================= -->
 
   <div class="card">
 
@@ -481,7 +605,9 @@ tr:nth-child(even){
         type="button"
         class="btn-secondary"
         onclick="addMaterialRow()">
+
         + إضافة مادة
+
       </button>
 
     </div>
@@ -490,9 +616,10 @@ tr:nth-child(even){
 
   </div>
 
-  <!-- =====================================================
-       مؤشرات العملية
-  ====================================================== -->
+
+  <!-- ===============================
+       المؤشرات
+  ================================= -->
 
   <div class="card">
 
@@ -529,23 +656,28 @@ tr:nth-child(even){
         class="btn-primary"
         disabled
         onclick="saveProduction()">
+
         حفظ عملية الإنتاج
+
       </button>
 
       <button
         type="button"
         class="btn-secondary"
         onclick="resetForm()">
+
         إلغاء / مسح
+
       </button>
 
     </div>
 
   </div>
 
-  <!-- =====================================================
+
+  <!-- ===============================
        سجل الإنتاج
-  ====================================================== -->
+  ================================= -->
 
   <div class="card">
 
@@ -556,6 +688,7 @@ tr:nth-child(even){
       <table>
 
         <thead>
+
           <tr>
             <th>كود الإنتاج</th>
             <th>التاريخ</th>
@@ -568,13 +701,14 @@ tr:nth-child(even){
             <th>المسؤول</th>
             <th>الإجراء</th>
           </tr>
+
         </thead>
 
         <tbody id="productionTable">
 
           <tr>
             <td colspan="10" class="empty">
-              جاري تحميل سجل الإنتاج...
+              يجب تسجيل الدخول لتحميل سجل الإنتاج
             </td>
           </tr>
 
@@ -587,6 +721,7 @@ tr:nth-child(even){
   </div>
 
 </div>
+
 
 <script>
 
@@ -621,12 +756,14 @@ let isAdminUser = false;
 
 let realtimeChannel = null;
 
+let pageInitialized = false;
+
 
 /* =========================================================
    أدوات التشخيص
 ========================================================= */
 
-function debug(message, data){
+function debug(message,data){
 
   console.log(
     "[Khayrna]",
@@ -637,9 +774,11 @@ function debug(message, data){
   const box =
     document.getElementById("debugBox");
 
-  if(!box) return;
+  if(!box)
+    return;
 
-  box.style.display = "block";
+  box.style.display =
+    "block";
 
   let line =
     "[" +
@@ -672,6 +811,7 @@ function debug(message, data){
   box.textContent +=
     line +
     "\n\n";
+
 }
 
 
@@ -692,20 +832,17 @@ function setConnectionStatus(message){
   debug(
     "STATUS: " + message
   );
+
 }
 
 
-function showNotice(
-  message,
-  type="error"
-){
+function showNotice(message,type="error"){
 
   const el =
-    document.getElementById(
-      "notice"
-    );
+    document.getElementById("notice");
 
-  if(!el) return;
+  if(!el)
+    return;
 
   el.textContent =
     message;
@@ -725,6 +862,7 @@ function showNotice(
     },
     7000
   );
+
 }
 
 
@@ -745,6 +883,7 @@ function escapeHtml(value){
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
 }
 
 
@@ -759,6 +898,7 @@ function formatNumber(value){
       maximumFractionDigits:3
     }
   );
+
 }
 
 
@@ -774,6 +914,7 @@ function getStatusText(status){
     return "ملغاة";
 
   return status || "";
+
 }
 
 
@@ -789,11 +930,12 @@ function getStatusClass(status){
     return "badge-cancelled";
 
   return "";
+
 }
 
 
 /* =========================================================
-   التعامل مع الأخطاء العامة
+   أخطاء عامة
 ========================================================= */
 
 window.addEventListener(
@@ -824,6 +966,311 @@ window.addEventListener(
 
 
 /* =========================================================
+   رابط العودة بعد Google
+========================================================= */
+
+function getRedirectUrl(){
+
+  return (
+    window.location.origin +
+    window.location.pathname
+  );
+
+}
+
+
+/* =========================================================
+   إظهار واجهة تسجيل الدخول
+========================================================= */
+
+function showLoginScreen(){
+
+  const authBox =
+    document.getElementById(
+      "authBox"
+    );
+
+  const userBox =
+    document.getElementById(
+      "userBox"
+    );
+
+  if(authBox){
+
+    authBox.style.display =
+      "block";
+
+  }
+
+  if(userBox){
+
+    userBox.style.display =
+      "none";
+
+  }
+
+  const saveButton =
+    document.getElementById(
+      "saveBtn"
+    );
+
+  if(saveButton){
+
+    saveButton.disabled =
+      true;
+
+  }
+
+  const table =
+    document.getElementById(
+      "productionTable"
+    );
+
+  if(table){
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="10" class="empty">
+          سجّل الدخول أولاً لعرض سجل الإنتاج
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+function showLoggedInScreen(){
+
+  const authBox =
+    document.getElementById(
+      "authBox"
+    );
+
+  const userBox =
+    document.getElementById(
+      "userBox"
+    );
+
+  if(authBox){
+
+    authBox.style.display =
+      "none";
+
+  }
+
+  if(userBox){
+
+    userBox.style.display =
+      "flex";
+
+  }
+
+  const userInfo =
+    document.getElementById(
+      "userInfo"
+    );
+
+  if(userInfo){
+
+    userInfo.textContent =
+      "المستخدم: " +
+      (
+        currentUser?.email ||
+        "مستخدم مسجل"
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   تسجيل الدخول بواسطة Google
+========================================================= */
+
+async function loginWithGoogle(){
+
+  try{
+
+    if(!supabaseClient){
+
+      throw new Error(
+        "النظام المركزي لم يكتمل تشغيله بعد."
+      );
+
+    }
+
+    const button =
+      document.getElementById(
+        "googleLoginBtn"
+      );
+
+    if(button){
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "جاري فتح تسجيل الدخول...";
+    }
+
+
+    debug(
+      "بدء تسجيل الدخول بواسطة Google."
+    );
+
+
+    const redirectTo =
+      getRedirectUrl();
+
+
+    debug(
+      "Google redirect URL",
+      redirectTo
+    );
+
+
+    const result =
+      await supabaseClient.auth.signInWithOAuth({
+
+        provider:"google",
+
+        options:{
+          redirectTo:redirectTo
+        }
+
+      });
+
+
+    debug(
+      "نتيجة Google Login",
+      result
+    );
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+  }catch(error){
+
+    debug(
+      "Google Login Error",
+      error
+    );
+
+
+    showNotice(
+      "تعذر فتح تسجيل الدخول بواسطة Google: " +
+      (
+        error?.message ||
+        String(error)
+      ),
+      "error"
+    );
+
+
+    const button =
+      document.getElementById(
+        "googleLoginBtn"
+      );
+
+    if(button){
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "🔐 تسجيل الدخول باستخدام Google";
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   تسجيل الخروج
+========================================================= */
+
+async function logoutUser(){
+
+  try{
+
+    if(!supabaseClient)
+      return;
+
+
+    const result =
+      await supabaseClient.auth.signOut();
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    currentSession =
+      null;
+
+    currentUser =
+      null;
+
+    canCreateProduction =
+      false;
+
+    isAdminUser =
+      false;
+
+    pageInitialized =
+      false;
+
+
+    showLoginScreen();
+
+
+    setConnectionStatus(
+      "تم تسجيل الخروج — سجّل الدخول للمتابعة."
+    );
+
+
+    showNotice(
+      "تم تسجيل الخروج بنجاح.",
+      "success"
+    );
+
+
+  }catch(error){
+
+    debug(
+      "Logout Error",
+      error
+    );
+
+
+    showNotice(
+      "تعذر تسجيل الخروج: " +
+      (
+        error?.message ||
+        String(error)
+      ),
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
    تحميل Supabase
 ========================================================= */
 
@@ -834,15 +1281,13 @@ async function ensureSupabaseLoaded(){
   );
 
 
-  /* المصدر الأساسي */
-
   if(
     window.supabase &&
     typeof window.supabase.createClient === "function"
   ){
 
     debug(
-      "Supabase library موجودة بالفعل."
+      "موجود بالفعل Supabase library"
     );
 
     return true;
@@ -851,7 +1296,7 @@ async function ensureSupabaseLoaded(){
 
 
   debug(
-    "Supabase library غير موجودة، سيتم تحميل البديل."
+    "Supabase library غير موجودة — تحميل البديل."
   );
 
 
@@ -917,10 +1362,6 @@ async function ensureSupabaseLoaded(){
 
           }else{
 
-            debug(
-              "تم تحميل الملف ولكن createClient غير موجود."
-            );
-
             resolve(false);
 
           }
@@ -940,7 +1381,7 @@ async function ensureSupabaseLoaded(){
             true;
 
           debug(
-            "فشل تحميل Supabase من المصدر الاحتياطي."
+            "فشل تحميل Supabase."
           );
 
           resolve(false);
@@ -952,6 +1393,7 @@ async function ensureSupabaseLoaded(){
 
     }
   );
+
 }
 
 
@@ -968,19 +1410,7 @@ async function createSupabaseConnection(){
   if(!loaded){
 
     throw new Error(
-      "لم يتم تحميل مكتبة Supabase. تأكد من اتصال الإنترنت."
-    );
-
-  }
-
-
-  if(
-    !window.supabase ||
-    typeof window.supabase.createClient !== "function"
-  ){
-
-    throw new Error(
-      "مكتبة Supabase غير جاهزة."
+      "لم يتم تحميل مكتبة Supabase."
     );
 
   }
@@ -1001,16 +1431,17 @@ async function createSupabaseConnection(){
 
 
   debug(
-    "تم إنشاء Supabase Client بنجاح."
+    "تم انشاء بنجاح supabase"
   );
 
 
   return supabaseClient;
+
 }
 
 
 /* =========================================================
-   فحص الاتصال الحقيقي
+   اختبار الاتصال
 ========================================================= */
 
 async function testSupabaseConnection(){
@@ -1033,25 +1464,40 @@ async function testSupabaseConnection(){
     await supabaseClient.auth.getSession();
 
 
-  debug(
-    "نتيجة getSession",
-    result
-  );
-
-
   if(result.error){
+
+    debug(
+      "getSession ERROR",
+      result.error
+    );
 
     throw result.error;
 
   }
 
 
+  if(result.data?.session){
+
+    debug(
+      "getSession: توجد جلسة مستخدم ✓"
+    );
+
+  }else{
+
+    debug(
+      "getSession: لا توجد جلسة حالياً — هذا ليس خطأ."
+    );
+
+  }
+
+
   return result;
+
 }
 
 
 /* =========================================================
-   جلسة المستخدم
+   تحميل الجلسة
 ========================================================= */
 
 async function loadSession(){
@@ -1067,22 +1513,26 @@ async function loadSession(){
       await supabaseClient.auth.getSession();
 
 
-    const data =
-      result.data;
+    debug(
+      "getSession result",
+      result
+    );
 
-    const error =
-      result.error;
 
+    if(result.error){
 
-    if(error){
+      debug(
+        "getSession session error",
+        result.error
+      );
 
-      throw error;
+      throw result.error;
 
     }
 
 
     currentSession =
-      data?.session ||
+      result.data?.session ||
       null;
 
 
@@ -1091,21 +1541,23 @@ async function loadSession(){
       null;
 
 
+    /* ================================================
+       لا توجد جلسة
+       لا نعتبرها خطأ
+    ================================================= */
+
     if(!currentUser){
 
-      setConnectionStatus(
-        "لم يتم تسجيل الدخول — سجّل الدخول أولاً."
+      debug(
+        "لا توجد جلسة مستخدم — مطلوب تسجيل الدخول."
       );
 
 
-      document.getElementById(
-        "saveBtn"
-      ).disabled =
-        true;
+      showLoginScreen();
 
 
-      debug(
-        "لا توجد جلسة مستخدم."
+      setConnectionStatus(
+        "لم يتم تسجيل الدخول — سجّل الدخول أولاً."
       );
 
 
@@ -1114,17 +1566,24 @@ async function loadSession(){
     }
 
 
-    setConnectionStatus(
-      "تم تسجيل الدخول ✓"
-    );
-
+    /* ================================================
+       توجد جلسة
+    ================================================= */
 
     debug(
-      "المستخدم الحالي",
+      "تم العثور على جلسة مستخدم ✓",
       {
         id:currentUser.id,
         email:currentUser.email
       }
+    );
+
+
+    showLoggedInScreen();
+
+
+    setConnectionStatus(
+      "تم تسجيل الدخول ✓"
     );
 
 
@@ -1137,6 +1596,9 @@ async function loadSession(){
       "Session Error",
       error
     );
+
+
+    showLoginScreen();
 
 
     setConnectionStatus(
@@ -1155,12 +1617,14 @@ async function loadSession(){
 
 
     return false;
+
   }
+
 }
 
 
 /* =========================================================
-   مراقبة Auth
+   Auth Listener
 ========================================================= */
 
 function startAuthListener(){
@@ -1190,20 +1654,38 @@ function startAuthListener(){
 
       if(currentUser){
 
-        setConnectionStatus(
-          "تم الاتصال بالنظام المركزي ✓"
+        debug(
+          "Auth Listener: المستخدم مسجل الدخول."
         );
+
+
+        showLoggedInScreen();
+
+
+        setConnectionStatus(
+          "تم تسجيل الدخول ✓"
+        );
+
 
       }else{
 
+        debug(
+          "Auth Listener: لا توجد جلسة."
+        );
+
+
+        showLoginScreen();
+
+
         setConnectionStatus(
-          "لم يتم تسجيل الدخول"
+          "لم يتم تسجيل الدخول — سجّل الدخول أولاً."
         );
 
       }
 
     }
   );
+
 }
 
 
@@ -1218,6 +1700,9 @@ async function checkPermissions(){
     canCreateProduction =
       false;
 
+    isAdminUser =
+      false;
+
     return false;
 
   }
@@ -1227,11 +1712,6 @@ async function checkPermissions(){
 
     setConnectionStatus(
       "جاري فحص صلاحيات المستخدم..."
-    );
-
-
-    debug(
-      "بدء فحص صلاحيات المستخدم."
     );
 
 
@@ -1312,9 +1792,14 @@ async function checkPermissions(){
     canCreateProduction =
       false;
 
+    isAdminUser =
+      false;
+
 
     return false;
+
   }
+
 }
 
 
@@ -1412,7 +1897,9 @@ async function loadProducts(){
       ),
       "error"
     );
+
   }
+
 }
 
 
@@ -1510,12 +1997,14 @@ async function loadWarehouses(){
       ),
       "error"
     );
+
   }
+
 }
 
 
 /* =========================================================
-   توليد كود الإنتاج
+   كود الإنتاج
 ========================================================= */
 
 async function generateProductionCode(){
@@ -1605,12 +2094,14 @@ async function generateProductionCode(){
         .toString()
         .slice(-4)
     );
+
   }
+
 }
 
 
 /* =========================================================
-   توليد كود المخزون
+   كود المخزون
 ========================================================= */
 
 async function generateInventoryCode(){
@@ -1700,7 +2191,9 @@ async function generateInventoryCode(){
         .toString()
         .slice(-4)
     );
+
   }
+
 }
 
 
@@ -1779,6 +2272,7 @@ function addMaterialRow(data={}){
 
       }
     );
+
 }
 
 
@@ -1812,6 +2306,7 @@ function loadMaterials(materials=[]){
 
     }
   );
+
 }
 
 
@@ -1864,10 +2359,15 @@ function getMaterials(){
       ){
 
         materials.push({
+
           name:name,
+
           quantity:quantity,
+
           unit:unit,
+
           code:code
+
         });
 
       }
@@ -1877,6 +2377,7 @@ function getMaterials(){
 
 
   return materials;
+
 }
 
 
@@ -1954,6 +2455,7 @@ function updateLive(){
     "liveStatus"
   ).textContent =
     getStatusText(status);
+
 }
 
 
@@ -1965,17 +2467,15 @@ async function openForm(){
 
   if(!currentUser){
 
-    showNotice(
-      "يجب تسجيل الدخول أولاً.",
-      "error"
-    );
-
     return;
 
   }
 
 
-  if(!canCreateProduction){
+  if(
+    !canCreateProduction &&
+    !isAdminUser
+  ){
 
     debug(
       "المستخدم لا يملك production.create."
@@ -2037,6 +2537,7 @@ async function openForm(){
     "saveBtn"
   ).disabled =
     false;
+
 }
 
 
@@ -2147,6 +2648,7 @@ function getFormData(){
       getMaterials()
 
   };
+
 }
 
 
@@ -2208,6 +2710,7 @@ async function writeHistory(
     );
 
   }
+
 }
 
 
@@ -2261,6 +2764,7 @@ async function writeAudit(
     );
 
   }
+
 }
 
 
@@ -2363,7 +2867,9 @@ async function saveCentralProduction(
   };
 
 
-  /* تعديل */
+  /* ===============================
+     تعديل
+  ================================= */
 
   if(editingId){
 
@@ -2380,7 +2886,10 @@ async function saveCentralProduction(
       await supabaseClient
         .from("production_batches")
         .select("*")
-        .eq("id",editingId)
+        .eq(
+          "id",
+          editingId
+        )
         .single();
 
 
@@ -2395,7 +2904,10 @@ async function saveCentralProduction(
       await supabaseClient
         .from("production_batches")
         .update(payload)
-        .eq("id",editingId)
+        .eq(
+          "id",
+          editingId
+        )
         .select()
         .single();
 
@@ -2431,7 +2943,9 @@ async function saveCentralProduction(
   }
 
 
-  /* إضافة */
+  /* ===============================
+     إضافة
+  ================================= */
 
   const insertResult =
     await supabaseClient
@@ -2467,8 +2981,6 @@ async function saveCentralProduction(
   );
 
 
-  /* ربط المخزون */
-
   if(
     formData.status ===
     "completed"
@@ -2483,6 +2995,7 @@ async function saveCentralProduction(
 
 
   return insertResult.data;
+
 }
 
 
@@ -2618,6 +3131,7 @@ async function createInventoryMovements(
     );
 
   }
+
 }
 
 
@@ -2708,7 +3222,9 @@ async function loadProductions(){
       ),
       "error"
     );
+
   }
+
 }
 
 
@@ -2883,11 +3399,13 @@ function renderProductions(){
               </td>
 
             </tr>
+
           `;
 
         }
       )
       .join("");
+
 }
 
 
@@ -3077,6 +3595,7 @@ async function editItem(id){
     top:0,
     behavior:"smooth"
   });
+
 }
 
 
@@ -3210,6 +3729,7 @@ async function deleteItem(id){
     );
 
   }
+
 }
 
 
@@ -3375,6 +3895,7 @@ async function saveProduction(){
       );
 
   }
+
 }
 
 
@@ -3492,7 +4013,10 @@ async function resetForm(){
 
   if(
     currentUser &&
-    canCreateProduction
+    (
+      canCreateProduction ||
+      isAdminUser
+    )
   ){
 
     await openForm();
@@ -3572,7 +4096,11 @@ function startRealtime(){
           },
           async function(){
 
-            await loadProductions();
+            if(currentUser){
+
+              await loadProductions();
+
+            }
 
           }
         )
@@ -3587,7 +4115,11 @@ function startRealtime(){
           },
           async function(){
 
-            await loadProducts();
+            if(currentUser){
+
+              await loadProducts();
+
+            }
 
           }
         )
@@ -3602,7 +4134,11 @@ function startRealtime(){
           },
           async function(){
 
-            await loadWarehouses();
+            if(currentUser){
+
+              await loadWarehouses();
+
+            }
 
           }
         )
@@ -3628,6 +4164,7 @@ function startRealtime(){
     );
 
   }
+
 }
 
 
@@ -3676,7 +4213,7 @@ async function init(){
   try{
 
     debug(
-      "بدء تشغيل صفحة الإنتاج."
+      "بدء تشغيل صفحة الإنتاج"
     );
 
 
@@ -3685,50 +4222,62 @@ async function init(){
     );
 
 
-    /* 1 */
+    /* 1 - إنشاء Supabase */
 
     await createSupabaseConnection();
 
 
-    /* 2 */
+    /* 2 - اختبار Session */
 
     await testSupabaseConnection();
 
 
-    /* 3 */
+    /* 3 - مراقبة Auth */
 
     startAuthListener();
 
 
-    /* 4 */
+    /* 4 - تحميل Session */
 
     const loggedIn =
       await loadSession();
 
 
+    /* ================================================
+       لو مفيش Login
+       نتوقف هنا بدون Error
+    ================================================= */
+
     if(!loggedIn){
 
       updatePageReadiness();
+
+      debug(
+        "تم إيقاف تحميل بيانات الإنتاج مؤقتاً حتى تسجيل الدخول."
+      );
 
       return;
 
     }
 
 
-    /* 5 */
+    /* 5 - الصلاحيات */
 
     await checkPermissions();
 
 
-    /* 6 */
+    /* 6 - البيانات الأساسية */
 
     await Promise.all([
+
       loadProducts(),
+
       loadWarehouses()
+
     ]);
 
 
-    /* 7 */
+    /* 7 - تجهيز النموذج */
 
     if(
       canCreateProduction ||
@@ -3740,19 +4289,23 @@ async function init(){
     }
 
 
-    /* 8 */
+    /* 8 - سجل الإنتاج */
 
     await loadProductions();
 
 
-    /* 9 */
+    /* 9 - الأزرار */
 
     updatePageReadiness();
 
 
-    /* 10 */
+    /* 10 - Realtime */
 
     startRealtime();
+
+
+    pageInitialized =
+      true;
 
 
     setConnectionStatus(
@@ -3761,7 +4314,7 @@ async function init(){
 
 
     debug(
-      "صفحة الإنتاج جاهزة بالكامل."
+      "صفحة الإنتاج جاهزة بالكامل ✓"
     );
 
 
@@ -3799,7 +4352,7 @@ async function init(){
 
 
 /* =========================================================
-   بدء الصفحة
+   تشغيل الصفحة
 ========================================================= */
 
 try{
@@ -3814,6 +4367,12 @@ try{
 
   console.error(
     "BOOT ERROR:",
+    error
+  );
+
+
+  debug(
+    "BOOT ERROR",
     error
   );
 
