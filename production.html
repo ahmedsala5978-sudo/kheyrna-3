@@ -978,101 +978,189 @@ async function loginWithGoogle(){
 
 async function loadCurrentUser(){
 
-  const {
-    data,
-    error
-  } =
-    await supabase.auth.getUser();
+  const userNameEl =
+    document.getElementById("userName");
 
-  if(error){
+  const userRoleEl =
+    document.getElementById("userRole");
+
+  try{
+
+    userNameEl.textContent =
+      "جاري التحقق من تسجيل الدخول...";
+
+    userRoleEl.textContent =
+      "—";
+
+    const {
+      data,
+      error
+    } =
+      await supabase.auth.getSession();
+
+    if(error){
+
+      console.error(
+        "Auth session error:",
+        error
+      );
+
+      currentUser = null;
+      currentAppUser = null;
+
+      userNameEl.textContent =
+        "تعذر التحقق من تسجيل الدخول";
+
+      userRoleEl.textContent =
+        "—";
+
+      showNotice(
+        "تعذر التحقق من جلسة تسجيل الدخول: " +
+        error.message,
+        "error"
+      );
+
+      return false;
+
+    }
+
+    currentUser =
+      data?.session?.user || null;
+
+    if(!currentUser){
+
+      currentAppUser = null;
+
+      userNameEl.textContent =
+        "غير مسجل الدخول";
+
+      userRoleEl.textContent =
+        "لم يتم تسجيل الدخول";
+
+      return false;
+
+    }
+
+    const {
+      data:appUser,
+      error:appError
+    } =
+      await supabase
+        .from("app_users")
+        .select(`
+          id,
+          auth_user_id,
+          full_name,
+          role,
+          is_active
+        `)
+        .eq(
+          "auth_user_id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+    if(appError){
+
+      console.error(
+        "App user error:",
+        appError
+      );
+
+      currentAppUser = null;
+
+      userNameEl.textContent =
+        "تم تسجيل الدخول";
+
+      userRoleEl.textContent =
+        "تعذر قراءة صلاحية النظام";
+
+      showNotice(
+        "تم تسجيل الدخول، لكن تعذر قراءة مستخدم نظام خيرنا.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+    if(!appUser){
+
+      currentAppUser = null;
+
+      userNameEl.textContent =
+        "حساب غير مسجل بالنظام";
+
+      userRoleEl.textContent =
+        "—";
+
+      showNotice(
+        "حساب Google موجود، لكنه غير مسجل داخل مستخدمي نظام خيرنا.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+    if(!appUser.is_active){
+
+      currentAppUser = null;
+
+      userNameEl.textContent =
+        appUser.full_name ||
+        "مستخدم غير نشط";
+
+      userRoleEl.textContent =
+        "الحساب غير نشط";
+
+      showNotice(
+        "هذا المستخدم غير نشط داخل النظام.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+    currentAppUser =
+      appUser;
+
+    userNameEl.textContent =
+      appUser.full_name ||
+      "مستخدم خيرنا";
+
+    userRoleEl.textContent =
+      "الصلاحية: " +
+      (appUser.role || "غير محددة");
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Unexpected auth error:",
+      error
+    );
 
     currentUser = null;
+    currentAppUser = null;
 
-    return false;
+    userNameEl.textContent =
+      "حدث خطأ أثناء التحقق";
 
-  }
-
-  currentUser =
-    data.user || null;
-
-  if(!currentUser){
-
-    return false;
-
-  }
-
-
-  const {
-    data:appUser,
-    error:appError
-  } =
-    await supabase
-      .from("app_users")
-      .select(
-        "id,auth_user_id,full_name,role,is_active"
-      )
-      .eq(
-        "auth_user_id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-
-  if(appError){
-
-    console.error(appError);
+    userRoleEl.textContent =
+      "—";
 
     showNotice(
-      "تم تسجيل الدخول، لكن تعذر قراءة مستخدم النظام.",
+      error?.message ||
+      "حدث خطأ أثناء التحقق من تسجيل الدخول.",
       "error"
     );
 
     return false;
 
   }
-
-
-  if(!appUser){
-
-    showNotice(
-      "حساب Google موجود، لكنه غير مسجل داخل مستخدمي نظام خيرنا.",
-      "error"
-    );
-
-    return false;
-
-  }
-
-
-  if(!appUser.is_active){
-
-    showNotice(
-      "هذا المستخدم غير نشط داخل النظام.",
-      "error"
-    );
-
-    return false;
-
-  }
-
-
-  currentAppUser =
-    appUser;
-
-
-  document.getElementById(
-    "userName"
-  ).textContent =
-    appUser.full_name;
-
-  document.getElementById(
-    "userRole"
-  ).textContent =
-    "الصلاحية: " +
-    appUser.role;
-
-
-  return true;
 
 }
 
@@ -1104,7 +1192,6 @@ async function loadProducts(){
         "name"
       );
 
-
   if(error){
 
     console.error(error);
@@ -1115,10 +1202,8 @@ async function loadProducts(){
 
   }
 
-
   products =
     data || [];
-
 
   const select =
     document.getElementById(
@@ -1127,7 +1212,6 @@ async function loadProducts(){
 
   select.innerHTML =
     `<option value="">اختر المنتج</option>`;
-
 
   products.forEach(product => {
 
@@ -1178,7 +1262,6 @@ async function loadWarehouses(){
         "name"
       );
 
-
   if(error){
 
     console.error(error);
@@ -1189,10 +1272,8 @@ async function loadWarehouses(){
 
   }
 
-
   warehouses =
     data || [];
-
 
   const select =
     document.getElementById(
@@ -1201,7 +1282,6 @@ async function loadWarehouses(){
 
   select.innerHTML =
     `<option value="">اختر المخزن</option>`;
-
 
   warehouses.forEach(warehouse => {
 
@@ -1263,7 +1343,6 @@ function addMaterialRow(material={}){
       "materialsContainer"
     );
 
-
   const row =
     document.createElement(
       "div"
@@ -1271,7 +1350,6 @@ function addMaterialRow(material={}){
 
   row.className =
     "material-row";
-
 
   const options =
     products
@@ -1296,7 +1374,6 @@ function addMaterialRow(material={}){
       })
       .join("");
 
-
   row.innerHTML = `
 
     <div class="material-field">
@@ -1318,7 +1395,6 @@ function addMaterialRow(material={}){
 
     </div>
 
-
     <div class="material-field">
 
       <label>الكمية</label>
@@ -1333,7 +1409,6 @@ function addMaterialRow(material={}){
       >
 
     </div>
-
 
     <div class="material-field">
 
@@ -1350,7 +1425,6 @@ function addMaterialRow(material={}){
 
     </div>
 
-
     <button
       type="button"
       class="remove-material-btn"
@@ -1360,7 +1434,6 @@ function addMaterialRow(material={}){
     </button>
 
   `;
-
 
   container.appendChild(row);
 
@@ -1412,7 +1485,6 @@ function getMaterials(){
 
   const materials = [];
 
-
   rows.forEach(row => {
 
     const productId =
@@ -1433,7 +1505,6 @@ function getMaterials(){
           ".material-unit-cost"
         ).value
       ) || 0;
-
 
     if(
       productId &&
@@ -1457,7 +1528,6 @@ function getMaterials(){
 
   });
 
-
   return materials;
 
 }
@@ -1470,7 +1540,6 @@ function updateMaterialSummary(){
 
   let total = 0;
   let count = 0;
-
 
   rows.forEach(row => {
 
@@ -1493,20 +1562,17 @@ function updateMaterialSummary(){
         ".material-product"
       ).value;
 
-
     if(productId){
 
       count++;
 
     }
 
-
     total +=
       quantity *
       unitCost;
 
   });
-
 
   document.getElementById(
     "materialsTotal"
@@ -1547,74 +1613,79 @@ document.getElementById(
 
 function openForm(){
 
+  if(
+    !currentAppUser
+  ){
+
+    showNotice(
+      "يجب تسجيل الدخول أولًا.",
+      "warning"
+    );
+
+    return;
+
+  }
+
   editingId = null;
 
   document.getElementById(
     "productionForm"
   ).reset();
 
-
   document.getElementById(
     "formTitle"
   ).textContent =
     "إضافة أمر إنتاج";
 
+  document.getElementById(
+    "productionCode"
+  ).value =
+    "";
 
   document.getElementById(
     "productionDate"
   ).value =
     localDateTimeValue();
 
-
   document.getElementById(
     "status"
   ).value =
     "draft";
 
-
   document.getElementById(
     "responsibleName"
   ).value =
-    currentAppUser
-      ? currentAppUser.full_name
-      : "";
-
+    currentAppUser.full_name || "";
 
   document.getElementById(
     "materialsContainer"
   ).innerHTML = "";
-
 
   document.getElementById(
     "materialsTotal"
   ).textContent =
     "0.00";
 
-
   document.getElementById(
     "liveQuantity"
   ).textContent =
     "0";
-
 
   document.getElementById(
     "liveMaterialsCount"
   ).textContent =
     "0";
 
-
   document.getElementById(
     "liveMaterialCost"
   ).textContent =
     "0.00";
-
 
   document.getElementById(
     "formBox"
   ).classList.add(
     "active"
   );
-
 
   window.scrollTo({
     top:0,
@@ -1682,6 +1753,7 @@ async function loadProductions(){
           unit_cost,
           total_cost,
           notes,
+          deleted_at,
           products(
             id,
             product_code,
@@ -1701,7 +1773,6 @@ async function loadProductions(){
         }
       );
 
-
   if(error){
 
     console.error(error);
@@ -1712,10 +1783,8 @@ async function loadProductions(){
 
   }
 
-
   productions =
     data || [];
-
 
   await attachCostCodes();
 
@@ -1736,12 +1805,10 @@ async function attachCostCodes(){
 
   }
 
-
   const ids =
     productions.map(
       x => x.id
     );
-
 
   const {
     data,
@@ -1767,7 +1834,6 @@ async function attachCostCodes(){
         }
       );
 
-
   if(error){
 
     console.error(
@@ -1779,9 +1845,7 @@ async function attachCostCodes(){
 
   }
 
-
   const costMap = {};
-
 
   (data || []).forEach(cost => {
 
@@ -1795,22 +1859,6 @@ async function attachCostCodes(){
         cost;
 
     }
-
-  });
-
-
-  productions =
-    productions.map(item => ({
-
-      ...item,
-
-      cost:
-        costMap[item.id] || null
-
-    }));
-
-}
-
 
 /* =========================================================
    حفظ أمر الإنتاج
@@ -1826,12 +1874,23 @@ document.getElementById(
 
     clearNotice();
 
+    if(
+      !currentAppUser
+    ){
+
+      showNotice(
+        "يجب تسجيل الدخول أولًا.",
+        "warning"
+      );
+
+      return;
+
+    }
 
     const productId =
       document.getElementById(
         "productId"
       ).value;
-
 
     const quantity =
       Number(
@@ -1840,30 +1899,25 @@ document.getElementById(
         ).value
       );
 
-
     const warehouseId =
       document.getElementById(
         "warehouseId"
       ).value || null;
-
 
     const producedAt =
       document.getElementById(
         "productionDate"
       ).value;
 
-
     const status =
       document.getElementById(
         "status"
       ).value;
 
-
     const notes =
       document.getElementById(
         "notes"
       ).value.trim();
-
 
     if(!productId){
 
@@ -1875,7 +1929,6 @@ document.getElementById(
       return;
 
     }
-
 
     if(
       !quantity ||
@@ -1891,14 +1944,11 @@ document.getElementById(
 
     }
 
-
     const materials =
       getMaterials();
 
-
     const rows =
       getMaterialRows();
-
 
     if(
       rows.length !==
@@ -1914,19 +1964,29 @@ document.getElementById(
 
     }
 
+    if(
+      materials.length === 0
+    ){
+
+      showNotice(
+        "أضف خامة واحدة على الأقل لأمر الإنتاج.",
+        "warning"
+      );
+
+      return;
+
+    }
 
     const submitButton =
       this.querySelector(
         ".save-btn"
       );
 
-
     submitButton.disabled =
       true;
 
     submitButton.textContent =
       "جاري الحفظ...";
-
 
     try{
 
@@ -1947,6 +2007,45 @@ document.getElementById(
 
         }
 
+        const {
+          data:existingItem,
+          error:existingError
+        } =
+          await supabase
+            .from("production_batches")
+            .select(
+              "id,status"
+            )
+            .eq(
+              "id",
+              editingId
+            )
+            .maybeSingle();
+
+        if(existingError){
+
+          throw existingError;
+
+        }
+
+        if(!existingItem){
+
+          throw new Error(
+            "أمر الإنتاج غير موجود."
+          );
+
+        }
+
+        if(
+          existingItem.status ===
+          "completed"
+        ){
+
+          throw new Error(
+            "لا يمكن تعديل أمر إنتاج مكتمل."
+          );
+
+        }
 
         const {
           error:updateError
@@ -1981,21 +2080,11 @@ document.getElementById(
               editingId
             );
 
-
         if(updateError){
 
           throw updateError;
 
         }
-
-
-        /*
-          ملاحظة:
-          تحديث مواد الإنتاج في هذه المرحلة
-          لا يتم عبر localStorage.
-          يتم فقط التعامل مع السجلات التي
-          تسمح بها صلاحيات النظام.
-        */
 
         closeForm();
 
@@ -2042,6 +2131,9 @@ document.getElementById(
             status:
               "draft",
 
+            responsible_user:
+              currentAppUser.id,
+
             notes:
               notes
 
@@ -2051,17 +2143,15 @@ document.getElementById(
           )
           .single();
 
-
       if(createError){
 
         throw createError;
 
       }
 
-
       /*
-        إضافة الخامات من خلال الدالة
-        الموجودة في Supabase.
+        إضافة الخامات من خلال دالة
+        Supabase المعتمدة.
       */
 
       for(
@@ -2092,7 +2182,6 @@ document.getElementById(
             }
           );
 
-
         if(inputError){
 
           throw inputError;
@@ -2101,15 +2190,22 @@ document.getElementById(
 
       }
 
-
       /*
-        إذا اختار المستخدم مكتملة،
-        لا نحاول إتمامها يدويًا.
-        نطلب من دالة Supabase تنفيذ
-        دورة الإتمام بالكامل.
+        الإتمام مسموح للـAdmin فقط.
       */
 
       if(status === "completed"){
+
+        if(
+          currentAppUser.role !==
+          "admin"
+        ){
+
+          throw new Error(
+            "إتمام أمر الإنتاج مسموح للـ Admin فقط."
+          );
+
+        }
 
         const {
           error:completeError
@@ -2122,7 +2218,6 @@ document.getElementById(
             }
           );
 
-
         if(completeError){
 
           throw completeError;
@@ -2130,7 +2225,6 @@ document.getElementById(
         }
 
       }
-
 
       closeForm();
 
@@ -2143,17 +2237,15 @@ document.getElementById(
         "success"
       );
 
-
     }catch(error){
 
       console.error(error);
 
       showNotice(
-        error.message ||
+        error?.message ||
         "حدث خطأ أثناء حفظ الإنتاج.",
         "error"
       );
-
 
     }finally{
 
@@ -2176,6 +2268,21 @@ document.getElementById(
 async function completeProduction(id){
 
   if(
+    !currentAppUser ||
+    currentAppUser.role !==
+    "admin"
+  ){
+
+    showNotice(
+      "إتمام الإنتاج مسموح للـ Admin فقط.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+  if(
     !confirm(
       "هل تريد إتمام أمر الإنتاج؟\n\n" +
       "بعد الإتمام ستقوم قاعدة البيانات بخصم الخامات " +
@@ -2187,14 +2294,12 @@ async function completeProduction(id){
 
   }
 
-
   try{
 
     showNotice(
       "جاري إتمام الإنتاج...",
       "warning"
     );
-
 
     const {
       error
@@ -2207,29 +2312,25 @@ async function completeProduction(id){
         }
       );
 
-
     if(error){
 
       throw error;
 
     }
 
-
     await loadProductions();
-
 
     showNotice(
       "تم إتمام الإنتاج بنجاح، وتم تنفيذ حركات المخزون والقيد المحاسبي من قاعدة البيانات.",
       "success"
     );
 
-
   }catch(error){
 
     console.error(error);
 
     showNotice(
-      error.message ||
+      error?.message ||
       "تعذر إتمام الإنتاج.",
       "error"
     );
@@ -2260,26 +2361,17 @@ async function editItem(id){
 
   }
 
-
   const item =
     productions.find(
       x =>
         x.id === id
     );
 
-
   if(!item){
 
     return;
 
   }
-
-
-  /*
-    لا نفتح التعديل على عملية مكتملة
-    لتجنب تعديل بيانات أدت بالفعل إلى
-    حركات مخزون وقيد محاسبي.
-  */
 
   if(
     item.status ===
@@ -2295,22 +2387,18 @@ async function editItem(id){
 
   }
 
-
   editingId =
     id;
-
 
   document.getElementById(
     "formTitle"
   ).textContent =
     "تعديل أمر إنتاج";
 
-
   document.getElementById(
     "productionCode"
   ).value =
     item.production_code || "";
-
 
   document.getElementById(
     "productionDate"
@@ -2323,12 +2411,10 @@ async function editItem(id){
         .slice(0,16)
       : localDateTimeValue();
 
-
   document.getElementById(
     "productId"
   ).value =
     item.product_id || "";
-
 
   document.getElementById(
     "productUnit"
@@ -2337,36 +2423,30 @@ async function editItem(id){
       ? item.products.unit
       : "";
 
-
   document.getElementById(
     "quantity"
   ).value =
     item.quantity || 0;
-
 
   document.getElementById(
     "warehouseId"
   ).value =
     item.warehouse_id || "";
 
-
   document.getElementById(
     "status"
   ).value =
     item.status || "draft";
 
-
   document.getElementById(
     "responsibleName"
   ).value =
-    currentAppUser.full_name;
-
+    currentAppUser.full_name || "";
 
   document.getElementById(
     "notes"
   ).value =
     item.notes || "";
-
 
   document.getElementById(
     "costCode"
@@ -2375,16 +2455,13 @@ async function editItem(id){
       ? item.cost.cost_code
       : "";
 
-
   const container =
     document.getElementById(
       "materialsContainer"
     );
 
-
   container.innerHTML =
     "";
-
 
   (item.production_inputs || [])
     .filter(
@@ -2410,16 +2487,13 @@ async function editItem(id){
       }
     );
 
-
   updateMaterialSummary();
-
 
   document.getElementById(
     "formBox"
   ).classList.add(
     "active"
   );
-
 
   window.scrollTo({
     top:0,
@@ -2450,28 +2524,17 @@ async function deleteItem(id){
 
   }
 
-
   const item =
     productions.find(
       x =>
         x.id === id
     );
 
-
   if(!item){
 
     return;
 
   }
-
-
-  /*
-    حاليًا الحذف الآمن من هذه الشاشة
-    يكون لأمر الإنتاج المسودة.
-    الإنتاج المكتمل له آثار في المخزون
-    والحسابات، لذلك لا نحذف السجل الأساسي
-    بطريقة تكسر هذه الآثار.
-  */
 
   if(
     item.status ===
@@ -2487,23 +2550,19 @@ async function deleteItem(id){
 
   }
 
-
   const reason =
     prompt(
       "اكتب سبب حذف أمر الإنتاج:"
     );
 
-
   if(
-    reason === null
-    ||
+    reason === null ||
     !reason.trim()
   ){
 
     return;
 
   }
-
 
   if(
     !confirm(
@@ -2515,14 +2574,12 @@ async function deleteItem(id){
 
   }
 
-
   try{
 
     showNotice(
       "جاري تسجيل الحذف...",
       "warning"
     );
-
 
     const {
       error
@@ -2546,29 +2603,25 @@ async function deleteItem(id){
           id
         );
 
-
     if(error){
 
       throw error;
 
     }
 
-
     await loadProductions();
-
 
     showNotice(
       "تم حذف أمر الإنتاج حذفًا منطقيًا مع تسجيل سبب الحذف.",
       "success"
     );
 
-
   }catch(error){
 
     console.error(error);
 
     showNotice(
-      error.message ||
+      error?.message ||
       "تعذر حذف أمر الإنتاج.",
       "error"
     );
@@ -2597,7 +2650,6 @@ function statusBadge(status){
 
   }
 
-
   return `
     <span class="badge draft">
       مسودة
@@ -2613,14 +2665,15 @@ function statusBadge(status){
 
 function render(){
 
-  const q =
+  const searchEl =
     document.getElementById(
       "search"
-    )
-    .value
-    .trim()
-    .toLowerCase();
+    );
 
+  const q =
+    searchEl
+      ? searchEl.value.trim().toLowerCase()
+      : "";
 
   const filtered =
     productions.filter(item => {
@@ -2630,18 +2683,15 @@ function render(){
           ? item.products.name
           : "";
 
-
       const warehouseName =
         item.warehouses
           ? item.warehouses.name
           : "";
 
-
       const costCode =
         item.cost
           ? item.cost.cost_code
           : "";
-
 
       return [
 
@@ -2664,16 +2714,13 @@ function render(){
 
     });
 
-
   const tbody =
     document.getElementById(
       "productionTable"
     );
 
-
   tbody.innerHTML =
     "";
-
 
   if(!filtered.length){
 
@@ -2701,34 +2748,28 @@ function render(){
           "tr"
         );
 
-
       const productName =
         item.products
           ? item.products.name
           : "—";
-
 
       const productUnit =
         item.products
           ? item.products.unit
           : "—";
 
-
       const warehouseName =
         item.warehouses
           ? item.warehouses.name
           : "—";
-
 
       const costCode =
         item.cost
           ? item.cost.cost_code
           : "لم تُسجل بعد";
 
-
       const inputs =
         item.production_inputs || [];
-
 
       const inputText =
         inputs.length
@@ -2744,9 +2785,12 @@ function render(){
               .join("، ")
           : "—";
 
-
       let actions = "";
 
+      /*
+        جميع الإجراءات التي تغيّر حالة
+        أمر الإنتاج أصبحت للـAdmin فقط.
+      */
 
       if(
         currentAppUser &&
@@ -2775,31 +2819,6 @@ function render(){
               حذف
             </button>
 
-          `;
-
-
-          actions += `
-
-            <button
-              class="complete-btn"
-              onclick="completeProduction('${escapeHtml(item.id)}')"
-            >
-              إتمام
-            </button>
-
-          `;
-
-        }
-
-      }else{
-
-        if(
-          item.status ===
-          "draft"
-        ){
-
-          actions = `
-
             <button
               class="complete-btn"
               onclick="completeProduction('${escapeHtml(item.id)}')"
@@ -2812,7 +2831,6 @@ function render(){
         }
 
       }
-
 
       tr.innerHTML = `
 
@@ -2884,7 +2902,6 @@ function render(){
 
       `;
 
-
       tbody.appendChild(
         tr
       );
@@ -2893,12 +2910,10 @@ function render(){
 
   }
 
-
   document.getElementById(
     "recordCount"
   ).textContent =
     productions.length;
-
 
   document.getElementById(
     "totalProduction"
@@ -2912,7 +2927,6 @@ function render(){
       0
     );
 
-
   document.getElementById(
     "completedCount"
   ).textContent =
@@ -2921,7 +2935,6 @@ function render(){
         item.status ===
         "completed"
     ).length;
-
 
   document.getElementById(
     "draftCount"
@@ -2939,25 +2952,45 @@ function render(){
    تشغيل الصفحة
 ========================================================= */
 
+let initRunning = false;
+let initQueued = false;
+
 async function init(){
 
+  if(initRunning){
+
+    initQueued = true;
+
+    return;
+
+  }
+
+  initRunning = true;
+
+  const loginBtn =
+    document.getElementById(
+      "loginBtn"
+    );
+
+  const appContent =
+    document.getElementById(
+      "appContent"
+    );
+
   try{
+
+    clearNotice();
 
     const loggedIn =
       await loadCurrentUser();
 
-
     if(!loggedIn){
 
-      document.getElementById(
-        "loginBtn"
-      ).classList.remove(
+      loginBtn.classList.remove(
         "hidden"
       );
 
-      document.getElementById(
-        "appContent"
-      ).classList.add(
+      appContent.classList.add(
         "hidden"
       );
 
@@ -2974,25 +3007,13 @@ async function init(){
 
     }
 
-
-    document.getElementById(
-      "loginBtn"
-    ).classList.add(
+    loginBtn.classList.add(
       "hidden"
     );
 
-
-    document.getElementById(
-      "appContent"
-    ).classList.remove(
+    appContent.classList.remove(
       "hidden"
     );
-
-
-    /*
-      تحميل المنتجات والمخازن
-      والإنتاج من Supabase.
-    */
 
     await loadProducts();
 
@@ -3000,22 +3021,45 @@ async function init(){
 
     await loadProductions();
 
-
-    /*
-      إضافة خامة أولى تلقائيًا
-      عند فتح النموذج فقط.
-    */
-
-
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Production init error:",
+      error
+    );
+
+    loginBtn.classList.remove(
+      "hidden"
+    );
+
+    appContent.classList.add(
+      "hidden"
+    );
 
     showNotice(
-      error.message ||
+      error?.message ||
       "حدث خطأ أثناء تشغيل دفتر الإنتاج.",
       "error"
     );
+
+  }finally{
+
+    initRunning = false;
+
+    if(initQueued){
+
+      initQueued = false;
+
+      setTimeout(
+        function(){
+
+          init();
+
+        },
+        0
+      );
+
+    }
 
   }
 
@@ -3027,9 +3071,21 @@ async function init(){
 ========================================================= */
 
 supabase.auth.onAuthStateChange(
-  async function(){
+  function(event, session){
 
-    await init();
+    console.log(
+      "Auth state changed:",
+      event
+    );
+
+    setTimeout(
+      function(){
+
+        init();
+
+      },
+      0
+    );
 
   }
 );
@@ -3045,3 +3101,16 @@ init();
 
 </body>
 </html>
+  });
+
+  productions =
+    productions.map(item => ({
+
+      ...item,
+
+      cost:
+        costMap[item.id] || null
+
+    }));
+
+}
