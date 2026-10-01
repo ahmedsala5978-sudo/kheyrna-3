@@ -6,10 +6,8 @@
 
 <title>خيرنا | الإنتاج اليومي</title>
 
-<script
-  src="https://unpkg.com/@supabase/supabase-js@2"
-  onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';">
-</script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -268,6 +266,7 @@ tr:nth-child(even){
 }
 
 @media(max-width:900px){
+
   .grid{
     grid-template-columns:repeat(2,1fr);
   }
@@ -282,6 +281,7 @@ tr:nth-child(even){
 }
 
 @media(max-width:600px){
+
   .container{
     padding:9px;
   }
@@ -311,17 +311,25 @@ tr:nth-child(even){
 <div class="container">
 
   <div class="header">
+
     <h1>خيرنا | نظام إدارة الإنتاج</h1>
+
     <p>دفتر الإنتاج اليومي</p>
 
     <div class="status" id="connectionStatus">
       جاري تشغيل النظام المركزي...
     </div>
+
   </div>
 
   <div id="notice" class="notice"></div>
 
+  <!-- =====================================================
+       إضافة عملية إنتاج
+  ====================================================== -->
+
   <div class="card">
+
     <h2>إضافة عملية إنتاج</h2>
 
     <div class="grid">
@@ -343,131 +351,255 @@ tr:nth-child(even){
 
       <div class="field">
         <label>المنتج</label>
+
         <select id="productId">
           <option value="">اختر المنتج</option>
         </select>
+
       </div>
 
       <div class="field">
         <label>خط الإنتاج</label>
-        <input id="productionLine" placeholder="مثال: خط التعبئة 1">
+        <input
+          id="productionLine"
+          placeholder="مثال: خط التعبئة 1">
       </div>
 
       <div class="field">
         <label>الوردية</label>
+
         <select id="shift">
-          <option value="">اختر الوردية</option>
-          <option value="صباحية">صباحية</option>
-          <option value="مسائية">مسائية</option>
-          <option value="ليلية">ليلية</option>
+
+          <option value="">
+            اختر الوردية
+          </option>
+
+          <option value="صباحية">
+            صباحية
+          </option>
+
+          <option value="مسائية">
+            مسائية
+          </option>
+
+          <option value="ليلية">
+            ليلية
+          </option>
+
         </select>
+
       </div>
 
       <div class="field">
         <label>الكمية المخططة</label>
-        <input id="plannedQty" type="number" step="0.001" min="0">
+
+        <input
+          id="plannedQty"
+          type="number"
+          step="0.001"
+          min="0">
       </div>
 
       <div class="field">
         <label>الكمية الفعلية</label>
-        <input id="actualQty" type="number" step="0.001" min="0">
+
+        <input
+          id="actualQty"
+          type="number"
+          step="0.001"
+          min="0">
       </div>
 
       <div class="field">
         <label>الوحدة</label>
-        <input id="unit" placeholder="كجم / طن / كرتونة">
+
+        <input
+          id="unit"
+          placeholder="كجم / طن / كرتونة">
       </div>
 
       <div class="field">
         <label>كمية الهالك</label>
-        <input id="wasteQty" type="number" step="0.001" min="0" value="0">
+
+        <input
+          id="wasteQty"
+          type="number"
+          step="0.001"
+          min="0"
+          value="0">
       </div>
 
       <div class="field">
+
         <label>حالة الإنتاج</label>
+
         <select id="status">
-          <option value="completed">مكتملة</option>
-          <option value="in_progress">قيد التنفيذ</option>
-          <option value="cancelled">ملغاة</option>
+
+          <option value="completed">
+            مكتملة
+          </option>
+
+          <option value="in_progress">
+            قيد التنفيذ
+          </option>
+
+          <option value="cancelled">
+            ملغاة
+          </option>
+
         </select>
+
       </div>
 
       <div class="field">
+
         <label>المسؤول</label>
+
         <input id="responsible">
+
       </div>
 
       <div class="field">
+
         <label>كود حركة المخزون</label>
-        <input id="inventoryCode" readonly>
+
+        <input
+          id="inventoryCode"
+          readonly>
+
       </div>
 
       <div class="field">
+
         <label>مكان التخزين</label>
+
         <select id="storageLocation">
-          <option value="">اختر المخزن</option>
+
+          <option value="">
+            اختر المخزن
+          </option>
+
         </select>
+
       </div>
 
       <div class="field">
+
         <label>عدد العمال</label>
-        <input id="workers" type="number" min="0" step="1">
+
+        <input
+          id="workers"
+          type="number"
+          min="0"
+          step="1">
+
       </div>
 
       <div class="field">
+
         <label>ساعات العمل</label>
-        <input id="workHours" type="number" min="0" step="0.1">
+
+        <input
+          id="workHours"
+          type="number"
+          min="0"
+          step="0.1">
+
       </div>
 
       <div class="field full">
+
         <label>ملاحظات</label>
-        <textarea id="notes" placeholder="أي ملاحظات خاصة بعملية الإنتاج..."></textarea>
+
+        <textarea
+          id="notes"
+          placeholder="أي ملاحظات خاصة بعملية الإنتاج..."></textarea>
+
       </div>
 
     </div>
+
   </div>
+
+
+  <!-- =====================================================
+       مواد الإنتاج
+  ====================================================== -->
 
   <div class="card">
 
     <div class="material-header">
-      <h2 style="margin:0">مواد الإنتاج</h2>
+
+      <h2 style="margin:0">
+        مواد الإنتاج
+      </h2>
 
       <button
         type="button"
         class="btn-secondary"
         onclick="addMaterialRow()">
+
         + إضافة مادة
+
       </button>
+
     </div>
 
     <div id="materialsContainer"></div>
 
   </div>
 
+
+  <!-- =====================================================
+       مؤشرات العملية
+  ====================================================== -->
+
   <div class="card">
 
-    <h2>مؤشرات العملية</h2>
+    <h2>
+      مؤشرات العملية
+    </h2>
 
     <div class="stats">
 
       <div class="stat">
+
         نسبة تحقيق الخطة
-        <strong id="achievement">0%</strong>
+
+        <strong id="achievement">
+          0%
+        </strong>
+
       </div>
 
       <div class="stat">
+
         صافي الإنتاج
-        <strong id="netProduction">0</strong>
+
+        <strong id="netProduction">
+          0
+        </strong>
+
       </div>
 
       <div class="stat">
+
         الهالك
-        <strong id="liveWaste">0</strong>
+
+        <strong id="liveWaste">
+          0
+        </strong>
+
       </div>
 
       <div class="stat">
+
         الحالة
-        <strong id="liveStatus">مكتملة</strong>
+
+        <strong id="liveStatus">
+          مكتملة
+        </strong>
+
       </div>
 
     </div>
@@ -479,30 +611,43 @@ tr:nth-child(even){
         class="btn-primary"
         disabled
         onclick="saveProduction()">
+
         حفظ عملية الإنتاج
+
       </button>
 
       <button
         type="button"
         class="btn-secondary"
         onclick="resetForm()">
+
         إلغاء / مسح
+
       </button>
 
     </div>
 
   </div>
 
+
+  <!-- =====================================================
+       سجل الإنتاج
+  ====================================================== -->
+
   <div class="card">
 
-    <h2>سجل الإنتاج اليومي</h2>
+    <h2>
+      سجل الإنتاج اليومي
+    </h2>
 
     <div class="table-wrap">
 
       <table>
 
         <thead>
+
           <tr>
+
             <th>كود الإنتاج</th>
             <th>التاريخ</th>
             <th>المنتج</th>
@@ -513,15 +658,25 @@ tr:nth-child(even){
             <th>الحالة</th>
             <th>المسؤول</th>
             <th>الإجراء</th>
+
           </tr>
+
         </thead>
 
         <tbody id="productionTable">
+
           <tr>
-            <td colspan="10" class="empty">
+
+            <td
+              colspan="10"
+              class="empty">
+
               جاري تحميل سجل الإنتاج...
+
             </td>
+
           </tr>
+
         </tbody>
 
       </table>
@@ -531,6 +686,7 @@ tr:nth-child(even){
   </div>
 
 </div>
+
 
 <script>
 
@@ -545,11 +701,36 @@ const SUPABASE_KEY =
   "sb_publishable_0QcrQbx1u92isBbfYS6zTg_zigmJKNl";
 
 
-/*
-   مهم:
-   تم إضافة lock مخصص لمنع تعليق getSession
-   في بعض بيئات المتصفح / GitHub Pages.
-*/
+/* =========================================================
+   التأكد من تحميل مكتبة Supabase
+========================================================= */
+
+if(
+  typeof window.supabase === "undefined" ||
+  typeof window.supabase.createClient !== "function"
+){
+
+  const status =
+    document.getElementById(
+      "connectionStatus"
+    );
+
+  if(status){
+
+    status.textContent =
+      "خطأ: لم يتم تحميل مكتبة النظام المركزي";
+
+  }
+
+  throw new Error(
+    "Supabase JS library was not loaded."
+  );
+}
+
+
+/* =========================================================
+   إنشاء الاتصال
+========================================================= */
 
 const supabase =
   window.supabase.createClient(
@@ -559,19 +740,15 @@ const supabase =
       auth:{
         persistSession:true,
         autoRefreshToken:true,
-        detectSessionInUrl:true,
-        flowType:"implicit",
-
-        lock: async function(
-          name,
-          acquireTimeout,
-          fn
-        ){
-          return await fn();
-        }
+        detectSessionInUrl:true
       }
     }
   );
+
+
+console.log(
+  "Khayrna: Supabase client created successfully"
+);
 
 
 /* =========================================================
@@ -601,38 +778,59 @@ let realtimeChannel = null;
 function setConnectionStatus(message){
 
   const el =
-    document.getElementById("connectionStatus");
+    document.getElementById(
+      "connectionStatus"
+    );
 
   if(el){
-    el.textContent = message;
+
+    el.textContent =
+      message;
+
   }
 }
 
 
-function showNotice(message,type="error"){
+function showNotice(
+  message,
+  type="error"
+){
 
   const el =
-    document.getElementById("notice");
+    document.getElementById(
+      "notice"
+    );
 
   if(!el) return;
 
-  el.textContent = message;
+  el.textContent =
+    message;
 
   el.className =
     "notice " + type;
 
-  el.style.display = "block";
+  el.style.display =
+    "block";
 
-  setTimeout(()=>{
-    el.style.display = "none";
-  },6000);
+  setTimeout(
+    ()=>{
+      el.style.display =
+        "none";
+    },
+    6000
+  );
 }
 
 
 function escapeHtml(value){
 
-  if(value === null || value === undefined){
+  if(
+    value === null ||
+    value === undefined
+  ){
+
     return "";
+
   }
 
   return String(value)
@@ -689,7 +887,7 @@ function getStatusClass(status){
 
 
 /* =========================================================
-   معالجة الأخطاء العامة
+   أخطاء عامة
 ========================================================= */
 
 window.addEventListener(
@@ -697,9 +895,10 @@ window.addEventListener(
   function(event){
 
     console.error(
-      "Global Error:",
+      "Khayrna Global Error:",
       event.error || event.message
     );
+
   }
 );
 
@@ -709,15 +908,16 @@ window.addEventListener(
   function(event){
 
     console.error(
-      "Unhandled Promise:",
+      "Khayrna Promise Error:",
       event.reason
     );
+
   }
 );
 
 
 /* =========================================================
-   التحقق من الجلسة
+   فحص جلسة المستخدم
 ========================================================= */
 
 async function loadSession(){
@@ -733,34 +933,14 @@ async function loadSession(){
     );
 
 
-    const sessionPromise =
-      supabase.auth.getSession();
-
-
-    const timeoutPromise =
-      new Promise(
-        (_,reject)=>{
-
-          setTimeout(
-            ()=>{
-              reject(
-                new Error(
-                  "انتهت مهلة الاتصال بخدمة تسجيل الدخول."
-                )
-              );
-            },
-            10000
-          );
-
-        }
-      );
-
-
     const result =
-      await Promise.race([
-        sessionPromise,
-        timeoutPromise
-      ]);
+      await supabase.auth.getSession();
+
+
+    console.log(
+      "Khayrna: نتيجة getSession:",
+      result
+    );
 
 
     const {
@@ -770,12 +950,15 @@ async function loadSession(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
     currentSession =
       data?.session || null;
+
 
     currentUser =
       currentSession?.user || null;
@@ -812,6 +995,7 @@ async function loadSession(){
 
     return true;
 
+
   }catch(error){
 
     console.error(
@@ -821,7 +1005,8 @@ async function loadSession(){
 
 
     setConnectionStatus(
-      "تعذر الاتصال بخدمة تسجيل الدخول"
+      "خطأ في الاتصال: " +
+      (error.message || "غير معروف")
     );
 
 
@@ -843,19 +1028,25 @@ async function loadSession(){
 
 
 /* =========================================================
-   مراقبة تغيّر تسجيل الدخول
+   مراقبة تسجيل الدخول
 ========================================================= */
 
 supabase.auth.onAuthStateChange(
-  async (event,session)=>{
+  function(event,session){
 
     console.log(
       "Auth event:",
       event
     );
 
-    currentSession = session || null;
-    currentUser = session?.user || null;
+
+    currentSession =
+      session || null;
+
+
+    currentUser =
+      session?.user || null;
+
 
     if(currentUser){
 
@@ -883,12 +1074,19 @@ async function checkPermissions(){
 
   if(!currentUser){
 
-    canCreateProduction = false;
+    canCreateProduction =
+      false;
+
     return false;
   }
 
 
   try{
+
+    console.log(
+      "Khayrna: فحص صلاحيات المستخدم..."
+    );
+
 
     const adminResult =
       await supabase.rpc(
@@ -900,6 +1098,14 @@ async function checkPermissions(){
 
       isAdminUser =
         adminResult.data === true;
+
+    }else{
+
+      console.warn(
+        "Admin check:",
+        adminResult.error
+      );
+
     }
 
 
@@ -920,21 +1126,27 @@ async function checkPermissions(){
         permissionResult.error
       );
 
-      /*
-        لو فحص الصلاحية غير متاح،
-        لا نعطي صلاحية تلقائية.
-      */
-
-      canCreateProduction = false;
+      canCreateProduction =
+        false;
 
     }else{
 
       canCreateProduction =
         permissionResult.data === true;
+
     }
 
 
+    console.log(
+      "Admin:",
+      isAdminUser,
+      "Create:",
+      canCreateProduction
+    );
+
+
     return canCreateProduction;
+
 
   }catch(error){
 
@@ -943,7 +1155,8 @@ async function checkPermissions(){
       error
     );
 
-    canCreateProduction = false;
+    canCreateProduction =
+      false;
 
     return false;
   }
@@ -951,12 +1164,17 @@ async function checkPermissions(){
 
 
 /* =========================================================
-   المنتجات
+   تحميل المنتجات
 ========================================================= */
 
 async function loadProducts(){
 
   try{
+
+    console.log(
+      "Khayrna: تحميل المنتجات..."
+    );
+
 
     const {
       data,
@@ -969,7 +1187,9 @@ async function loadProducts(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
@@ -987,24 +1207,39 @@ async function loadProducts(){
       '<option value="">اختر المنتج</option>';
 
 
-    products.forEach(product=>{
+    products.forEach(
+      product=>{
 
-      const option =
-        document.createElement("option");
-
-      option.value =
-        product.id;
-
-      option.textContent =
-        product.name ||
-        product.product_name ||
-        product.code ||
-        "منتج";
+        const option =
+          document.createElement(
+            "option"
+          );
 
 
-      select.appendChild(option);
+        option.value =
+          product.id;
 
-    });
+
+        option.textContent =
+          product.name ||
+          product.product_name ||
+          product.code ||
+          "منتج";
+
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+    console.log(
+      "Khayrna: تم تحميل",
+      products.length,
+      "منتج"
+    );
 
 
   }catch(error){
@@ -1013,6 +1248,7 @@ async function loadProducts(){
       "Products Error:",
       error
     );
+
 
     showNotice(
       "تعذر تحميل المنتجات: " +
@@ -1024,12 +1260,17 @@ async function loadProducts(){
 
 
 /* =========================================================
-   المخازن
+   تحميل المخازن
 ========================================================= */
 
 async function loadWarehouses(){
 
   try{
+
+    console.log(
+      "Khayrna: تحميل المخازن..."
+    );
+
 
     const {
       data,
@@ -1042,7 +1283,9 @@ async function loadWarehouses(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
@@ -1060,24 +1303,39 @@ async function loadWarehouses(){
       '<option value="">اختر المخزن</option>';
 
 
-    warehouses.forEach(warehouse=>{
+    warehouses.forEach(
+      warehouse=>{
 
-      const option =
-        document.createElement("option");
-
-      option.value =
-        warehouse.id;
-
-      option.textContent =
-        warehouse.name ||
-        warehouse.warehouse_name ||
-        warehouse.code ||
-        "مخزن";
+        const option =
+          document.createElement(
+            "option"
+          );
 
 
-      select.appendChild(option);
+        option.value =
+          warehouse.id;
 
-    });
+
+        option.textContent =
+          warehouse.name ||
+          warehouse.warehouse_name ||
+          warehouse.code ||
+          "مخزن";
+
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+    console.log(
+      "Khayrna: تم تحميل",
+      warehouses.length,
+      "مخزن"
+    );
 
 
   }catch(error){
@@ -1086,6 +1344,7 @@ async function loadWarehouses(){
       "Warehouses Error:",
       error
     );
+
 
     showNotice(
       "تعذر تحميل المخازن: " +
@@ -1097,7 +1356,7 @@ async function loadWarehouses(){
 
 
 /* =========================================================
-   توليد كود الإنتاج
+   كود الإنتاج
 ========================================================= */
 
 async function generateProductionCode(){
@@ -1133,14 +1392,20 @@ async function generateProductionCode(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
-    let nextNumber = 1;
+    let nextNumber =
+      1;
 
 
-    if(data && data.length){
+    if(
+      data &&
+      data.length
+    ){
 
       const lastCode =
         data[0].production_code;
@@ -1155,7 +1420,9 @@ async function generateProductionCode(){
 
         nextNumber =
           Number(match[1]) + 1;
+
       }
+
     }
 
 
@@ -1174,12 +1441,6 @@ async function generateProductionCode(){
     );
 
 
-    /*
-      في حالة تعذر قراءة آخر كود،
-      نستخدم رقمًا مؤقتًا لا نحفظ به
-      إلا بعد التأكد.
-    */
-
     return (
       prefix +
       Date.now()
@@ -1191,7 +1452,7 @@ async function generateProductionCode(){
 
 
 /* =========================================================
-   توليد كود المخزون
+   كود حركة المخزون
 ========================================================= */
 
 async function generateInventoryCode(){
@@ -1227,14 +1488,20 @@ async function generateInventoryCode(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
-    let nextNumber = 1;
+    let nextNumber =
+      1;
 
 
-    if(data && data.length){
+    if(
+      data &&
+      data.length
+    ){
 
       const lastCode =
         data[0].movement_code;
@@ -1249,7 +1516,9 @@ async function generateInventoryCode(){
 
         nextNumber =
           Number(match[1]) + 1;
+
       }
+
     }
 
 
@@ -1291,7 +1560,10 @@ function addMaterialRow(data={}){
 
 
   const row =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   row.className =
     "material-row";
@@ -1330,24 +1602,31 @@ function addMaterialRow(data={}){
       type="button"
       class="btn-danger"
       onclick="this.parentElement.remove();updateLive();">
+
       حذف
+
     </button>
 
   `;
 
 
-  container.appendChild(row);
+  container.appendChild(
+    row
+  );
 
 
-  row.querySelectorAll("input")
-    .forEach(input=>{
+  row
+    .querySelectorAll("input")
+    .forEach(
+      input=>{
 
-      input.addEventListener(
-        "input",
-        updateLive
-      );
+        input.addEventListener(
+          "input",
+          updateLive
+        );
 
-    });
+      }
+    );
 }
 
 
@@ -1359,7 +1638,8 @@ function loadMaterials(materials=[]){
     );
 
 
-  container.innerHTML = "";
+  container.innerHTML =
+    "";
 
 
   if(!materials.length){
@@ -1370,9 +1650,13 @@ function loadMaterials(materials=[]){
   }
 
 
-  materials.forEach(material=>{
-    addMaterialRow(material);
-  });
+  materials.forEach(
+    material=>{
+      addMaterialRow(
+        material
+      );
+    }
+  );
 }
 
 
@@ -1384,49 +1668,59 @@ function getMaterials(){
     );
 
 
-  const materials = [];
+  const materials =
+    [];
 
 
-  rows.forEach(row=>{
+  rows.forEach(
+    row=>{
 
-    const name =
-      row.querySelector(
-        ".material-name"
-      )?.value.trim();
-
-
-    const quantity =
-      Number(
+      const name =
         row.querySelector(
-          ".material-qty"
-        )?.value || 0
-      );
+          ".material-name"
+        )?.value.trim();
 
 
-    const unit =
-      row.querySelector(
-        ".material-unit"
-      )?.value.trim();
+      const quantity =
+        Number(
+          row.querySelector(
+            ".material-qty"
+          )?.value || 0
+        );
 
 
-    const code =
-      row.querySelector(
-        ".material-code"
-      )?.value.trim();
+      const unit =
+        row.querySelector(
+          ".material-unit"
+        )?.value.trim();
 
 
-    if(name || quantity || unit || code){
+      const code =
+        row.querySelector(
+          ".material-code"
+        )?.value.trim();
 
-      materials.push({
-        name,
-        quantity,
-        unit,
+
+      if(
+        name ||
+        quantity ||
+        unit ||
         code
-      });
+      ){
+
+        materials.push({
+
+          name,
+          quantity,
+          unit,
+          code
+
+        });
+
+      }
 
     }
-
-  });
+  );
 
 
   return materials;
@@ -1434,7 +1728,7 @@ function getMaterials(){
 
 
 /* =========================================================
-   المؤشرات المباشرة
+   المؤشرات
 ========================================================= */
 
 function updateLive(){
@@ -1463,13 +1757,15 @@ function updateLive(){
     );
 
 
-  let achievement = 0;
+  let achievement =
+    0;
 
 
   if(planned > 0){
 
     achievement =
       (actual / planned) * 100;
+
   }
 
 
@@ -1509,7 +1805,7 @@ function updateLive(){
 
 
 /* =========================================================
-   فتح وتجهيز النموذج
+   فتح نموذج الإنتاج
 ========================================================= */
 
 async function openForm(){
@@ -1556,9 +1852,11 @@ async function openForm(){
     inventoryCode;
 
 
-  if(!document.getElementById(
-    "productionDate"
-  ).value){
+  if(
+    !document.getElementById(
+      "productionDate"
+    ).value
+  ){
 
     const now =
       new Date();
@@ -1577,17 +1875,19 @@ async function openForm(){
       "productionDate"
     ).value =
       local;
+
   }
 
 
   document.getElementById(
     "saveBtn"
-  ).disabled = false;
+  ).disabled =
+    false;
 }
 
 
 /* =========================================================
-   بيانات العملية
+   بيانات النموذج
 ========================================================= */
 
 function getFormData(){
@@ -1697,7 +1997,7 @@ function getFormData(){
 
 
 /* =========================================================
-   كتابة سجل التغييرات
+   سجل التغييرات
 ========================================================= */
 
 async function writeHistory(
@@ -1710,29 +2010,44 @@ async function writeHistory(
 
   try{
 
-    await supabase
-      .from("record_change_history")
-      .insert({
+    const {
+      error
+    } =
+      await supabase
+        .from("record_change_history")
+        .insert({
 
-        record_id:recordId,
+          record_id:
+            recordId,
 
-        table_name:
-          "production_batches",
+          table_name:
+            "production_batches",
 
-        action,
+          action,
 
-        previous_data:
-          previousData || null,
+          previous_data:
+            previousData || null,
 
-        new_data:
-          newData || null,
+          new_data:
+            newData || null,
 
-        changed_by:
-          currentUser?.id || null,
+          changed_by:
+            currentUser?.id || null,
 
-        reason:reason || null
+          reason:
+            reason || null
 
-      });
+        });
+
+
+    if(error){
+
+      console.warn(
+        "History warning:",
+        error
+      );
+
+    }
 
   }catch(error){
 
@@ -1740,6 +2055,7 @@ async function writeHistory(
       "History warning:",
       error
     );
+
   }
 }
 
@@ -1756,24 +2072,37 @@ async function writeAudit(
 
   try{
 
-    await supabase
-      .from("audit_log")
-      .insert({
+    const {
+      error
+    } =
+      await supabase
+        .from("audit_log")
+        .insert({
 
-        user_id:
-          currentUser?.id || null,
+          user_id:
+            currentUser?.id || null,
 
-        action,
+          action,
 
-        table_name:
-          "production_batches",
+          table_name:
+            "production_batches",
 
-        record_id:
-          recordId || null,
+          record_id:
+            recordId || null,
 
-        details
+          details
 
-      });
+        });
+
+
+    if(error){
+
+      console.warn(
+        "Audit warning:",
+        error
+      );
+
+    }
 
   }catch(error){
 
@@ -1781,12 +2110,13 @@ async function writeAudit(
       "Audit warning:",
       error
     );
+
   }
 }
 
 
 /* =========================================================
-   حفظ العملية المركزية
+   الحفظ المركزي
 ========================================================= */
 
 async function saveCentralProduction(
@@ -1803,7 +2133,8 @@ async function saveCentralProduction(
 
   const metadata = {
 
-    __kheyrna_production_meta:true,
+    __kheyrna_production_meta:
+      true,
 
     production_line:
       formData.productionLine,
@@ -1832,17 +2163,14 @@ async function saveCentralProduction(
   };
 
 
-  let notesValue =
-    formData.notes || "";
-
-
-  notesValue =
+  const notesValue =
     JSON.stringify({
 
-      __kheyrna_production_meta:true,
+      __kheyrna_production_meta:
+        true,
 
       original_notes:
-        notesValue,
+        formData.notes || "",
 
       ...metadata
 
@@ -1887,6 +2215,10 @@ async function saveCentralProduction(
   };
 
 
+  /* =====================================================
+     تعديل
+  ====================================================== */
+
   if(editingId){
 
     if(!isAdminUser){
@@ -1894,6 +2226,7 @@ async function saveCentralProduction(
       throw new Error(
         "التعديل متاح للـ Admin فقط."
       );
+
     }
 
 
@@ -1909,7 +2242,9 @@ async function saveCentralProduction(
 
 
     if(oldError){
+
       throw oldError;
+
     }
 
 
@@ -1926,7 +2261,9 @@ async function saveCentralProduction(
 
 
     if(error){
+
       throw error;
+
     }
 
 
@@ -1953,6 +2290,10 @@ async function saveCentralProduction(
   }
 
 
+  /* =====================================================
+     إضافة
+  ====================================================== */
+
   const {
     data,
     error
@@ -1965,7 +2306,9 @@ async function saveCentralProduction(
 
 
   if(error){
+
     throw error;
+
   }
 
 
@@ -1988,19 +2331,20 @@ async function saveCentralProduction(
   );
 
 
-  /*
-    في حالة اكتمال الإنتاج:
-    يتم إنشاء حركة المخزون.
-  */
+  /* =====================================================
+     ربط الإنتاج بالمخزون
+  ====================================================== */
 
   if(
-    formData.status === "completed"
+    formData.status ===
+    "completed"
   ){
 
     await createInventoryMovements(
       data,
       formData
     );
+
   }
 
 
@@ -2045,12 +2389,9 @@ async function createInventoryMovements(
     }
 
 
-    /*
-      منع تكرار حركة المخزون
-    */
-
     const {
-      data:existing
+      data:existing,
+      error:existingError
     } =
       await supabase
         .from("inventory_movements")
@@ -2062,7 +2403,21 @@ async function createInventoryMovements(
         .limit(1);
 
 
-    if(existing && existing.length){
+    if(existingError){
+
+      console.warn(
+        "Inventory existing check:",
+        existingError
+      );
+
+      return;
+    }
+
+
+    if(
+      existing &&
+      existing.length
+    ){
 
       console.log(
         "Inventory movement already exists."
@@ -2107,7 +2462,9 @@ async function createInventoryMovements(
     } =
       await supabase
         .from("inventory_movements")
-        .insert(movement);
+        .insert(
+          movement
+        );
 
 
     if(error){
@@ -2132,17 +2489,23 @@ async function createInventoryMovements(
       "Inventory Error:",
       error
     );
+
   }
 }
 
 
 /* =========================================================
-   تحميل الإنتاج
+   تحميل سجل الإنتاج
 ========================================================= */
 
 async function loadProductions(){
 
   try{
+
+    console.log(
+      "Khayrna: تحميل سجل الإنتاج..."
+    );
+
 
     const {
       data,
@@ -2174,7 +2537,9 @@ async function loadProductions(){
 
 
     if(error){
+
       throw error;
+
     }
 
 
@@ -2183,6 +2548,7 @@ async function loadProductions(){
 
 
     renderProductions();
+
 
   }catch(error){
 
@@ -2196,8 +2562,12 @@ async function loadProductions(){
       "productionTable"
     ).innerHTML = `
       <tr>
-        <td colspan="10" class="empty">
+        <td
+          colspan="10"
+          class="empty">
+
           تعذر تحميل سجل الإنتاج
+
         </td>
       </tr>
     `;
@@ -2213,7 +2583,7 @@ async function loadProductions(){
 
 
 /* =========================================================
-   عرض الإنتاج
+   عرض سجل الإنتاج
 ========================================================= */
 
 function renderProductions(){
@@ -2228,8 +2598,12 @@ function renderProductions(){
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="10" class="empty">
+        <td
+          colspan="10"
+          class="empty">
+
           لا توجد عمليات إنتاج مسجلة حتى الآن
+
         </td>
       </tr>
     `;
@@ -2240,145 +2614,170 @@ function renderProductions(){
 
   tbody.innerHTML =
     productionRecords
-      .map(item=>{
+      .map(
+        item=>{
 
-        const productName =
-          item.products?.name ||
-          "—";
-
-
-        const warehouseName =
-          item.warehouses?.name ||
-          "—";
-
-
-        const status =
-          item.status;
-
-
-        let responsible = "—";
-
-
-        try{
-
-          const parsed =
-            item.notes
-              ? JSON.parse(item.notes)
-              : null;
-
-
-          responsible =
-            parsed?.responsible ||
-            parsed?.original_notes ||
+          const productName =
+            item.products?.name ||
             "—";
 
-        }catch(e){}
+
+          const warehouseName =
+            item.warehouses?.name ||
+            "—";
 
 
-        return `
+          const status =
+            item.status;
 
-          <tr>
 
-            <td>
-              ${escapeHtml(
-                item.production_code
-              )}
-            </td>
+          let responsible =
+            "—";
 
-            <td>
-              ${escapeHtml(
-                item.production_date
-                  ? new Date(
-                      item.production_date
-                    ).toLocaleString(
-                      "ar-EG"
+
+          try{
+
+            const parsed =
+              item.notes
+                ? JSON.parse(
+                    item.notes
+                  )
+                : null;
+
+
+            responsible =
+              parsed?.responsible ||
+              parsed?.original_notes ||
+              "—";
+
+          }catch(e){}
+
+
+          return `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  item.production_code
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.production_date
+                    ? new Date(
+                        item.production_date
+                      ).toLocaleString(
+                        "ar-EG"
+                      )
+                    : "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  productName
+                )}
+              </td>
+
+              <td>
+                ${formatNumber(
+                  item.actual_quantity
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.unit || "—"
+                )}
+              </td>
+
+              <td>
+                ${formatNumber(
+                  item.waste_quantity
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  warehouseName
+                )}
+              </td>
+
+              <td>
+
+                <span
+                  class="badge ${
+                    getStatusClass(
+                      status
                     )
-                  : "—"
-              )}
-            </td>
+                  }">
 
-            <td>
-              ${escapeHtml(
-                productName
-              )}
-            </td>
+                  ${
+                    getStatusText(
+                      status
+                    )
+                  }
 
-            <td>
-              ${formatNumber(
-                item.actual_quantity
-              )}
-            </td>
+                </span>
 
-            <td>
-              ${escapeHtml(
-                item.unit || "—"
-              )}
-            </td>
+              </td>
 
-            <td>
-              ${formatNumber(
-                item.waste_quantity
-              )}
-            </td>
+              <td>
+                ${escapeHtml(
+                  responsible
+                )}
+              </td>
 
-            <td>
-              ${escapeHtml(
-                warehouseName
-              )}
-            </td>
+              <td>
 
-            <td>
-              <span
-                class="badge ${
-                  getStatusClass(status)
-                }">
                 ${
-                  getStatusText(status)
+                  isAdminUser
+
+                  ? `
+
+                    <button
+                      class="btn-secondary"
+                      onclick="editItem('${item.id}')">
+
+                      تعديل
+
+                    </button>
+
+                    <button
+                      class="btn-danger"
+                      onclick="deleteItem('${item.id}')">
+
+                      حذف
+
+                    </button>
+
+                  `
+
+                  : `
+
+                    <span>
+                      عرض فقط
+                    </span>
+
+                  `
                 }
-              </span>
-            </td>
 
-            <td>
-              ${escapeHtml(
-                responsible
-              )}
-            </td>
+              </td>
 
-            <td>
+            </tr>
 
-              ${
-                isAdminUser
-                ? `
-                  <button
-                    class="btn-secondary"
-                    onclick="editItem('${item.id}')">
-                    تعديل
-                  </button>
+          `;
 
-                  <button
-                    class="btn-danger"
-                    onclick="deleteItem('${item.id}')">
-                    حذف
-                  </button>
-                `
-                : `
-                  <span>عرض فقط</span>
-                `
-              }
-
-            </td>
-
-          </tr>
-
-        `;
-
-      })
+        }
+      )
       .join("");
 }
 
 
 /* =========================================================
-   تعديل عملية
+   تعديل
 ========================================================= */
 
 async function editItem(id){
@@ -2401,11 +2800,14 @@ async function editItem(id){
 
 
   if(!item){
+
     return;
+
   }
 
 
-  editingId = id;
+  editingId =
+    id;
 
 
   document.getElementById(
@@ -2478,7 +2880,9 @@ async function editItem(id){
 
     const meta =
       item.notes
-        ? JSON.parse(item.notes)
+        ? JSON.parse(
+            item.notes
+          )
         : {};
 
 
@@ -2528,6 +2932,7 @@ async function editItem(id){
       meta.materials || []
     );
 
+
   }catch(error){
 
     document.getElementById(
@@ -2535,7 +2940,9 @@ async function editItem(id){
     ).value =
       item.notes || "";
 
+
     loadMaterials([]);
+
   }
 
 
@@ -2547,7 +2954,8 @@ async function editItem(id){
 
   document.getElementById(
     "saveBtn"
-  ).disabled = false;
+  ).disabled =
+    false;
 
 
   updateLive();
@@ -2584,7 +2992,9 @@ async function deleteItem(id){
 
 
   if(!item){
+
     return;
+
   }
 
 
@@ -2594,7 +3004,10 @@ async function deleteItem(id){
     );
 
 
-  if(!reason || !reason.trim()){
+  if(
+    !reason ||
+    !reason.trim()
+  ){
 
     showNotice(
       "يجب كتابة سبب الحذف.",
@@ -2631,7 +3044,9 @@ async function deleteItem(id){
 
 
     if(error){
+
       throw error;
+
     }
 
 
@@ -2679,12 +3094,13 @@ async function deleteItem(id){
       error.message,
       "error"
     );
+
   }
 }
 
 
 /* =========================================================
-   حفظ النموذج
+   حفظ العملية
 ========================================================= */
 
 async function saveProduction(){
@@ -2696,22 +3112,23 @@ async function saveProduction(){
       throw new Error(
         "يجب تسجيل الدخول أولاً."
       );
+
     }
 
 
     if(!canCreateProduction){
 
-      /*
-        في حالة التعديل:
-        الـ Admin مسموح له بالتعديل.
-      */
-
-      if(!editingId || !isAdminUser){
+      if(
+        !editingId ||
+        !isAdminUser
+      ){
 
         throw new Error(
           "ليس لديك صلاحية حفظ عملية الإنتاج."
         );
+
       }
+
     }
 
 
@@ -2719,27 +3136,35 @@ async function saveProduction(){
       getFormData();
 
 
-    if(!formData.productionCode){
+    if(
+      !formData.productionCode
+    ){
 
       formData.productionCode =
         await generateProductionCode();
+
 
       document.getElementById(
         "productionCode"
       ).value =
         formData.productionCode;
+
     }
 
 
-    if(!formData.inventoryCode){
+    if(
+      !formData.inventoryCode
+    ){
 
       formData.inventoryCode =
         await generateInventoryCode();
+
 
       document.getElementById(
         "inventoryCode"
       ).value =
         formData.inventoryCode;
+
     }
 
 
@@ -2748,6 +3173,7 @@ async function saveProduction(){
       throw new Error(
         "اختر المنتج أولاً."
       );
+
     }
 
 
@@ -2759,6 +3185,7 @@ async function saveProduction(){
       throw new Error(
         "أدخل الكمية الفعلية للإنتاج."
       );
+
     }
 
 
@@ -2768,7 +3195,9 @@ async function saveProduction(){
       );
 
 
-    saveButton.disabled = true;
+    saveButton.disabled =
+      true;
+
 
     saveButton.textContent =
       "جاري الحفظ...";
@@ -2779,8 +3208,12 @@ async function saveProduction(){
     );
 
 
+    const wasEditing =
+      Boolean(editingId);
+
+
     showNotice(
-      editingId
+      wasEditing
         ? "تم تعديل عملية الإنتاج بنجاح ✓"
         : "تم تسجيل عملية الإنتاج بنجاح ✓",
       "success"
@@ -2822,9 +3255,8 @@ async function saveProduction(){
 
 
     saveButton.textContent =
-      editingId
-        ? "حفظ تعديل العملية"
-        : "حفظ عملية الإنتاج";
+      "حفظ عملية الإنتاج";
+
   }
 }
 
@@ -2833,54 +3265,64 @@ async function saveProduction(){
    إعادة ضبط النموذج
 ========================================================= */
 
-function resetForm(){
+async function resetForm(){
 
-  editingId = null;
+  editingId =
+    null;
 
 
   document.getElementById(
     "productionCode"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "inventoryCode"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "costCode"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "productionLine"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "shift"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "plannedQty"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "actualQty"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "unit"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "wasteQty"
-  ).value = "0";
+  ).value =
+    "0";
 
 
   document.getElementById(
@@ -2891,27 +3333,32 @@ function resetForm(){
 
   document.getElementById(
     "responsible"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "storageLocation"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "workers"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "workHours"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "notes"
-  ).value = "";
+  ).value =
+    "";
 
 
   loadMaterials([]);
@@ -2934,7 +3381,11 @@ function resetForm(){
   updateLive();
 
 
-  openForm();
+  if(currentUser){
+
+    await openForm();
+
+  }
 }
 
 
@@ -2955,11 +3406,14 @@ function updatePageReadiness(){
     canCreateProduction
   ){
 
-    saveButton.disabled = false;
+    saveButton.disabled =
+      false;
 
   }else{
 
-    saveButton.disabled = true;
+    saveButton.disabled =
+      true;
+
   }
 }
 
@@ -2977,6 +3431,7 @@ function startRealtime(){
       supabase.removeChannel(
         realtimeChannel
       );
+
     }
 
 
@@ -2985,6 +3440,8 @@ function startRealtime(){
         .channel(
           "kheyrna-production-live"
         )
+
+
         .on(
           "postgres_changes",
           {
@@ -2996,6 +3453,8 @@ function startRealtime(){
             await loadProductions();
           }
         )
+
+
         .on(
           "postgres_changes",
           {
@@ -3007,6 +3466,8 @@ function startRealtime(){
             await loadProductions();
           }
         )
+
+
         .on(
           "postgres_changes",
           {
@@ -3018,6 +3479,8 @@ function startRealtime(){
             await loadProducts();
           }
         )
+
+
         .on(
           "postgres_changes",
           {
@@ -3029,6 +3492,8 @@ function startRealtime(){
             await loadWarehouses();
           }
         )
+
+
         .on(
           "postgres_changes",
           {
@@ -3042,7 +3507,17 @@ function startRealtime(){
             );
           }
         )
-        .subscribe();
+
+
+        .subscribe(
+          status=>{
+            console.log(
+              "Realtime status:",
+              status
+            );
+          }
+        );
+
 
   }catch(error){
 
@@ -3050,12 +3525,13 @@ function startRealtime(){
       "Realtime warning:",
       error
     );
+
   }
 }
 
 
 /* =========================================================
-   ربط الحقول بالحسابات المباشرة
+   الحسابات المباشرة
 ========================================================= */
 
 [
@@ -3063,21 +3539,36 @@ function startRealtime(){
   "actualQty",
   "wasteQty",
   "status"
-].forEach(id=>{
+]
+.forEach(
+  id=>{
 
-  document.getElementById(id)
-    .addEventListener(
+    const element =
+      document.getElementById(
+        id
+      );
+
+
+    if(!element){
+
+      return;
+
+    }
+
+
+    element.addEventListener(
       "input",
       updateLive
     );
 
-  document.getElementById(id)
-    .addEventListener(
+
+    element.addEventListener(
       "change",
       updateLive
     );
 
-});
+  }
+);
 
 
 /* =========================================================
@@ -3093,10 +3584,20 @@ async function init(){
     );
 
 
-    /*
-      الخطوة الأولى:
-      التأكد من الجلسة.
-    */
+    console.log(
+      "================================="
+    );
+
+    console.log(
+      "Khayrna Production INIT START"
+    );
+
+    console.log(
+      "================================="
+    );
+
+
+    /* 1 — الجلسة */
 
     const loggedIn =
       await loadSession();
@@ -3107,21 +3608,26 @@ async function init(){
       updatePageReadiness();
 
       return;
+
     }
 
 
-    /*
-      الخطوة الثانية:
-      الصلاحيات.
-    */
+    /* 2 — الصلاحيات */
+
+    setConnectionStatus(
+      "تم تسجيل الدخول — جاري فحص الصلاحيات..."
+    );
+
 
     await checkPermissions();
 
 
-    /*
-      الخطوة الثالثة:
-      تحميل البيانات الأساسية.
-    */
+    /* 3 — البيانات الأساسية */
+
+    setConnectionStatus(
+      "جاري تحميل المنتجات والمخازن..."
+    );
+
 
     await Promise.all([
       loadProducts(),
@@ -3129,34 +3635,32 @@ async function init(){
     ]);
 
 
-    /*
-      الخطوة الرابعة:
-      تجهيز النموذج.
-    */
+    /* 4 — النموذج */
+
+    setConnectionStatus(
+      "جاري تجهيز دفتر الإنتاج..."
+    );
+
 
     await openForm();
 
 
-    /*
-      الخطوة الخامسة:
-      تحميل سجل الإنتاج.
-    */
+    /* 5 — سجل الإنتاج */
+
+    setConnectionStatus(
+      "جاري تحميل سجل الإنتاج..."
+    );
+
 
     await loadProductions();
 
 
-    /*
-      الخطوة السادسة:
-      جاهزية الصفحة.
-    */
+    /* 6 — الجاهزية */
 
     updatePageReadiness();
 
 
-    /*
-      الخطوة السابعة:
-      Realtime.
-    */
+    /* 7 — Realtime */
 
     startRealtime();
 
@@ -3167,7 +3671,15 @@ async function init(){
 
 
     console.log(
+      "================================="
+    );
+
+    console.log(
       "Khayrna Production Page Ready"
+    );
+
+    console.log(
+      "================================="
     );
 
 
@@ -3189,6 +3701,7 @@ async function init(){
       (error.message || error),
       "error"
     );
+
   }
 }
 
@@ -3198,6 +3711,8 @@ async function init(){
 ========================================================= */
 
 loadMaterials([]);
+
+updateLive();
 
 init();
 
