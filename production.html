@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>خيرنا | الإنتاج اليومي</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -37,7 +40,7 @@ header{
 
 .container{
   width:92%;
-  max-width:1400px;
+  max-width:1450px;
   margin:30px auto;
 }
 
@@ -52,7 +55,8 @@ header{
 .title-box,
 .form-box,
 .search-box,
-.table-box{
+.table-box,
+.auth-box{
   background:white;
   border:1px solid #e1e8e3;
   border-radius:18px;
@@ -82,19 +86,54 @@ header{
   margin-bottom:20px;
 }
 
-.add-btn{
+.add-btn,
+.google-btn,
+.save-btn,
+.cancel-btn,
+.complete-btn,
+.edit-btn,
+.delete-btn{
   border:0;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.add-btn{
   background:#176b3a;
   color:white;
   padding:12px 18px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
   font-size:15px;
 }
 
 .add-btn:hover{
   background:#12562e;
+}
+
+.google-btn{
+  background:#176b3a;
+  color:white;
+  padding:13px 22px;
+}
+
+.auth-box{
+  padding:25px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.auth-info strong{
+  display:block;
+  margin-bottom:6px;
+}
+
+.auth-info span{
+  color:#68766e;
+  font-size:13px;
 }
 
 .stats{
@@ -162,6 +201,12 @@ header{
   border:1px solid #d8e0db;
   border-radius:8px;
   font-size:14px;
+  background:white;
+}
+
+.field input:disabled,
+.field select:disabled{
+  background:#f1f4f2;
 }
 
 .field textarea{
@@ -180,10 +225,6 @@ header{
   border-bottom:1px solid #e5ebe7;
   color:#176b3a;
 }
-
-/* =========================
-   المواد الخام
-========================= */
 
 .materials-box{
   grid-column:1/-1;
@@ -245,6 +286,7 @@ header{
   padding:10px;
   border:1px solid #d8e0db;
   border-radius:8px;
+  width:100%;
 }
 
 .remove-material-btn{
@@ -256,22 +298,13 @@ header{
   cursor:pointer;
 }
 
-.no-materials{
-  text-align:center;
-  color:#777;
-  padding:15px;
+.material-total{
+  margin-top:15px;
+  padding:14px;
+  background:#e9f7ef;
+  border-radius:10px;
+  font-weight:bold;
 }
-
-.materials-note{
-  margin-top:10px;
-  color:#68766e;
-  font-size:13px;
-  line-height:1.7;
-}
-
-/* =========================
-   النتائج
-========================= */
 
 .result-box{
   grid-column:1/-1;
@@ -304,25 +337,39 @@ header{
   display:flex;
   gap:10px;
   margin-top:5px;
-}
-
-.save-btn,
-.cancel-btn{
-  border:0;
-  padding:12px 20px;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:bold;
+  flex-wrap:wrap;
 }
 
 .save-btn{
   background:#176b3a;
   color:white;
+  padding:12px 20px;
 }
 
 .cancel-btn{
   background:#6c757d;
   color:white;
+  padding:12px 20px;
+}
+
+.complete-btn{
+  background:#198754;
+  color:white;
+  padding:8px 12px;
+  margin-right:5px;
+}
+
+.edit-btn{
+  background:#6c757d;
+  color:white;
+  padding:7px 10px;
+  margin-left:5px;
+}
+
+.delete-btn{
+  background:#dc3545;
+  color:white;
+  padding:7px 10px;
 }
 
 .search-box{
@@ -344,7 +391,7 @@ header{
 
 table{
   width:100%;
-  min-width:1500px;
+  min-width:1350px;
   border-collapse:collapse;
 }
 
@@ -379,33 +426,14 @@ tr:hover{
   color:#0f5132;
 }
 
-.progress{
+.draft{
   background:#fff3cd;
   color:#664d03;
 }
 
-.cancelled{
+.deleted{
   background:#f8d7da;
   color:#842029;
-}
-
-.delete-btn,
-.edit-btn{
-  border:0;
-  color:white;
-  padding:7px 10px;
-  border-radius:7px;
-  cursor:pointer;
-  font-size:12px;
-}
-
-.delete-btn{
-  background:#dc3545;
-}
-
-.edit-btn{
-  background:#6c757d;
-  margin-left:5px;
 }
 
 .empty{
@@ -413,7 +441,39 @@ tr:hover{
   color:#777;
 }
 
-@media(max-width:900px){
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#68766e;
+}
+
+.notice{
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:15px;
+  line-height:1.7;
+}
+
+.notice.warning{
+  background:#fff3cd;
+  color:#664d03;
+}
+
+.notice.success{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.notice.error{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.hidden{
+  display:none !important;
+}
+
+@media(max-width:1000px){
 
   .stats{
     grid-template-columns:repeat(2,1fr);
@@ -453,6 +513,10 @@ tr:hover{
   .material-row{
     grid-template-columns:1fr;
   }
+
+  .auth-box{
+    align-items:stretch;
+  }
 }
 </style>
 </head>
@@ -475,423 +539,366 @@ tr:hover{
   <h2>🏭 دفتر الإنتاج اليومي</h2>
 
   <p>
-    تسجيل عمليات الإنتاج اليومية وربطها بتكلفة المنتج والمخزون،
-    مع متابعة الكميات المخططة والمنفذة والهالك وحالة العملية،
-    وتسجيل المواد الخام المستخدمة في كل عملية إنتاج.
+    تسجيل أوامر الإنتاج وربطها بالمنتج والخامات والمخزن،
+    ثم إتمام الإنتاج من خلال قاعدة البيانات بحيث يتم خصم الخامات
+    وإضافة المنتج النهائي وربط العملية بالحسابات والتكلفة.
   </p>
 
 </section>
 
-<div class="actions">
+<section class="auth-box">
 
-  <h2>سجلات الإنتاج اليومية</h2>
+  <div class="auth-info">
+    <strong id="userName">جاري التحقق من تسجيل الدخول...</strong>
+    <span id="userRole">—</span>
+  </div>
 
-  <button class="add-btn" onclick="openForm()">
-    + إضافة عملية إنتاج
+  <button
+    id="loginBtn"
+    class="google-btn hidden"
+    onclick="loginWithGoogle()"
+  >
+    تسجيل الدخول باستخدام Google
   </button>
 
-</div>
-
-<section class="stats">
-
-  <div class="stat">
-    <h3>عدد عمليات الإنتاج</h3>
-    <strong id="recordCount">0</strong>
-  </div>
-
-  <div class="stat">
-    <h3>إجمالي الإنتاج الفعلي</h3>
-    <strong id="totalProduction">0</strong>
-  </div>
-
-  <div class="stat">
-    <h3>إجمالي الهالك</h3>
-    <strong id="totalWaste">0</strong>
-  </div>
-
-  <div class="stat">
-    <h3>العمليات المكتملة</h3>
-    <strong id="completedCount">0</strong>
-  </div>
-
 </section>
 
-<section class="form-box" id="formBox">
+<div id="notice"></div>
 
-<h2 id="formTitle">
-  إضافة عملية إنتاج
-</h2>
+<div id="appContent" class="hidden">
 
-<form id="productionForm">
+  <div class="actions">
 
-<div class="form-grid">
-
-  <div class="field">
-    <label>كود عملية الإنتاج</label>
-    <input id="productionCode" readonly>
-  </div>
-
-  <div class="field">
-    <label>التاريخ والوقت</label>
-    <input type="datetime-local" id="productionDate" required>
-  </div>
-
-  <div class="field">
-    <label>كود تكلفة المنتج</label>
-    <input id="costCode" placeholder="مثال: COST-2026-0001">
-  </div>
-
-  <div class="field">
-    <label>اسم المنتج</label>
-    <input id="product" required>
-  </div>
-
-  <div class="field">
-    <label>خط / قسم الإنتاج</label>
-    <input id="productionLine" placeholder="مثال: خط التعبئة 1">
-  </div>
-
-  <div class="field">
-    <label>الوردية</label>
-    <select id="shift">
-      <option>صباحية</option>
-      <option>مسائية</option>
-      <option>ليلية</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label>الكمية المخططة</label>
-    <input type="number" id="plannedQty" min="0" step="0.01" value="0">
-  </div>
-
-  <div class="field">
-    <label>الكمية الفعلية</label>
-    <input type="number" id="actualQty" min="0" step="0.01" value="0" required>
-  </div>
-
-  <div class="field">
-    <label>وحدة القياس</label>
-    <select id="unit">
-      <option>كجم</option>
-      <option>طن</option>
-      <option>عبوة</option>
-      <option>كرتونة</option>
-      <option>قطعة</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label>كمية الهالك</label>
-    <input type="number" id="wasteQty" min="0" step="0.01" value="0">
-  </div>
-
-  <div class="field">
-    <label>حالة الإنتاج</label>
-    <select id="status">
-      <option value="مكتملة">مكتملة</option>
-      <option value="قيد التنفيذ">قيد التنفيذ</option>
-      <option value="ملغاة">ملغاة</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label>المسؤول عن الإنتاج</label>
-    <input id="responsible" required>
-  </div>
-
-  <div class="section">
-    <h3>🧱 المواد الخام المستخدمة</h3>
-  </div>
-
-  <div class="materials-box">
-
-    <div class="materials-header">
-
-      <h3>مواد الإنتاج</h3>
-
-      <button
-        type="button"
-        class="add-material-btn"
-        onclick="addMaterialRow()"
-      >
-        + إضافة خامة
-      </button>
-
-    </div>
-
-    <div id="materialsContainer"></div>
-
-    <div class="materials-note">
-      سيتم خصم المواد الخام من المخزون تلقائيًا عند حفظ عملية الإنتاج
-      بحالة <strong>مكتملة</strong> فقط.
-    </div>
-
-  </div>
-
-  <div class="section">
-    <h3>🔗 بيانات الربط</h3>
-  </div>
-
-  <div class="field">
-    <label>كود حركة مخزون الناتج</label>
-    <input id="inventoryCode" readonly>
-  </div>
-
-  <div class="field">
-    <label>المخزن المستلم</label>
-    <input id="storageLocation" value="المخزن الرئيسي">
-  </div>
-
-  <div class="field">
-    <label>عدد العمال</label>
-    <input type="number" id="workers" min="0" step="1" value="0">
-  </div>
-
-  <div class="field">
-    <label>ساعات العمل</label>
-    <input type="number" id="workHours" min="0" step="0.25" value="0">
-  </div>
-
-  <div class="result-box">
-
-    <div class="result-item">
-      <span>نسبة تحقيق الخطة</span>
-      <strong id="liveAchievement">0%</strong>
-    </div>
-
-    <div class="result-item">
-      <span>صافي الإنتاج بعد الهالك</span>
-      <strong id="liveNet">0</strong>
-    </div>
-
-    <div class="result-item">
-      <span>الهالك</span>
-      <strong id="liveWaste">0</strong>
-    </div>
-
-  </div>
-
-  <div class="field full">
-    <label>ملاحظات</label>
-    <textarea id="notes"></textarea>
-  </div>
-
-  <div class="form-buttons">
-
-    <button type="submit" class="save-btn">
-      حفظ العملية
-    </button>
+    <h2>سجلات الإنتاج</h2>
 
     <button
-      type="button"
-      class="cancel-btn"
-      onclick="closeForm()"
+      id="addProductionBtn"
+      class="add-btn"
+      onclick="openForm()"
     >
-      إلغاء
+      + إضافة أمر إنتاج
     </button>
 
   </div>
 
+  <section class="stats">
+
+    <div class="stat">
+      <h3>عدد أوامر الإنتاج</h3>
+      <strong id="recordCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>إجمالي الإنتاج</h3>
+      <strong id="totalProduction">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>الإنتاج المكتمل</h3>
+      <strong id="completedCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>قيد التنفيذ</h3>
+      <strong id="draftCount">0</strong>
+    </div>
+
+  </section>
+
+  <section class="form-box" id="formBox">
+
+    <h2 id="formTitle">
+      إضافة أمر إنتاج
+    </h2>
+
+    <form id="productionForm">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>كود عملية الإنتاج</label>
+          <input
+            id="productionCode"
+            readonly
+            placeholder="يُنشأ تلقائيًا من قاعدة البيانات"
+          >
+        </div>
+
+        <div class="field">
+          <label>التاريخ والوقت</label>
+          <input
+            type="datetime-local"
+            id="productionDate"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label>حالة الإنتاج</label>
+          <select id="status">
+            <option value="draft">مسودة</option>
+            <option value="completed">مكتملة</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>المنتج النهائي</label>
+          <select id="productId" required>
+            <option value="">اختر المنتج</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>كمية الإنتاج</label>
+          <input
+            type="number"
+            id="quantity"
+            min="0.01"
+            step="0.01"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label>وحدة المنتج</label>
+          <input
+            id="productUnit"
+            readonly
+            placeholder="تُجلب تلقائيًا"
+          >
+        </div>
+
+        <div class="field">
+          <label>المخزن المستلم</label>
+          <select id="warehouseId">
+            <option value="">اختر المخزن</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>المسؤول</label>
+          <input
+            id="responsibleName"
+            readonly
+          >
+        </div>
+
+        <div class="field">
+          <label>كود تكلفة المنتج</label>
+          <input
+            id="costCode"
+            readonly
+            placeholder="سيظهر بعد ربط دفتر التكلفة"
+          >
+        </div>
+
+        <div class="section">
+          <h3>🧱 المواد الخام المستخدمة</h3>
+        </div>
+
+        <div class="materials-box">
+
+          <div class="materials-header">
+
+            <h3>مواد الإنتاج</h3>
+
+            <button
+              type="button"
+              class="add-material-btn"
+              onclick="addMaterialRow()"
+            >
+              + إضافة خامة
+            </button>
+
+          </div>
+
+          <div id="materialsContainer"></div>
+
+          <div class="material-total">
+            إجمالي تكلفة الخامات:
+            <span id="materialsTotal">0.00</span>
+          </div>
+
+        </div>
+
+        <div class="result-box">
+
+          <div class="result-item">
+            <span>كمية الإنتاج</span>
+            <strong id="liveQuantity">0</strong>
+          </div>
+
+          <div class="result-item">
+            <span>عدد الخامات</span>
+            <strong id="liveMaterialsCount">0</strong>
+          </div>
+
+          <div class="result-item">
+            <span>تكلفة الخامات</span>
+            <strong id="liveMaterialCost">0.00</strong>
+          </div>
+
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes"></textarea>
+        </div>
+
+        <div class="form-buttons">
+
+          <button
+            type="submit"
+            class="save-btn"
+          >
+            حفظ أمر الإنتاج
+          </button>
+
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="closeForm()"
+          >
+            إلغاء
+          </button>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="search-box">
+
+    <input
+      id="search"
+      type="text"
+      placeholder="🔎 بحث بكود الإنتاج أو اسم المنتج أو الحالة..."
+      oninput="render()"
+    >
+
+  </section>
+
+  <section class="table-box">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>كود الإنتاج</th>
+          <th>التاريخ</th>
+          <th>المنتج</th>
+          <th>الكمية</th>
+          <th>الوحدة</th>
+          <th>المخزن</th>
+          <th>الحالة</th>
+          <th>كود التكلفة</th>
+          <th>الخامات</th>
+          <th>الملاحظات</th>
+          <th>الإجراء</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="productionTable">
+
+        <tr>
+          <td colspan="11" class="loading">
+            جاري تحميل الإنتاج...
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
 </div>
-
-</form>
-
-</section>
-
-<section class="search-box">
-
-  <input
-    id="search"
-    type="text"
-    placeholder="🔎 بحث بكود الإنتاج أو المنتج أو كود التكلفة..."
-    oninput="render()"
-  >
-
-</section>
-
-<section class="table-box">
-
-<table>
-
-<thead>
-<tr>
-<th>كود الإنتاج</th>
-<th>التاريخ والوقت</th>
-<th>كود التكلفة</th>
-<th>المنتج</th>
-<th>خط الإنتاج</th>
-<th>الوردية</th>
-<th>المخطط</th>
-<th>الفعلي</th>
-<th>الوحدة</th>
-<th>الهالك</th>
-<th>الصافي</th>
-<th>الحالة</th>
-<th>المسؤول</th>
-<th>كود المخزون</th>
-<th>المخزن</th>
-<th>العمال</th>
-<th>الساعات</th>
-<th>الخامات</th>
-<th>ملاحظات</th>
-<th>الإجراء</th>
-</tr>
-</thead>
-
-<tbody id="productionTable"></tbody>
-
-</table>
-
-</section>
 
 </main>
 
 <script>
 
-const KEY = "kheyrna_production";
-const INVENTORY_KEY = "kheyrna_inventory_manual";
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-let editingCode = null;
+const SUPABASE_URL =
+  "https://xvmgbmwlepiftspgazga.supabase.co";
 
+const SUPABASE_KEY =
+  "sb_publishable_0QcrQbx1u92isBbfYS6zTg_zigmJKNl";
 
-/* =========================
-   أدوات البيانات
-========================= */
-
-function getData(){
-
-  try{
-
-    return JSON.parse(
-      localStorage.getItem(KEY)
-    ) || [];
-
-  }catch(e){
-
-    return [];
-
-  }
-
-}
-
-function saveData(data){
-
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(data)
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        autoRefreshToken:true,
+        persistSession:true,
+        detectSessionInUrl:true
+      }
+    }
   );
 
-}
 
-function getInventory(){
+/* =========================================================
+   الحالة
+========================================================= */
 
-  try{
+let currentUser = null;
+let currentAppUser = null;
+let editingId = null;
 
-    return JSON.parse(
-      localStorage.getItem(INVENTORY_KEY)
-    ) || [];
-
-  }catch(e){
-
-    return [];
-
-  }
-
-}
-
-function saveInventory(data){
-
-  localStorage.setItem(
-    INVENTORY_KEY,
-    JSON.stringify(data)
-  );
-
-}
+let products = [];
+let warehouses = [];
+let productions = [];
 
 
-/* =========================
-   إنشاء كود الإنتاج
-========================= */
+/* =========================================================
+   أدوات عامة
+========================================================= */
 
-function generateCode(){
+function escapeHtml(value){
 
-  const year =
-    new Date().getFullYear();
-
-  let max = 0;
-
-  getData().forEach(x => {
-
-    const match =
-      (x.code || "").match(
-        /PRD-\d{4}-(\d+)/
-      );
-
-    if(match){
-
-      max =
-        Math.max(
-          max,
-          parseInt(match[1],10)
-        );
-
-    }
-
-  });
-
-  return `PRD-${year}-${String(
-    max + 1
-  ).padStart(4,"0")}`;
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
+function showNotice(message,type="warning"){
 
-/* =========================
-   إنشاء كود المخزون
-========================= */
+  const box =
+    document.getElementById("notice");
 
-function generateInventoryCode(){
-
-  const year =
-    new Date().getFullYear();
-
-  let max = 0;
-
-  getInventory().forEach(x => {
-
-    const match =
-      (x.code || "").match(
-        /INV-\d{4}-(\d+)/
-      );
-
-    if(match){
-
-      max =
-        Math.max(
-          max,
-          parseInt(match[1],10)
-        );
-
-    }
-
-  });
-
-  return `INV-${year}-${String(
-    max + 1
-  ).padStart(4,"0")}`;
+  box.innerHTML = `
+    <div class="notice ${type}">
+      ${escapeHtml(message)}
+    </div>
+  `;
 
 }
 
+function clearNotice(){
 
-/* =========================
-   الوقت الحالي
-========================= */
+  document.getElementById(
+    "notice"
+  ).innerHTML = "";
 
-function setNow(){
+}
 
-  const now =
-    new Date();
+function localDateTimeValue(){
+
+  const now = new Date();
 
   now.setMinutes(
     now.getMinutes()
@@ -899,24 +906,363 @@ function setNow(){
     now.getTimezoneOffset()
   );
 
-  document.getElementById(
-    "productionDate"
-  ).value =
-    now.toISOString().slice(0,16);
+  return now.toISOString().slice(0,16);
+
+}
+
+function formatDate(value){
+
+  if(!value) return "—";
+
+  try{
+
+    return new Date(value)
+      .toLocaleString(
+        "ar-EG",
+        {
+          year:"numeric",
+          month:"2-digit",
+          day:"2-digit",
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+  }catch{
+
+    return value;
+
+  }
 
 }
 
 
-/* =========================
-   المواد الخام
-========================= */
+/* =========================================================
+   تسجيل الدخول
+========================================================= */
 
-function addMaterialRow(material = {}){
+async function loginWithGoogle(){
+
+  const redirectTo =
+    window.location.href.split("#")[0];
+
+  const {
+    error
+  } =
+    await supabase.auth.signInWithOAuth({
+
+      provider:"google",
+
+      options:{
+        redirectTo:redirectTo
+      }
+
+    });
+
+  if(error){
+
+    showNotice(
+      "تعذر بدء تسجيل الدخول: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   التحقق من المستخدم
+========================================================= */
+
+async function loadCurrentUser(){
+
+  const {
+    data,
+    error
+  } =
+    await supabase.auth.getUser();
+
+  if(error){
+
+    currentUser = null;
+
+    return false;
+
+  }
+
+  currentUser =
+    data.user || null;
+
+  if(!currentUser){
+
+    return false;
+
+  }
+
+
+  const {
+    data:appUser,
+    error:appError
+  } =
+    await supabase
+      .from("app_users")
+      .select(
+        "id,auth_user_id,full_name,role,is_active"
+      )
+      .eq(
+        "auth_user_id",
+        currentUser.id
+      )
+      .maybeSingle();
+
+
+  if(appError){
+
+    console.error(appError);
+
+    showNotice(
+      "تم تسجيل الدخول، لكن تعذر قراءة مستخدم النظام.",
+      "error"
+    );
+
+    return false;
+
+  }
+
+
+  if(!appUser){
+
+    showNotice(
+      "حساب Google موجود، لكنه غير مسجل داخل مستخدمي نظام خيرنا.",
+      "error"
+    );
+
+    return false;
+
+  }
+
+
+  if(!appUser.is_active){
+
+    showNotice(
+      "هذا المستخدم غير نشط داخل النظام.",
+      "error"
+    );
+
+    return false;
+
+  }
+
+
+  currentAppUser =
+    appUser;
+
+
+  document.getElementById(
+    "userName"
+  ).textContent =
+    appUser.full_name;
+
+  document.getElementById(
+    "userRole"
+  ).textContent =
+    "الصلاحية: " +
+    appUser.role;
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   المنتجات
+========================================================= */
+
+async function loadProducts(){
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("products")
+      .select(
+        "id,product_code,name,unit,status"
+      )
+      .is(
+        "deleted_at",
+        null
+      )
+      .eq(
+        "status",
+        "active"
+      )
+      .order(
+        "name"
+      );
+
+
+  if(error){
+
+    console.error(error);
+
+    throw new Error(
+      "تعذر تحميل المنتجات."
+    );
+
+  }
+
+
+  products =
+    data || [];
+
+
+  const select =
+    document.getElementById(
+      "productId"
+    );
+
+  select.innerHTML =
+    `<option value="">اختر المنتج</option>`;
+
+
+  products.forEach(product => {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      product.id;
+
+    option.textContent =
+      `${product.name} — ${product.unit}`;
+
+    select.appendChild(
+      option
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   المخازن
+========================================================= */
+
+async function loadWarehouses(){
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("warehouses")
+      .select(
+        "id,warehouse_code,name,location,status"
+      )
+      .is(
+        "deleted_at",
+        null
+      )
+      .eq(
+        "status",
+        "active"
+      )
+      .order(
+        "name"
+      );
+
+
+  if(error){
+
+    console.error(error);
+
+    throw new Error(
+      "تعذر تحميل المخازن."
+    );
+
+  }
+
+
+  warehouses =
+    data || [];
+
+
+  const select =
+    document.getElementById(
+      "warehouseId"
+    );
+
+  select.innerHTML =
+    `<option value="">اختر المخزن</option>`;
+
+
+  warehouses.forEach(warehouse => {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      warehouse.id;
+
+    option.textContent =
+      warehouse.name;
+
+    select.appendChild(
+      option
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   اختيار المنتج
+========================================================= */
+
+document.getElementById(
+  "productId"
+).addEventListener(
+  "change",
+  function(){
+
+    const product =
+      products.find(
+        x =>
+          x.id === this.value
+      );
+
+    document.getElementById(
+      "productUnit"
+    ).value =
+      product
+        ? product.unit
+        : "";
+
+  }
+);
+
+
+/* =========================================================
+   المواد الخام
+========================================================= */
+
+function addMaterialRow(material={}){
 
   const container =
     document.getElementById(
       "materialsContainer"
     );
+
 
   const row =
     document.createElement(
@@ -926,76 +1272,84 @@ function addMaterialRow(material = {}){
   row.className =
     "material-row";
 
+
+  const options =
+    products
+      .map(product => {
+
+        const selected =
+          product.id ===
+          material.product_id
+            ? "selected"
+            : "";
+
+        return `
+          <option
+            value="${escapeHtml(product.id)}"
+            ${selected}
+          >
+            ${escapeHtml(product.name)}
+            — ${escapeHtml(product.unit)}
+          </option>
+        `;
+
+      })
+      .join("");
+
+
   row.innerHTML = `
 
     <div class="material-field">
 
-      <label>اسم الخامة</label>
+      <label>الخامة</label>
 
-      <input
-        type="text"
-        class="material-item"
-        placeholder="مثال: سكر خام"
-        value="${escapeHtml(material.item || "")}"
+      <select
+        class="material-product"
+        onchange="updateMaterialCost(this)"
       >
 
-    </div>
+        <option value="">
+          اختر الخامة
+        </option>
 
-    <div class="material-field">
-
-      <label>الكمية المستخدمة</label>
-
-      <input
-        type="number"
-        class="material-quantity"
-        min="0"
-        step="0.01"
-        value="${material.quantity || ""}"
-        placeholder="0"
-      >
-
-    </div>
-
-    <div class="material-field">
-
-      <label>الوحدة</label>
-
-      <select class="material-unit">
-
-        <option ${
-          material.unit === "كجم"
-          || !material.unit
-          ? "selected"
-          : ""
-        }>كجم</option>
-
-        <option ${
-          material.unit === "طن"
-          ? "selected"
-          : ""
-        }>طن</option>
-
-        <option ${
-          material.unit === "عبوة"
-          ? "selected"
-          : ""
-        }>عبوة</option>
-
-        <option ${
-          material.unit === "كرتونة"
-          ? "selected"
-          : ""
-        }>كرتونة</option>
-
-        <option ${
-          material.unit === "قطعة"
-          ? "selected"
-          : ""
-        }>قطعة</option>
+        ${options}
 
       </select>
 
     </div>
+
+
+    <div class="material-field">
+
+      <label>الكمية</label>
+
+      <input
+        type="number"
+        class="material-quantity"
+        min="0.01"
+        step="0.01"
+        value="${material.quantity || ""}"
+        oninput="updateMaterialCost(this)"
+      >
+
+    </div>
+
+
+    <div class="material-field">
+
+      <label>تكلفة الوحدة</label>
+
+      <input
+        type="number"
+        class="material-unit-cost"
+        min="0"
+        step="0.01"
+        value="${material.unit_cost ?? ""}"
+        oninput="updateMaterialCost(this)"
+      >
+
+    </div>
+
 
     <button
       type="button"
@@ -1007,9 +1361,13 @@ function addMaterialRow(material = {}){
 
   `;
 
+
   container.appendChild(row);
 
+  updateMaterialSummary();
+
 }
+
 
 function removeMaterialRow(button){
 
@@ -1024,75 +1382,43 @@ function removeMaterialRow(button){
 
   }
 
-  ensureMaterialMessage();
+  updateMaterialSummary();
 
 }
 
-function ensureMaterialMessage(){
 
-  const container =
-    document.getElementById(
-      "materialsContainer"
-    );
+function updateMaterialCost(){
 
-  const rows =
-    container.querySelectorAll(
-      ".material-row"
-    );
-
-  const oldMessage =
-    container.querySelector(
-      ".no-materials"
-    );
-
-  if(!rows.length){
-
-    if(!oldMessage){
-
-      const message =
-        document.createElement(
-          "div"
-        );
-
-      message.className =
-        "no-materials";
-
-      message.textContent =
-        "لم تتم إضافة خامات بعد — اضغط «+ إضافة خامة»";
-
-      container.appendChild(
-        message
-      );
-
-    }
-
-  }else{
-
-    if(oldMessage){
-
-      oldMessage.remove();
-
-    }
-
-  }
+  updateMaterialSummary();
 
 }
+
+
+function getMaterialRows(){
+
+  return [
+    ...document.querySelectorAll(
+      "#materialsContainer .material-row"
+    )
+  ];
+
+}
+
 
 function getMaterials(){
 
   const rows =
-    document.querySelectorAll(
-      "#materialsContainer .material-row"
-    );
+    getMaterialRows();
 
   const materials = [];
 
+
   rows.forEach(row => {
 
-    const item =
+    const productId =
       row.querySelector(
-        ".material-item"
-      ).value.trim();
+        ".material-product"
+      ).value;
 
     const quantity =
       Number(
@@ -1101,20 +1427,29 @@ function getMaterials(){
         ).value
       ) || 0;
 
-    const unit =
-      row.querySelector(
-        ".material-unit"
-      ).value;
+    const unitCost =
+      Number(
+        row.querySelector(
+          ".material-unit-cost"
+        ).value
+      ) || 0;
 
-    if(item && quantity > 0){
+
+    if(
+      productId &&
+      quantity > 0
+    ){
 
       materials.push({
 
-        item:item,
+        product_id:
+          productId,
 
-        quantity:quantity,
+        quantity:
+          quantity,
 
-        unit:unit
+        unit_cost:
+          unitCost
 
       });
 
@@ -1122,223 +1457,322 @@ function getMaterials(){
 
   });
 
+
   return materials;
 
 }
 
-function loadMaterials(materials){
 
-  const container =
+function updateMaterialSummary(){
+
+  const rows =
+    getMaterialRows();
+
+  let total = 0;
+  let count = 0;
+
+
+  rows.forEach(row => {
+
+    const quantity =
+      Number(
+        row.querySelector(
+          ".material-quantity"
+        ).value
+      ) || 0;
+
+    const unitCost =
+      Number(
+        row.querySelector(
+          ".material-unit-cost"
+        ).value
+      ) || 0;
+
+    const productId =
+      row.querySelector(
+        ".material-product"
+      ).value;
+
+
+    if(productId){
+
+      count++;
+
+    }
+
+
+    total +=
+      quantity *
+      unitCost;
+
+  });
+
+
+  document.getElementById(
+    "materialsTotal"
+  ).textContent =
+    total.toFixed(2);
+
+  document.getElementById(
+    "liveMaterialCost"
+  ).textContent =
+    total.toFixed(2);
+
+  document.getElementById(
+    "liveMaterialsCount"
+  ).textContent =
+    count;
+
+}
+
+
+document.getElementById(
+  "quantity"
+).addEventListener(
+  "input",
+  function(){
+
     document.getElementById(
-      "materialsContainer"
-    );
-
-  container.innerHTML = "";
-
-  if(
-    Array.isArray(materials)
-    &&
-    materials.length
-  ){
-
-    materials.forEach(material => {
-
-      addMaterialRow(
-        material
-      );
-
-    });
+      "liveQuantity"
+    ).textContent =
+      this.value || "0";
 
   }
-
-  ensureMaterialMessage();
-
-}
+);
 
 
-/* =========================
-   حماية النصوص
-========================= */
-
-function escapeHtml(value){
-
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================
+/* =========================================================
    فتح النموذج
-========================= */
+========================================================= */
 
 function openForm(){
 
-  editingCode = null;
-
-  document.getElementById(
-    "formBox"
-  ).classList.add("active");
-
-  document.getElementById(
-    "formTitle"
-  ).textContent =
-    "إضافة عملية إنتاج";
+  editingId = null;
 
   document.getElementById(
     "productionForm"
   ).reset();
 
-  document.getElementById(
-    "productionCode"
-  ).value =
-    generateCode();
 
   document.getElementById(
-    "inventoryCode"
-  ).value =
-    generateInventoryCode();
+    "formTitle"
+  ).textContent =
+    "إضافة أمر إنتاج";
+
 
   document.getElementById(
-    "storageLocation"
+    "productionDate"
   ).value =
-    "المخزن الرئيسي";
+    localDateTimeValue();
 
-  loadMaterials([]);
 
-  setNow();
+  document.getElementById(
+    "status"
+  ).value =
+    "draft";
 
-  updateLive();
+
+  document.getElementById(
+    "responsibleName"
+  ).value =
+    currentAppUser
+      ? currentAppUser.full_name
+      : "";
+
+
+  document.getElementById(
+    "materialsContainer"
+  ).innerHTML = "";
+
+
+  document.getElementById(
+    "materialsTotal"
+  ).textContent =
+    "0.00";
+
+
+  document.getElementById(
+    "liveQuantity"
+  ).textContent =
+    "0";
+
+
+  document.getElementById(
+    "liveMaterialsCount"
+  ).textContent =
+    "0";
+
+
+  document.getElementById(
+    "liveMaterialCost"
+  ).textContent =
+    "0.00";
+
+
+  document.getElementById(
+    "formBox"
+  ).classList.add(
+    "active"
+  );
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 
 }
 
 
-/* =========================
+/* =========================================================
    إغلاق النموذج
-========================= */
+========================================================= */
 
 function closeForm(){
 
   document.getElementById(
     "formBox"
-  ).classList.remove("active");
+  ).classList.remove(
+    "active"
+  );
 
-  editingCode = null;
-
-}
-
-
-/* =========================
-   الحسابات المباشرة
-========================= */
-
-function updateLive(){
-
-  const plan =
-    Number(
-      document.getElementById(
-        "plannedQty"
-      ).value
-    ) || 0;
-
-  const actual =
-    Number(
-      document.getElementById(
-        "actualQty"
-      ).value
-    ) || 0;
-
-  const waste =
-    Number(
-      document.getElementById(
-        "wasteQty"
-      ).value
-    ) || 0;
-
-  const achievement =
-    plan > 0
-      ? ((actual / plan) * 100).toFixed(1)
-      : 0;
-
-  const net =
-    Math.max(
-      actual - waste,
-      0
-    );
-
-  document.getElementById(
-    "liveAchievement"
-  ).textContent =
-    achievement + "%";
-
-  document.getElementById(
-    "liveNet"
-  ).textContent =
-    net;
-
-  document.getElementById(
-    "liveWaste"
-  ).textContent =
-    waste;
+  editingId = null;
 
 }
 
-[
-  "plannedQty",
-  "actualQty",
-  "wasteQty"
-].forEach(id => {
 
-  document.getElementById(id)
-    .addEventListener(
-      "input",
-      updateLive
-    );
+/* =========================================================
+   تحميل الإنتاج
+========================================================= */
 
-});
+async function loadProductions(){
 
-
-/* =========================
-   مزامنة الإنتاج مع المخزون
-========================= */
-
-function syncInventory(item){
-
-  let inventory =
-    getInventory();
-
-
-  /*
-    حذف جميع الحركات القديمة
-    الخاصة بهذه العملية
-  */
-
-  inventory =
-    inventory.filter(m => {
-
-      return !(
-        m.source === "production" &&
-        m.reference === item.code
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("production_batches")
+      .select(`
+        id,
+        production_code,
+        produced_at,
+        product_id,
+        quantity,
+        warehouse_id,
+        responsible_user,
+        status,
+        notes,
+        deleted_at,
+        products(
+          id,
+          product_code,
+          name,
+          unit
+        ),
+        warehouses(
+          id,
+          warehouse_code,
+          name
+        ),
+        production_inputs(
+          id,
+          product_id,
+          quantity,
+          unit_cost,
+          total_cost,
+          notes,
+          products(
+            id,
+            product_code,
+            name,
+            unit
+          )
+        )
+      `)
+      .is(
+        "deleted_at",
+        null
+      )
+      .order(
+        "produced_at",
+        {
+          ascending:false
+        }
       );
 
-    });
+
+  if(error){
+
+    console.error(error);
+
+    throw new Error(
+      "تعذر تحميل سجلات الإنتاج."
+    );
+
+  }
 
 
-  /*
-    لا يتم إنشاء أي حركة
-    إذا لم يكن الإنتاج مكتملًا
-  */
+  productions =
+    data || [];
 
-  if(
-    item.status !== "مكتملة"
-  ){
 
-    saveInventory(
-      inventory
+  await attachCostCodes();
+
+  render();
+
+}
+
+
+/* =========================================================
+   ربط كود التكلفة
+========================================================= */
+
+async function attachCostCodes(){
+
+  if(!productions.length){
+
+    return;
+
+  }
+
+
+  const ids =
+    productions.map(
+      x => x.id
+    );
+
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("product_costs")
+      .select(
+        "id,cost_code,production_id,material_cost,labor_cost,overhead_cost,total_cost"
+      )
+      .in(
+        "production_id",
+        ids
+      )
+      .is(
+        "deleted_at",
+        null
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      "Cost loading error:",
+      error
     );
 
     return;
@@ -1346,234 +1780,111 @@ function syncInventory(item){
   }
 
 
-  /*
-    =========================
-    1 — خروج المواد الخام
-    =========================
-  */
-
-  if(
-    Array.isArray(item.materials)
-  ){
-
-    item.materials.forEach(material => {
-
-      if(
-        material.item &&
-        Number(material.quantity) > 0
-      ){
-
-        inventory.push({
-
-          code:
-            generateInventoryCodeFromList(
-              inventory
-            ),
-
-          date:
-            item.date,
-
-          item:
-            material.item,
-
-          type:
-            "خروج",
-
-          in:
-            0,
-
-          out:
-            Number(
-              material.quantity
-            ),
-
-          reason:
-            "استهلاك مواد خام في الإنتاج",
-
-          reference:
-            item.code,
-
-          location:
-            item.storageLocation ||
-            "المخزن الرئيسي",
-
-          responsible:
-            item.responsible ||
-            "الإنتاج",
-
-          notes:
-            `حركة خروج تلقائية لاستهلاك ${material.item} في الإنتاج ${item.code}`,
-
-          auto:
-            true,
-
-          source:
-            "production",
-
-          productionMovementType:
-            "raw_material",
-
-          productionCode:
-            item.code
-
-        });
-
-      }
-
-    });
-
-  }
+  const costMap = {};
 
 
-  /*
-    =========================
-    2 — دخول المنتج النهائي
-    =========================
-  */
+  (data || []).forEach(cost => {
 
-  if(
-    Number(item.netQty) > 0
-  ){
+    if(
+      !costMap[cost.production_id]
+    ){
 
-    inventory.push({
-
-      code:
-        item.inventoryCode ||
-        generateInventoryCodeFromList(
-          inventory
-        ),
-
-      date:
-        item.date,
-
-      item:
-        item.product,
-
-      type:
-        "دخول",
-
-      in:
-        Number(
-          item.netQty
-        ),
-
-      out:
-        0,
-
-      reason:
-        "إنتاج مكتمل",
-
-      reference:
-        item.code,
-
-      location:
-        item.storageLocation ||
-        "المخزن الرئيسي",
-
-      responsible:
-        item.responsible ||
-        "الإنتاج",
-
-      notes:
-        `حركة دخول تلقائية ناتجة عن الإنتاج ${item.code}`,
-
-      auto:
-        true,
-
-      source:
-        "production",
-
-      productionMovementType:
-        "finished_product",
-
-      productionCode:
-        item.code
-
-    });
-
-  }
-
-
-  saveInventory(
-    inventory
-  );
-
-}
-
-
-/* =========================
-   توليد كود حركة من القائمة
-========================= */
-
-function generateInventoryCodeFromList(list){
-
-  const year =
-    new Date().getFullYear();
-
-  let max = 0;
-
-  list.forEach(x => {
-
-    const match =
-      (x.code || "").match(
-        /INV-\d{4}-(\d+)/
-      );
-
-    if(match){
-
-      max =
-        Math.max(
-          max,
-          parseInt(
-            match[1],
-            10
-          )
-        );
+      costMap[
+        cost.production_id
+      ] =
+        cost;
 
     }
 
   });
 
-  return `INV-${year}-${String(
-    max + 1
-  ).padStart(4,"0")}`;
+
+  productions =
+    productions.map(item => ({
+
+      ...item,
+
+      cost:
+        costMap[item.id] || null
+
+    }));
 
 }
 
 
-/* =========================
-   حفظ العملية
-========================= */
+/* =========================================================
+   حفظ أمر الإنتاج
+========================================================= */
 
 document.getElementById(
   "productionForm"
 ).addEventListener(
   "submit",
-  function(e){
+  async function(e){
 
     e.preventDefault();
 
-    const data =
-      getData();
+    clearNotice();
 
-    const actualQty =
+
+    const productId =
+      document.getElementById(
+        "productId"
+      ).value;
+
+
+    const quantity =
       Number(
         document.getElementById(
-          "actualQty"
+          "quantity"
         ).value
-      ) || 0;
+      );
 
-    const wasteQty =
-      Number(
-        document.getElementById(
-          "wasteQty"
-        ).value
-      ) || 0;
 
-    if(wasteQty > actualQty){
+    const warehouseId =
+      document.getElementById(
+        "warehouseId"
+      ).value || null;
 
-      alert(
-        "كمية الهالك لا يمكن أن تكون أكبر من الكمية الفعلية."
+
+    const producedAt =
+      document.getElementById(
+        "productionDate"
+      ).value;
+
+
+    const status =
+      document.getElementById(
+        "status"
+      ).value;
+
+
+    const notes =
+      document.getElementById(
+        "notes"
+      ).value.trim();
+
+
+    if(!productId){
+
+      showNotice(
+        "اختر المنتج النهائي أولًا.",
+        "warning"
+      );
+
+      return;
+
+    }
+
+
+    if(
+      !quantity ||
+      quantity <= 0
+    ){
+
+      showNotice(
+        "أدخل كمية إنتاج أكبر من صفر.",
+        "warning"
       );
 
       return;
@@ -1585,48 +1896,18 @@ document.getElementById(
       getMaterials();
 
 
-    /*
-      التأكد من عدم وجود
-      خامة باسم فارغ أو كمية سالبة
-    */
+    const rows =
+      getMaterialRows();
 
-    const materialRows =
-      document.querySelectorAll(
-        "#materialsContainer .material-row"
-      );
 
-    let invalidMaterial = false;
+    if(
+      rows.length !==
+      materials.length
+    ){
 
-    materialRows.forEach(row => {
-
-      const name =
-        row.querySelector(
-          ".material-item"
-        ).value.trim();
-
-      const qty =
-        Number(
-          row.querySelector(
-            ".material-quantity"
-          ).value
-        ) || 0;
-
-      if(
-        (name && qty <= 0)
-        ||
-        (!name && qty > 0)
-      ){
-
-        invalidMaterial = true;
-
-      }
-
-    });
-
-    if(invalidMaterial){
-
-      alert(
-        "من فضلك تأكد من إدخال اسم كل خامة والكمية المستخدمة بشكل صحيح."
+      showNotice(
+        "تأكد من أن كل خامة لها منتج وكمية صحيحة.",
+        "warning"
       );
 
       return;
@@ -1634,139 +1915,95 @@ document.getElementById(
     }
 
 
-    const item = {
-
-      code:
-        document.getElementById(
-          "productionCode"
-        ).value,
-
-      date:
-        document.getElementById(
-          "productionDate"
-        ).value,
-
-      costCode:
-        document.getElementById(
-          "costCode"
-        ).value.trim(),
-
-      product:
-        document.getElementById(
-          "product"
-        ).value.trim(),
-
-      productionLine:
-        document.getElementById(
-          "productionLine"
-        ).value.trim(),
-
-      shift:
-        document.getElementById(
-          "shift"
-        ).value,
-
-      plannedQty:
-        Number(
-          document.getElementById(
-            "plannedQty"
-          ).value
-        ) || 0,
-
-      actualQty:
-        actualQty,
-
-      unit:
-        document.getElementById(
-          "unit"
-        ).value,
-
-      wasteQty:
-        wasteQty,
-
-      status:
-        document.getElementById(
-          "status"
-        ).value,
-
-      responsible:
-        document.getElementById(
-          "responsible"
-        ).value.trim(),
-
-      inventoryCode:
-        document.getElementById(
-          "inventoryCode"
-        ).value,
-
-      storageLocation:
-        document.getElementById(
-          "storageLocation"
-        ).value.trim(),
-
-      workers:
-        Number(
-          document.getElementById(
-            "workers"
-          ).value
-        ) || 0,
-
-      workHours:
-        Number(
-          document.getElementById(
-            "workHours"
-          ).value
-        ) || 0,
-
-      materials:
-        materials,
-
-      notes:
-        document.getElementById(
-          "notes"
-        ).value.trim()
-
-    };
-
-
-    item.netQty =
-      Math.max(
-        item.actualQty -
-        item.wasteQty,
-        0
+    const submitButton =
+      this.querySelector(
+        ".save-btn"
       );
 
 
-    /*
-      إضافة جديدة
-    */
+    submitButton.disabled =
+      true;
 
-    if(!editingCode){
-
-      data.push(
-        item
-      );
-
-    }
+    submitButton.textContent =
+      "جاري الحفظ...";
 
 
-    /*
-      تعديل عملية موجودة
-    */
+    try{
 
-    else{
+      /* =========================
+         تعديل
+      ========================= */
 
-      const index =
-        data.findIndex(
-          x =>
-            x.code ===
-            editingCode
-        );
+      if(editingId){
 
-      if(index === -1){
+        if(
+          currentAppUser.role !==
+          "admin"
+        ){
 
-        alert(
-          "لم يتم العثور على عملية الإنتاج."
+          throw new Error(
+            "التعديل مسموح للـ Admin فقط."
+          );
+
+        }
+
+
+        const {
+          error:updateError
+        } =
+          await supabase
+            .from("production_batches")
+            .update({
+
+              produced_at:
+                new Date(
+                  producedAt
+                ).toISOString(),
+
+              product_id:
+                productId,
+
+              quantity:
+                quantity,
+
+              warehouse_id:
+                warehouseId,
+
+              status:
+                status,
+
+              notes:
+                notes
+
+            })
+            .eq(
+              "id",
+              editingId
+            );
+
+
+        if(updateError){
+
+          throw updateError;
+
+        }
+
+
+        /*
+          ملاحظة:
+          تحديث مواد الإنتاج في هذه المرحلة
+          لا يتم عبر localStorage.
+          يتم فقط التعامل مع السجلات التي
+          تسمح بها صلاحيات النظام.
+        */
+
+        closeForm();
+
+        await loadProductions();
+
+        showNotice(
+          "تم تعديل أمر الإنتاج بنجاح.",
+          "success"
         );
 
         return;
@@ -1774,57 +2011,157 @@ document.getElementById(
       }
 
 
+      /* =========================
+         إنشاء أمر إنتاج
+      ========================= */
+
+      const {
+        data:created,
+        error:createError
+      } =
+        await supabase
+          .from(
+            "production_batches"
+          )
+          .insert({
+
+            produced_at:
+              new Date(
+                producedAt
+              ).toISOString(),
+
+            product_id:
+              productId,
+
+            quantity:
+              quantity,
+
+            warehouse_id:
+              warehouseId,
+
+            status:
+              "draft",
+
+            notes:
+              notes
+
+          })
+          .select(
+            "id,production_code"
+          )
+          .single();
+
+
+      if(createError){
+
+        throw createError;
+
+      }
+
+
       /*
-        الاحتفاظ بكود حركة
-        المنتج النهائي القديم
+        إضافة الخامات من خلال الدالة
+        الموجودة في Supabase.
       */
 
-      item.inventoryCode =
-        data[index].inventoryCode ||
-        item.inventoryCode ||
-        generateInventoryCode();
+      for(
+        const material
+        of materials
+      ){
+
+        const {
+          error:inputError
+        } =
+          await supabase.rpc(
+            "add_production_input",
+            {
+              p_production_id:
+                created.id,
+
+              p_product_id:
+                material.product_id,
+
+              p_quantity:
+                material.quantity,
+
+              p_unit_cost:
+                material.unit_cost,
+
+              p_notes:
+                null
+            }
+          );
 
 
-      data[index] =
-        item;
+        if(inputError){
 
-    }
+          throw inputError;
 
+        }
 
-    saveData(
-      data
-    );
+      }
 
 
-    /*
-      تحديث المخزون
-    */
+      /*
+        إذا اختار المستخدم مكتملة،
+        لا نحاول إتمامها يدويًا.
+        نطلب من دالة Supabase تنفيذ
+        دورة الإتمام بالكامل.
+      */
 
-    syncInventory(
-      item
-    );
+      if(status === "completed"){
+
+        const {
+          error:completeError
+        } =
+          await supabase.rpc(
+            "complete_production",
+            {
+              p_production_id:
+                created.id
+            }
+          );
 
 
-    closeForm();
+        if(completeError){
 
-    render();
+          throw completeError;
+
+        }
+
+      }
 
 
-    if(
-      item.status === "مكتملة"
-    ){
+      closeForm();
 
-      alert(
-        "تم حفظ الإنتاج بنجاح ✅\n\n" +
-        "تم تسجيل خروج المواد الخام من المخزون، " +
-        "وإضافة المنتج النهائي للمخزون."
+      await loadProductions();
+
+      showNotice(
+        status === "completed"
+          ? "تم حفظ الإنتاج وإتمامه، وتم تنفيذ ربط المخزون والحسابات من قاعدة البيانات."
+          : "تم إنشاء أمر الإنتاج كمسودة بنجاح.",
+        "success"
       );
 
-    }else{
 
-      alert(
-        "تم حفظ عملية الإنتاج بنجاح ✅"
+    }catch(error){
+
+      console.error(error);
+
+      showNotice(
+        error.message ||
+        "حدث خطأ أثناء حفظ الإنتاج.",
+        "error"
       );
+
+
+    }finally{
+
+      submitButton.disabled =
+        false;
+
+      submitButton.textContent =
+        "حفظ أمر الإنتاج";
 
     }
 
@@ -1832,115 +2169,198 @@ document.getElementById(
 );
 
 
-/* =========================
-   تعديل
-========================= */
+/* =========================================================
+   إتمام الإنتاج
+========================================================= */
 
-function editItem(code){
+async function completeProduction(id){
 
-  const item =
-    getData().find(
-      x =>
-        x.code === code
+  if(
+    !confirm(
+      "هل تريد إتمام أمر الإنتاج؟\n\n" +
+      "بعد الإتمام ستقوم قاعدة البيانات بخصم الخامات " +
+      "وإضافة المنتج النهائي وربط القيد المحاسبي."
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    showNotice(
+      "جاري إتمام الإنتاج...",
+      "warning"
     );
 
-  if(!item) return;
 
-  editingCode =
-    code;
+    const {
+      error
+    } =
+      await supabase.rpc(
+        "complete_production",
+        {
+          p_production_id:
+            id
+        }
+      );
 
-  document.getElementById(
-    "formBox"
-  ).classList.add(
-    "active"
-  );
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    await loadProductions();
+
+
+    showNotice(
+      "تم إتمام الإنتاج بنجاح، وتم تنفيذ حركات المخزون والقيد المحاسبي من قاعدة البيانات.",
+      "success"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showNotice(
+      error.message ||
+      "تعذر إتمام الإنتاج.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   تعديل
+========================================================= */
+
+async function editItem(id){
+
+  if(
+    !currentAppUser ||
+    currentAppUser.role !==
+    "admin"
+  ){
+
+    showNotice(
+      "التعديل مسموح للـ Admin فقط.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+
+  const item =
+    productions.find(
+      x =>
+        x.id === id
+    );
+
+
+  if(!item){
+
+    return;
+
+  }
+
+
+  /*
+    لا نفتح التعديل على عملية مكتملة
+    لتجنب تعديل بيانات أدت بالفعل إلى
+    حركات مخزون وقيد محاسبي.
+  */
+
+  if(
+    item.status ===
+    "completed"
+  ){
+
+    showNotice(
+      "هذا الإنتاج مكتمل بالفعل. لن نسمح بتعديل بياناته من الشاشة حتى لا نغيّر نتيجة المخزون والقيد المحاسبي.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+
+  editingId =
+    id;
+
 
   document.getElementById(
     "formTitle"
   ).textContent =
-    "تعديل عملية إنتاج";
+    "تعديل أمر إنتاج";
+
 
   document.getElementById(
     "productionCode"
   ).value =
-    item.code;
+    item.production_code || "";
+
 
   document.getElementById(
     "productionDate"
   ).value =
-    item.date;
+    item.produced_at
+      ? new Date(
+          item.produced_at
+        )
+        .toISOString()
+        .slice(0,16)
+      : localDateTimeValue();
+
 
   document.getElementById(
-    "costCode"
+    "productId"
   ).value =
-    item.costCode || "";
+    item.product_id || "";
+
 
   document.getElementById(
-    "product"
+    "productUnit"
   ).value =
-    item.product || "";
+    item.products
+      ? item.products.unit
+      : "";
+
 
   document.getElementById(
-    "productionLine"
+    "quantity"
   ).value =
-    item.productionLine || "";
+    item.quantity || 0;
+
 
   document.getElementById(
-    "shift"
+    "warehouseId"
   ).value =
-    item.shift || "صباحية";
+    item.warehouse_id || "";
 
-  document.getElementById(
-    "plannedQty"
-  ).value =
-    item.plannedQty || 0;
-
-  document.getElementById(
-    "actualQty"
-  ).value =
-    item.actualQty || 0;
-
-  document.getElementById(
-    "unit"
-  ).value =
-    item.unit || "كجم";
-
-  document.getElementById(
-    "wasteQty"
-  ).value =
-    item.wasteQty || 0;
 
   document.getElementById(
     "status"
   ).value =
-    item.status || "مكتملة";
+    item.status || "draft";
+
 
   document.getElementById(
-    "responsible"
+    "responsibleName"
   ).value =
-    item.responsible || "";
+    currentAppUser.full_name;
 
-  document.getElementById(
-    "inventoryCode"
-  ).value =
-    item.inventoryCode ||
-    generateInventoryCode();
-
-  document.getElementById(
-    "storageLocation"
-  ).value =
-    item.storageLocation ||
-    "المخزن الرئيسي";
-
-  document.getElementById(
-    "workers"
-  ).value =
-    item.workers || 0;
-
-  document.getElementById(
-    "workHours"
-  ).value =
-    item.workHours || 0;
 
   document.getElementById(
     "notes"
@@ -1948,16 +2368,58 @@ function editItem(code){
     item.notes || "";
 
 
-  /*
-    تحميل المواد الخام
-  */
+  document.getElementById(
+    "costCode"
+  ).value =
+    item.cost
+      ? item.cost.cost_code
+      : "";
 
-  loadMaterials(
-    item.materials || []
+
+  const container =
+    document.getElementById(
+      "materialsContainer"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  (item.production_inputs || [])
+    .filter(
+      input =>
+        !input.deleted_at
+    )
+    .forEach(
+      input => {
+
+        addMaterialRow({
+
+          product_id:
+            input.product_id,
+
+          quantity:
+            input.quantity,
+
+          unit_cost:
+            input.unit_cost
+
+        });
+
+      }
+    );
+
+
+  updateMaterialSummary();
+
+
+  document.getElementById(
+    "formBox"
+  ).classList.add(
+    "active"
   );
 
-
-  updateLive();
 
   window.scrollTo({
     top:0,
@@ -1967,23 +2429,85 @@ function editItem(code){
 }
 
 
-/* =========================
-   حذف
-========================= */
+/* =========================================================
+   الحذف
+========================================================= */
 
-function deleteItem(code){
+async function deleteItem(id){
 
-  const item =
-    getData().find(
-      x =>
-        x.code === code
+  if(
+    !currentAppUser ||
+    currentAppUser.role !==
+    "admin"
+  ){
+
+    showNotice(
+      "الحذف مسموح للـ Admin فقط.",
+      "warning"
     );
 
-  if(!item) return;
+    return;
+
+  }
+
+
+  const item =
+    productions.find(
+      x =>
+        x.id === id
+    );
+
+
+  if(!item){
+
+    return;
+
+  }
+
+
+  /*
+    حاليًا الحذف الآمن من هذه الشاشة
+    يكون لأمر الإنتاج المسودة.
+    الإنتاج المكتمل له آثار في المخزون
+    والحسابات، لذلك لا نحذف السجل الأساسي
+    بطريقة تكسر هذه الآثار.
+  */
+
+  if(
+    item.status ===
+    "completed"
+  ){
+
+    showNotice(
+      "هذا الإنتاج مكتمل وله حركات مخزون وقيد محاسبي. لن نحذفه من الشاشة بهذه الطريقة حتى لا نفصل السجلات المرتبطة.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+
+  const reason =
+    prompt(
+      "اكتب سبب حذف أمر الإنتاج:"
+    );
+
+
+  if(
+    reason === null
+    ||
+    !reason.trim()
+  ){
+
+    return;
+
+  }
+
 
   if(
     !confirm(
-      "هل تريد حذف عملية الإنتاج وحركات المخزون المرتبطة بها؟"
+      "تأكيد حذف أمر الإنتاج؟"
     )
   ){
 
@@ -1992,57 +2516,77 @@ function deleteItem(code){
   }
 
 
-  /*
-    حذف عملية الإنتاج
-  */
+  try{
 
-  const newData =
-    getData().filter(
-      x =>
-        x.code !== code
+    showNotice(
+      "جاري تسجيل الحذف...",
+      "warning"
     );
 
-  saveData(
-    newData
-  );
+
+    const {
+      error
+    } =
+      await supabase
+        .from("production_batches")
+        .update({
+
+          deleted_at:
+            new Date().toISOString(),
+
+          deleted_by:
+            currentAppUser.id,
+
+          delete_reason:
+            reason.trim()
+
+        })
+        .eq(
+          "id",
+          id
+        );
 
 
-  /*
-    حذف كل حركات المخزون
-    المرتبطة بالإنتاج
-  */
+    if(error){
 
-  const inventory =
-    getInventory().filter(
-      m =>
-        !(
-          m.source === "production" &&
-          m.reference === code
-        )
+      throw error;
+
+    }
+
+
+    await loadProductions();
+
+
+    showNotice(
+      "تم حذف أمر الإنتاج حذفًا منطقيًا مع تسجيل سبب الحذف.",
+      "success"
     );
 
-  saveInventory(
-    inventory
-  );
 
+  }catch(error){
 
-  render();
+    console.error(error);
 
-  alert(
-    "تم حذف عملية الإنتاج وحركات المخزون المرتبطة بها ✅"
-  );
+    showNotice(
+      error.message ||
+      "تعذر حذف أمر الإنتاج.",
+      "error"
+    );
+
+  }
 
 }
 
 
-/* =========================
-   حالة العملية
-========================= */
+/* =========================================================
+   الحالة
+========================================================= */
 
-function badge(status){
+function statusBadge(status){
 
   if(
-    status === "مكتملة"
+    status ===
+    "completed"
   ){
 
     return `
@@ -2053,64 +2597,65 @@ function badge(status){
 
   }
 
-  if(
-    status === "قيد التنفيذ"
-  ){
-
-    return `
-      <span class="badge progress">
-        قيد التنفيذ
-      </span>
-    `;
-
-  }
 
   return `
-    <span class="badge cancelled">
-      ملغاة
+    <span class="badge draft">
+      مسودة
     </span>
   `;
 
 }
 
 
-/* =========================
+/* =========================================================
    عرض البيانات
-========================= */
+========================================================= */
 
 function render(){
 
   const q =
     document.getElementById(
       "search"
-    ).value
+    )
+    .value
     .trim()
     .toLowerCase();
 
-  const data =
-    getData();
 
   const filtered =
-    data.filter(x => {
+    productions.filter(item => {
 
-      const materialText =
-        Array.isArray(
-          x.materials
-        )
-        ? x.materials
-            .map(m => m.item)
-            .join(" ")
-        : "";
+      const productName =
+        item.products
+          ? item.products.name
+          : "";
+
+
+      const warehouseName =
+        item.warehouses
+          ? item.warehouses.name
+          : "";
+
+
+      const costCode =
+        item.cost
+          ? item.cost.cost_code
+          : "";
+
 
       return [
 
-        x.code,
-        x.product,
-        x.costCode,
-        x.inventoryCode,
-        x.productionLine,
-        x.responsible,
-        materialText
+        item.production_code,
+
+        productName,
+
+        warehouseName,
+
+        item.status,
+
+        costCode,
+
+        item.notes
 
       ]
       .join(" ")
@@ -2125,7 +2670,9 @@ function render(){
       "productionTable"
     );
 
-  tbody.innerHTML = "";
+
+  tbody.innerHTML =
+    "";
 
 
   if(!filtered.length){
@@ -2135,10 +2682,10 @@ function render(){
       <tr>
 
         <td
-          colspan="20"
+          colspan="11"
           class="empty"
         >
-          لا توجد عمليات إنتاج مسجلة
+          لا توجد أوامر إنتاج مسجلة
         </td>
 
       </tr>
@@ -2147,89 +2694,196 @@ function render(){
 
   }else{
 
-    filtered.forEach(x => {
+    filtered.forEach(item => {
 
       const tr =
         document.createElement(
           "tr"
         );
 
-      const materialsText =
-        Array.isArray(
-          x.materials
-        )
-        &&
-        x.materials.length
-        ?
-        x.materials
-          .map(
-            m =>
-              `${escapeHtml(m.item)} (${m.quantity} ${escapeHtml(m.unit)})`
-          )
-          .join("، ")
-        :
-        "—";
+
+      const productName =
+        item.products
+          ? item.products.name
+          : "—";
+
+
+      const productUnit =
+        item.products
+          ? item.products.unit
+          : "—";
+
+
+      const warehouseName =
+        item.warehouses
+          ? item.warehouses.name
+          : "—";
+
+
+      const costCode =
+        item.cost
+          ? item.cost.cost_code
+          : "لم تُسجل بعد";
+
+
+      const inputs =
+        item.production_inputs || [];
+
+
+      const inputText =
+        inputs.length
+          ? inputs
+              .filter(
+                x =>
+                  !x.deleted_at
+              )
+              .map(
+                x =>
+                  `${x.products ? x.products.name : "خامة"} (${x.quantity})`
+              )
+              .join("، ")
+          : "—";
+
+
+      let actions = "";
+
+
+      if(
+        currentAppUser &&
+        currentAppUser.role ===
+        "admin"
+      ){
+
+        if(
+          item.status ===
+          "draft"
+        ){
+
+          actions += `
+
+            <button
+              class="edit-btn"
+              onclick="editItem('${escapeHtml(item.id)}')"
+            >
+              تعديل
+            </button>
+
+            <button
+              class="delete-btn"
+              onclick="deleteItem('${escapeHtml(item.id)}')"
+            >
+              حذف
+            </button>
+
+          `;
+
+
+          actions += `
+
+            <button
+              class="complete-btn"
+              onclick="completeProduction('${escapeHtml(item.id)}')"
+            >
+              إتمام
+            </button>
+
+          `;
+
+        }
+
+      }else{
+
+        if(
+          item.status ===
+          "draft"
+        ){
+
+          actions = `
+
+            <button
+              class="complete-btn"
+              onclick="completeProduction('${escapeHtml(item.id)}')"
+            >
+              إتمام
+            </button>
+
+          `;
+
+        }
+
+      }
 
 
       tr.innerHTML = `
 
-        <td>${escapeHtml(x.code)}</td>
-
-        <td>${escapeHtml(x.date || "")}</td>
-
-        <td>${escapeHtml(x.costCode || "—")}</td>
-
-        <td>${escapeHtml(x.product || "—")}</td>
-
-        <td>${escapeHtml(x.productionLine || "—")}</td>
-
-        <td>${escapeHtml(x.shift || "—")}</td>
-
-        <td>${x.plannedQty || 0}</td>
-
-        <td>${x.actualQty || 0}</td>
-
-        <td>${escapeHtml(x.unit || "—")}</td>
-
-        <td>${x.wasteQty || 0}</td>
-
-        <td>${x.netQty || 0}</td>
-
-        <td>${badge(x.status)}</td>
-
-        <td>${escapeHtml(x.responsible || "—")}</td>
-
-        <td>${escapeHtml(x.inventoryCode || "—")}</td>
-
-        <td>${escapeHtml(x.storageLocation || "—")}</td>
-
-        <td>${x.workers || 0}</td>
-
-        <td>${x.workHours || 0}</td>
-
-        <td>${materialsText}</td>
-
-        <td>${escapeHtml(x.notes || "—")}</td>
+        <td>
+          ${escapeHtml(
+            item.production_code
+          )}
+        </td>
 
         <td>
+          ${escapeHtml(
+            formatDate(
+              item.produced_at
+            )
+          )}
+        </td>
 
-          <button
-            class="edit-btn"
-            onclick="editItem('${escapeHtml(x.code)}')"
-          >
-            تعديل
-          </button>
+        <td>
+          ${escapeHtml(
+            productName
+          )}
+        </td>
 
-          <button
-            class="delete-btn"
-            onclick="deleteItem('${escapeHtml(x.code)}')"
-          >
-            حذف
-          </button>
+        <td>
+          ${Number(
+            item.quantity || 0
+          )}
+        </td>
 
+        <td>
+          ${escapeHtml(
+            productUnit
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            warehouseName
+          )}
+        </td>
+
+        <td>
+          ${statusBadge(
+            item.status
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            costCode
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            inputText
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            item.notes || "—"
+          )}
+        </td>
+
+        <td>
+          ${actions || "—"}
         </td>
 
       `;
+
 
       tbody.appendChild(
         tr
@@ -2240,61 +2894,152 @@ function render(){
   }
 
 
-  /* =========================
-     الإحصائيات
-  ========================= */
-
   document.getElementById(
     "recordCount"
   ).textContent =
-    data.length;
+    productions.length;
+
 
   document.getElementById(
     "totalProduction"
   ).textContent =
-    data.reduce(
-      (sum,x) =>
+    productions.reduce(
+      (sum,item) =>
         sum +
-        (
-          Number(
-            x.actualQty
-          ) || 0
+        Number(
+          item.quantity || 0
         ),
       0
     );
 
-  document.getElementById(
-    "totalWaste"
-  ).textContent =
-    data.reduce(
-      (sum,x) =>
-        sum +
-        (
-          Number(
-            x.wasteQty
-          ) || 0
-        ),
-      0
-    );
 
   document.getElementById(
     "completedCount"
   ).textContent =
-    data.filter(
-      x =>
-        x.status === "مكتملة"
+    productions.filter(
+      item =>
+        item.status ===
+        "completed"
+    ).length;
+
+
+  document.getElementById(
+    "draftCount"
+  ).textContent =
+    productions.filter(
+      item =>
+        item.status ===
+        "draft"
     ).length;
 
 }
 
 
-/* =========================
+/* =========================================================
    تشغيل الصفحة
-========================= */
+========================================================= */
 
-loadMaterials([]);
+async function init(){
 
-render();
+  try{
+
+    const loggedIn =
+      await loadCurrentUser();
+
+
+    if(!loggedIn){
+
+      document.getElementById(
+        "loginBtn"
+      ).classList.remove(
+        "hidden"
+      );
+
+      document.getElementById(
+        "appContent"
+      ).classList.add(
+        "hidden"
+      );
+
+      if(!currentUser){
+
+        showNotice(
+          "يجب تسجيل الدخول أولًا للوصول إلى دفتر الإنتاج.",
+          "warning"
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    document.getElementById(
+      "loginBtn"
+    ).classList.add(
+      "hidden"
+    );
+
+
+    document.getElementById(
+      "appContent"
+    ).classList.remove(
+      "hidden"
+    );
+
+
+    /*
+      تحميل المنتجات والمخازن
+      والإنتاج من Supabase.
+    */
+
+    await loadProducts();
+
+    await loadWarehouses();
+
+    await loadProductions();
+
+
+    /*
+      إضافة خامة أولى تلقائيًا
+      عند فتح النموذج فقط.
+    */
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showNotice(
+      error.message ||
+      "حدث خطأ أثناء تشغيل دفتر الإنتاج.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   مراقبة تسجيل الدخول
+========================================================= */
+
+supabase.auth.onAuthStateChange(
+  async function(){
+
+    await init();
+
+  }
+);
+
+
+/* =========================================================
+   بدء الصفحة
+========================================================= */
+
+init();
 
 </script>
 
