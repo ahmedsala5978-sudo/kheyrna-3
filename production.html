@@ -55,10 +55,6 @@ body{
   line-height:1.7;
 }
 
-/* ===============================
-   تسجيل الدخول
-================================ */
-
 .auth-box{
   background:#fff;
   border-radius:16px;
@@ -118,10 +114,6 @@ body{
   font-weight:bold;
 }
 
-/* ===============================
-   Debug
-================================ */
-
 .debug-box{
   display:none;
   background:#111;
@@ -138,10 +130,6 @@ body{
   max-height:220px;
   overflow:auto;
 }
-
-/* ===============================
-   Cards
-================================ */
 
 .card{
   background:#fff;
@@ -413,10 +401,6 @@ tr:nth-child(even){
 
 <div class="container">
 
-  <!-- ===============================
-       رأس الصفحة
-  ================================= -->
-
   <div class="header">
 
     <h1>خيرنا | نظام إدارة الإنتاج</h1>
@@ -446,11 +430,6 @@ tr:nth-child(even){
 
   </div>
 
-
-  <!-- ===============================
-       تسجيل الدخول
-  ================================= -->
-
   <div class="auth-box" id="authBox">
 
     <h2>تسجيل الدخول إلى خيرنا</h2>
@@ -472,13 +451,7 @@ tr:nth-child(even){
 
   </div>
 
-
   <div id="notice" class="notice"></div>
-
-
-  <!-- ===============================
-       إضافة عملية إنتاج
-  ================================= -->
 
   <div class="card">
 
@@ -588,11 +561,6 @@ tr:nth-child(even){
 
   </div>
 
-
-  <!-- ===============================
-       مواد الإنتاج
-  ================================= -->
-
   <div class="card">
 
     <div class="material-header">
@@ -615,11 +583,6 @@ tr:nth-child(even){
     <div id="materialsContainer"></div>
 
   </div>
-
-
-  <!-- ===============================
-       المؤشرات
-  ================================= -->
 
   <div class="card">
 
@@ -674,11 +637,6 @@ tr:nth-child(even){
 
   </div>
 
-
-  <!-- ===============================
-       سجل الإنتاج
-  ================================= -->
-
   <div class="card">
 
     <h2>سجل الإنتاج اليومي</h2>
@@ -725,20 +683,11 @@ tr:nth-child(even){
 
 <script>
 
-/* =========================================================
-   إعدادات خيرنا
-========================================================= */
-
 const SUPABASE_URL =
   "https://xvmgbmwlepiftspgazga.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_0QcrQbx1u92isBbfYS6zTg_zigmJKNl";
-
-
-/* =========================================================
-   متغيرات النظام
-========================================================= */
 
 let supabaseClient = null;
 
@@ -777,8 +726,7 @@ function debug(message,data){
   if(!box)
     return;
 
-  box.style.display =
-    "block";
+  box.style.display = "block";
 
   let line =
     "[" +
@@ -800,17 +748,13 @@ function debug(message,data){
 
     }catch(e){
 
-      line +=
-        "\n" +
-        String(data);
+      line += "\n" + String(data);
 
     }
 
   }
 
-  box.textContent +=
-    line +
-    "\n\n";
+  box.textContent += line + "\n\n";
 
 }
 
@@ -818,20 +762,12 @@ function debug(message,data){
 function setConnectionStatus(message){
 
   const el =
-    document.getElementById(
-      "connectionStatus"
-    );
+    document.getElementById("connectionStatus");
 
-  if(el){
+  if(el)
+    el.textContent = message;
 
-    el.textContent =
-      message;
-
-  }
-
-  debug(
-    "STATUS: " + message
-  );
+  debug("STATUS: " + message);
 
 }
 
@@ -844,24 +780,17 @@ function showNotice(message,type="error"){
   if(!el)
     return;
 
-  el.textContent =
-    message;
+  el.textContent = message;
 
-  el.className =
-    "notice " + type;
+  el.className = "notice " + type;
 
-  el.style.display =
-    "block";
+  el.style.display = "block";
 
-  setTimeout(
-    function(){
+  setTimeout(function(){
 
-      el.style.display =
-        "none";
+    el.style.display = "none";
 
-    },
-    7000
-  );
+  },7000);
 
 }
 
@@ -871,11 +800,8 @@ function escapeHtml(value){
   if(
     value === null ||
     value === undefined
-  ){
-
+  )
     return "";
-
-  }
 
   return String(value)
     .replace(/&/g,"&amp;")
@@ -944,8 +870,7 @@ window.addEventListener(
 
     debug(
       "GLOBAL ERROR",
-      event.error ||
-      event.message
+      event.error || event.message
     );
 
   }
@@ -980,51 +905,31 @@ function getRedirectUrl(){
 
 
 /* =========================================================
-   إظهار واجهة تسجيل الدخول
+   تسجيل الدخول
 ========================================================= */
 
 function showLoginScreen(){
 
   const authBox =
-    document.getElementById(
-      "authBox"
-    );
+    document.getElementById("authBox");
 
   const userBox =
-    document.getElementById(
-      "userBox"
-    );
+    document.getElementById("userBox");
 
-  if(authBox){
+  if(authBox)
+    authBox.style.display = "block";
 
-    authBox.style.display =
-      "block";
-
-  }
-
-  if(userBox){
-
-    userBox.style.display =
-      "none";
-
-  }
+  if(userBox)
+    userBox.style.display = "none";
 
   const saveButton =
-    document.getElementById(
-      "saveBtn"
-    );
+    document.getElementById("saveBtn");
 
-  if(saveButton){
-
-    saveButton.disabled =
-      true;
-
-  }
+  if(saveButton)
+    saveButton.disabled = true;
 
   const table =
-    document.getElementById(
-      "productionTable"
-    );
+    document.getElementById("productionTable");
 
   if(table){
 
@@ -1044,33 +949,19 @@ function showLoginScreen(){
 function showLoggedInScreen(){
 
   const authBox =
-    document.getElementById(
-      "authBox"
-    );
+    document.getElementById("authBox");
 
   const userBox =
-    document.getElementById(
-      "userBox"
-    );
+    document.getElementById("userBox");
 
-  if(authBox){
+  if(authBox)
+    authBox.style.display = "none";
 
-    authBox.style.display =
-      "none";
-
-  }
-
-  if(userBox){
-
-    userBox.style.display =
-      "flex";
-
-  }
+  if(userBox)
+    userBox.style.display = "flex";
 
   const userInfo =
-    document.getElementById(
-      "userInfo"
-    );
+    document.getElementById("userInfo");
 
   if(userInfo){
 
@@ -1086,10 +977,6 @@ function showLoggedInScreen(){
 }
 
 
-/* =========================================================
-   تسجيل الدخول بواسطة Google
-========================================================= */
-
 async function loginWithGoogle(){
 
   try{
@@ -1103,34 +990,24 @@ async function loginWithGoogle(){
     }
 
     const button =
-      document.getElementById(
-        "googleLoginBtn"
-      );
+      document.getElementById("googleLoginBtn");
 
     if(button){
 
-      button.disabled =
-        true;
+      button.disabled = true;
 
       button.textContent =
         "جاري فتح تسجيل الدخول...";
+
     }
-
-
-    debug(
-      "بدء تسجيل الدخول بواسطة Google."
-    );
-
 
     const redirectTo =
       getRedirectUrl();
-
 
     debug(
       "Google redirect URL",
       redirectTo
     );
-
 
     const result =
       await supabaseClient.auth.signInWithOAuth({
@@ -1143,19 +1020,13 @@ async function loginWithGoogle(){
 
       });
 
-
     debug(
       "نتيجة Google Login",
       result
     );
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
-
-    }
-
 
   }catch(error){
 
@@ -1163,7 +1034,6 @@ async function loginWithGoogle(){
       "Google Login Error",
       error
     );
-
 
     showNotice(
       "تعذر فتح تسجيل الدخول بواسطة Google: " +
@@ -1174,16 +1044,12 @@ async function loginWithGoogle(){
       "error"
     );
 
-
     const button =
-      document.getElementById(
-        "googleLoginBtn"
-      );
+      document.getElementById("googleLoginBtn");
 
     if(button){
 
-      button.disabled =
-        false;
+      button.disabled = false;
 
       button.textContent =
         "🔐 تسجيل الدخول باستخدام Google";
@@ -1195,10 +1061,6 @@ async function loginWithGoogle(){
 }
 
 
-/* =========================================================
-   تسجيل الخروج
-========================================================= */
-
 async function logoutUser(){
 
   try{
@@ -1206,47 +1068,28 @@ async function logoutUser(){
     if(!supabaseClient)
       return;
 
-
     const result =
       await supabaseClient.auth.signOut();
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
-    currentSession =
-      null;
-
-    currentUser =
-      null;
-
-    canCreateProduction =
-      false;
-
-    isAdminUser =
-      false;
-
-    pageInitialized =
-      false;
-
+    currentSession = null;
+    currentUser = null;
+    canCreateProduction = false;
+    isAdminUser = false;
+    pageInitialized = false;
 
     showLoginScreen();
-
 
     setConnectionStatus(
       "تم تسجيل الخروج — سجّل الدخول للمتابعة."
     );
 
-
     showNotice(
       "تم تسجيل الخروج بنجاح.",
       "success"
     );
-
 
   }catch(error){
 
@@ -1254,7 +1097,6 @@ async function logoutUser(){
       "Logout Error",
       error
     );
-
 
     showNotice(
       "تعذر تسجيل الخروج: " +
@@ -1280,7 +1122,6 @@ async function ensureSupabaseLoaded(){
     "جاري التأكد من تحميل النظام المركزي..."
   );
 
-
   if(
     window.supabase &&
     typeof window.supabase.createClient === "function"
@@ -1294,12 +1135,6 @@ async function ensureSupabaseLoaded(){
 
   }
 
-
-  debug(
-    "Supabase library غير موجودة — تحميل البديل."
-  );
-
-
   return new Promise(
     function(resolve){
 
@@ -1309,33 +1144,25 @@ async function ensureSupabaseLoaded(){
       script.src =
         "https://unpkg.com/@supabase/supabase-js@2";
 
-      script.async =
-        true;
+      script.async = true;
 
-      let finished =
-        false;
-
+      let finished = false;
 
       const timer =
-        setTimeout(
-          function(){
+        setTimeout(function(){
 
-            if(finished)
-              return;
+          if(finished)
+            return;
 
-            finished =
-              true;
+          finished = true;
 
-            debug(
-              "انتهت مهلة تحميل Supabase."
-            );
+          debug(
+            "انتهت مهلة تحميل Supabase."
+          );
 
-            resolve(false);
+          resolve(false);
 
-          },
-          12000
-        );
-
+        },12000);
 
       script.onload =
         function(){
@@ -1345,9 +1172,7 @@ async function ensureSupabaseLoaded(){
 
           clearTimeout(timer);
 
-          finished =
-            true;
-
+          finished = true;
 
           if(
             window.supabase &&
@@ -1368,7 +1193,6 @@ async function ensureSupabaseLoaded(){
 
         };
 
-
       script.onerror =
         function(){
 
@@ -1377,8 +1201,7 @@ async function ensureSupabaseLoaded(){
 
           clearTimeout(timer);
 
-          finished =
-            true;
+          finished = true;
 
           debug(
             "فشل تحميل Supabase."
@@ -1387,7 +1210,6 @@ async function ensureSupabaseLoaded(){
           resolve(false);
 
         };
-
 
       document.head.appendChild(script);
 
@@ -1406,7 +1228,6 @@ async function createSupabaseConnection(){
   const loaded =
     await ensureSupabaseLoaded();
 
-
   if(!loaded){
 
     throw new Error(
@@ -1414,7 +1235,6 @@ async function createSupabaseConnection(){
     );
 
   }
-
 
   supabaseClient =
     window.supabase.createClient(
@@ -1429,11 +1249,9 @@ async function createSupabaseConnection(){
       }
     );
 
-
   debug(
     "تم انشاء بنجاح supabase"
   );
-
 
   return supabaseClient;
 
@@ -1450,7 +1268,6 @@ async function testSupabaseConnection(){
     "جاري اختبار الاتصال بالنظام المركزي..."
   );
 
-
   if(!supabaseClient){
 
     throw new Error(
@@ -1459,10 +1276,8 @@ async function testSupabaseConnection(){
 
   }
 
-
   const result =
     await supabaseClient.auth.getSession();
-
 
   if(result.error){
 
@@ -1474,7 +1289,6 @@ async function testSupabaseConnection(){
     throw result.error;
 
   }
-
 
   if(result.data?.session){
 
@@ -1489,7 +1303,6 @@ async function testSupabaseConnection(){
     );
 
   }
-
 
   return result;
 
@@ -1508,67 +1321,34 @@ async function loadSession(){
       "جاري التحقق من تسجيل الدخول..."
     );
 
-
     const result =
       await supabaseClient.auth.getSession();
-
 
     debug(
       "getSession result",
       result
     );
 
-
-    if(result.error){
-
-      debug(
-        "getSession session error",
-        result.error
-      );
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
     currentSession =
-      result.data?.session ||
-      null;
-
+      result.data?.session || null;
 
     currentUser =
-      currentSession?.user ||
-      null;
-
-
-    /* ================================================
-       لا توجد جلسة
-       لا نعتبرها خطأ
-    ================================================= */
+      currentSession?.user || null;
 
     if(!currentUser){
 
-      debug(
-        "لا توجد جلسة مستخدم — مطلوب تسجيل الدخول."
-      );
-
-
       showLoginScreen();
-
 
       setConnectionStatus(
         "لم يتم تسجيل الدخول — سجّل الدخول أولاً."
       );
 
-
       return false;
 
     }
-
-
-    /* ================================================
-       توجد جلسة
-    ================================================= */
 
     debug(
       "تم العثور على جلسة مستخدم ✓",
@@ -1578,17 +1358,13 @@ async function loadSession(){
       }
     );
 
-
     showLoggedInScreen();
-
 
     setConnectionStatus(
       "تم تسجيل الدخول ✓"
     );
 
-
     return true;
-
 
   }catch(error){
 
@@ -1597,14 +1373,11 @@ async function loadSession(){
       error
     );
 
-
     showLoginScreen();
-
 
     setConnectionStatus(
       "خطأ أثناء فحص تسجيل الدخول"
     );
-
 
     showNotice(
       "تعذر التحقق من تسجيل الدخول: " +
@@ -1614,7 +1387,6 @@ async function loadSession(){
       ),
       "error"
     );
-
 
     return false;
 
@@ -1632,7 +1404,6 @@ function startAuthListener(){
   if(!supabaseClient)
     return;
 
-
   supabaseClient.auth.onAuthStateChange(
     function(event,session){
 
@@ -1641,41 +1412,23 @@ function startAuthListener(){
         event
       );
 
-
       currentSession =
-        session ||
-        null;
-
+        session || null;
 
       currentUser =
-        session?.user ||
-        null;
-
+        session?.user || null;
 
       if(currentUser){
 
-        debug(
-          "Auth Listener: المستخدم مسجل الدخول."
-        );
-
-
         showLoggedInScreen();
-
 
         setConnectionStatus(
           "تم تسجيل الدخول ✓"
         );
 
-
       }else{
 
-        debug(
-          "Auth Listener: لا توجد جلسة."
-        );
-
-
         showLoginScreen();
-
 
         setConnectionStatus(
           "لم يتم تسجيل الدخول — سجّل الدخول أولاً."
@@ -1697,16 +1450,12 @@ async function checkPermissions(){
 
   if(!currentUser){
 
-    canCreateProduction =
-      false;
-
-    isAdminUser =
-      false;
+    canCreateProduction = false;
+    isAdminUser = false;
 
     return false;
 
   }
-
 
   try{
 
@@ -1714,18 +1463,15 @@ async function checkPermissions(){
       "جاري فحص صلاحيات المستخدم..."
     );
 
-
     const adminResult =
       await supabaseClient.rpc(
         "is_system_admin"
       );
 
-
     debug(
       "نتيجة is_system_admin",
       adminResult
     );
-
 
     if(!adminResult.error){
 
@@ -1734,11 +1480,9 @@ async function checkPermissions(){
 
     }else{
 
-      isAdminUser =
-        false;
+      isAdminUser = false;
 
     }
-
 
     const permissionResult =
       await supabaseClient.rpc(
@@ -1749,17 +1493,14 @@ async function checkPermissions(){
         }
       );
 
-
     debug(
       "نتيجة production.create",
       permissionResult
     );
 
-
     if(permissionResult.error){
 
-      canCreateProduction =
-        false;
+      canCreateProduction = false;
 
     }else{
 
@@ -1767,7 +1508,6 @@ async function checkPermissions(){
         permissionResult.data === true;
 
     }
-
 
     debug(
       "الصلاحيات النهائية",
@@ -1777,9 +1517,7 @@ async function checkPermissions(){
       }
     );
 
-
     return canCreateProduction;
-
 
   }catch(error){
 
@@ -1788,13 +1526,8 @@ async function checkPermissions(){
       error
     );
 
-
-    canCreateProduction =
-      false;
-
-    isAdminUser =
-      false;
-
+    canCreateProduction = false;
+    isAdminUser = false;
 
     return false;
 
@@ -1815,41 +1548,28 @@ async function loadProducts(){
       "جاري تحميل المنتجات..."
     );
 
-
     const result =
       await supabaseClient
         .from("products")
         .select("*")
         .order("name");
 
-
     debug(
       "نتيجة تحميل المنتجات",
       result
     );
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
     products =
-      result.data ||
-      [];
-
+      result.data || [];
 
     const select =
-      document.getElementById(
-        "productId"
-      );
-
+      document.getElementById("productId");
 
     select.innerHTML =
       '<option value="">اختر المنتج</option>';
-
 
     products.forEach(
       function(product){
@@ -1857,10 +1577,8 @@ async function loadProducts(){
         const option =
           document.createElement("option");
 
-
         option.value =
           product.id;
-
 
         option.textContent =
           product.name ||
@@ -1868,18 +1586,10 @@ async function loadProducts(){
           product.code ||
           "منتج";
 
-
         select.appendChild(option);
 
       }
     );
-
-
-    debug(
-      "عدد المنتجات",
-      products.length
-    );
-
 
   }catch(error){
 
@@ -1887,7 +1597,6 @@ async function loadProducts(){
       "Products Error",
       error
     );
-
 
     showNotice(
       "تعذر تحميل المنتجات: " +
@@ -1915,41 +1624,28 @@ async function loadWarehouses(){
       "جاري تحميل المخازن..."
     );
 
-
     const result =
       await supabaseClient
         .from("warehouses")
         .select("*")
         .order("name");
 
-
     debug(
       "نتيجة تحميل المخازن",
       result
     );
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
     warehouses =
-      result.data ||
-      [];
-
+      result.data || [];
 
     const select =
-      document.getElementById(
-        "storageLocation"
-      );
-
+      document.getElementById("storageLocation");
 
     select.innerHTML =
       '<option value="">اختر المخزن</option>';
-
 
     warehouses.forEach(
       function(warehouse){
@@ -1957,10 +1653,8 @@ async function loadWarehouses(){
         const option =
           document.createElement("option");
 
-
         option.value =
           warehouse.id;
-
 
         option.textContent =
           warehouse.name ||
@@ -1968,18 +1662,10 @@ async function loadWarehouses(){
           warehouse.code ||
           "مخزن";
 
-
         select.appendChild(option);
 
       }
     );
-
-
-    debug(
-      "عدد المخازن",
-      warehouses.length
-    );
-
 
   }catch(error){
 
@@ -1987,7 +1673,6 @@ async function loadWarehouses(){
       "Warehouses Error",
       error
     );
-
 
     showNotice(
       "تعذر تحميل المخازن: " +
@@ -2012,12 +1697,10 @@ async function generateProductionCode(){
   const year =
     new Date().getFullYear();
 
-
   const prefix =
     "PRD-" +
     year +
     "-";
-
 
   try{
 
@@ -2037,17 +1720,10 @@ async function generateProductionCode(){
         )
         .limit(1);
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
-    let nextNumber =
-      1;
-
+    let nextNumber = 1;
 
     if(
       result.data &&
@@ -2057,21 +1733,15 @@ async function generateProductionCode(){
       const lastCode =
         result.data[0].production_code;
 
-
       const match =
         String(lastCode)
           .match(/(\d+)$/);
 
-
-      if(match){
-
+      if(match)
         nextNumber =
           Number(match[1]) + 1;
 
-      }
-
     }
-
 
     return (
       prefix +
@@ -2079,14 +1749,12 @@ async function generateProductionCode(){
         .padStart(4,"0")
     );
 
-
   }catch(error){
 
     debug(
       "Production Code Error",
       error
     );
-
 
     return (
       prefix +
@@ -2109,12 +1777,10 @@ async function generateInventoryCode(){
   const year =
     new Date().getFullYear();
 
-
   const prefix =
     "INV-" +
     year +
     "-";
-
 
   try{
 
@@ -2134,17 +1800,10 @@ async function generateInventoryCode(){
         )
         .limit(1);
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
-    let nextNumber =
-      1;
-
+    let nextNumber = 1;
 
     if(
       result.data &&
@@ -2154,21 +1813,15 @@ async function generateInventoryCode(){
       const lastCode =
         result.data[0].movement_code;
 
-
       const match =
         String(lastCode)
           .match(/(\d+)$/);
 
-
-      if(match){
-
+      if(match)
         nextNumber =
           Number(match[1]) + 1;
 
-      }
-
     }
-
 
     return (
       prefix +
@@ -2176,14 +1829,12 @@ async function generateInventoryCode(){
         .padStart(4,"0")
     );
 
-
   }catch(error){
 
     debug(
       "Inventory Code Error",
       error
     );
-
 
     return (
       prefix +
@@ -2208,14 +1859,11 @@ function addMaterialRow(data={}){
       "materialsContainer"
     );
 
-
   const row =
     document.createElement("div");
 
-
   row.className =
     "material-row";
-
 
   row.innerHTML = `
 
@@ -2256,9 +1904,7 @@ function addMaterialRow(data={}){
     </button>
   `;
 
-
   container.appendChild(row);
-
 
   row
     .querySelectorAll("input")
@@ -2283,10 +1929,7 @@ function loadMaterials(materials=[]){
       "materialsContainer"
     );
 
-
-  container.innerHTML =
-    "";
-
+  container.innerHTML = "";
 
   if(!materials.length){
 
@@ -2295,7 +1938,6 @@ function loadMaterials(materials=[]){
     return;
 
   }
-
 
   materials.forEach(
     function(material){
@@ -2317,10 +1959,7 @@ function getMaterials(){
       ".material-row"
     );
 
-
-  const materials =
-    [];
-
+  const materials = [];
 
   rows.forEach(
     function(row){
@@ -2330,7 +1969,6 @@ function getMaterials(){
           ".material-name"
         )?.value.trim();
 
-
       const quantity =
         Number(
           row.querySelector(
@@ -2338,18 +1976,15 @@ function getMaterials(){
           )?.value || 0
         );
 
-
       const unit =
         row.querySelector(
           ".material-unit"
         )?.value.trim();
 
-
       const code =
         row.querySelector(
           ".material-code"
         )?.value.trim();
-
 
       if(
         name ||
@@ -2375,7 +2010,6 @@ function getMaterials(){
     }
   );
 
-
   return materials;
 
 }
@@ -2394,14 +2028,12 @@ function updateLive(){
       ).value || 0
     );
 
-
   const actual =
     Number(
       document.getElementById(
         "actualQty"
       ).value || 0
     );
-
 
   const waste =
     Number(
@@ -2410,46 +2042,34 @@ function updateLive(){
       ).value || 0
     );
 
+  let achievement = 0;
 
-  let achievement =
-    0;
-
-
-  if(planned > 0){
-
+  if(planned > 0)
     achievement =
       (actual / planned) * 100;
 
-  }
-
-
   const net =
     actual - waste;
-
 
   document.getElementById(
     "achievement"
   ).textContent =
     achievement.toFixed(1) + "%";
 
-
   document.getElementById(
     "netProduction"
   ).textContent =
     formatNumber(net);
-
 
   document.getElementById(
     "liveWaste"
   ).textContent =
     formatNumber(waste);
 
-
   const status =
     document.getElementById(
       "status"
     ).value;
-
 
   document.getElementById(
     "liveStatus"
@@ -2465,12 +2085,8 @@ function updateLive(){
 
 async function openForm(){
 
-  if(!currentUser){
-
+  if(!currentUser)
     return;
-
-  }
-
 
   if(
     !canCreateProduction &&
@@ -2485,26 +2101,21 @@ async function openForm(){
 
   }
 
-
   const productionCode =
     await generateProductionCode();
 
-
   const inventoryCode =
     await generateInventoryCode();
-
 
   document.getElementById(
     "productionCode"
   ).value =
     productionCode;
 
-
   document.getElementById(
     "inventoryCode"
   ).value =
     inventoryCode;
-
 
   if(
     !document.getElementById(
@@ -2515,7 +2126,6 @@ async function openForm(){
     const now =
       new Date();
 
-
     const local =
       new Date(
         now.getTime() -
@@ -2524,14 +2134,12 @@ async function openForm(){
       .toISOString()
       .slice(0,16);
 
-
     document.getElementById(
       "productionDate"
     ).value =
       local;
 
   }
-
 
   document.getElementById(
     "saveBtn"
@@ -2692,7 +2300,6 @@ async function writeHistory(
 
         });
 
-
     if(result.error){
 
       debug(
@@ -2746,7 +2353,6 @@ async function writeAudit(
 
         });
 
-
     if(result.error){
 
       debug(
@@ -2784,7 +2390,6 @@ async function saveCentralProduction(
 
   }
 
-
   const metadata = {
 
     __kheyrna_production_meta:true,
@@ -2815,7 +2420,6 @@ async function saveCentralProduction(
 
   };
 
-
   const notesValue =
     JSON.stringify({
 
@@ -2829,12 +2433,18 @@ async function saveCentralProduction(
     });
 
 
+  /* =====================================================
+     IMPORTANT:
+     قاعدة البيانات تستخدم Produced_at
+     وليس production_date
+  ===================================================== */
+
   const payload = {
 
     production_code:
       formData.productionCode,
 
-    production_date:
+    Produced_at:
       formData.productionDate,
 
     cost_code:
@@ -2881,7 +2491,6 @@ async function saveCentralProduction(
 
     }
 
-
     const oldResult =
       await supabaseClient
         .from("production_batches")
@@ -2892,13 +2501,8 @@ async function saveCentralProduction(
         )
         .single();
 
-
-    if(oldResult.error){
-
+    if(oldResult.error)
       throw oldResult.error;
-
-    }
-
 
     const updateResult =
       await supabaseClient
@@ -2911,13 +2515,8 @@ async function saveCentralProduction(
         .select()
         .single();
 
-
-    if(updateResult.error){
-
+    if(updateResult.error)
       throw updateResult.error;
-
-    }
-
 
     await writeHistory(
       editingId,
@@ -2927,7 +2526,6 @@ async function saveCentralProduction(
       "تعديل عملية إنتاج"
     );
 
-
     await writeAudit(
       "production.update",
       editingId,
@@ -2936,7 +2534,6 @@ async function saveCentralProduction(
           formData.productionCode
       }
     );
-
 
     return updateResult.data;
 
@@ -2954,13 +2551,8 @@ async function saveCentralProduction(
       .select()
       .single();
 
-
-  if(insertResult.error){
-
+  if(insertResult.error)
     throw insertResult.error;
-
-  }
-
 
   await writeHistory(
     insertResult.data.id,
@@ -2969,7 +2561,6 @@ async function saveCentralProduction(
     insertResult.data,
     "إضافة عملية إنتاج"
   );
-
 
   await writeAudit(
     "production.create",
@@ -2980,10 +2571,8 @@ async function saveCentralProduction(
     }
   );
 
-
   if(
-    formData.status ===
-    "completed"
+    formData.status === "completed"
   ){
 
     await createInventoryMovements(
@@ -2992,7 +2581,6 @@ async function saveCentralProduction(
     );
 
   }
-
 
   return insertResult.data;
 
@@ -3019,7 +2607,6 @@ async function createInventoryMovements(
         }
       );
 
-
     if(
       permissionResult.error ||
       permissionResult.data !== true
@@ -3033,7 +2620,6 @@ async function createInventoryMovements(
 
     }
 
-
     const existingResult =
       await supabaseClient
         .from("inventory_movements")
@@ -3043,7 +2629,6 @@ async function createInventoryMovements(
           formData.inventoryCode
         )
         .limit(1);
-
 
     if(existingResult.error){
 
@@ -3055,7 +2640,6 @@ async function createInventoryMovements(
       return;
 
     }
-
 
     if(
       existingResult.data &&
@@ -3069,7 +2653,6 @@ async function createInventoryMovements(
       return;
 
     }
-
 
     const movement = {
 
@@ -3100,12 +2683,10 @@ async function createInventoryMovements(
 
     };
 
-
     const result =
       await supabaseClient
         .from("inventory_movements")
         .insert(movement);
-
 
     if(result.error){
 
@@ -3147,7 +2728,6 @@ async function loadProductions(){
       "جاري تحميل سجل الإنتاج..."
     );
 
-
     const result =
       await supabaseClient
         .from("production_batches")
@@ -3167,33 +2747,24 @@ async function loadProductions(){
           null
         )
         .order(
-          "production_date",
+          "Produced_at",
           {
             ascending:false
           }
         );
-
 
     debug(
       "نتيجة سجل الإنتاج",
       result
     );
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
 
-    }
-
-
     productionRecords =
-      result.data ||
-      [];
-
+      result.data || [];
 
     renderProductions();
-
 
   }catch(error){
 
@@ -3201,7 +2772,6 @@ async function loadProductions(){
       "Load Production Error",
       error
     );
-
 
     document.getElementById(
       "productionTable"
@@ -3212,7 +2782,6 @@ async function loadProductions(){
         </td>
       </tr>
     `;
-
 
     showNotice(
       "تعذر تحميل سجل الإنتاج: " +
@@ -3239,7 +2808,6 @@ function renderProductions(){
       "productionTable"
     );
 
-
   if(!productionRecords.length){
 
     tbody.innerHTML = `
@@ -3254,7 +2822,6 @@ function renderProductions(){
 
   }
 
-
   tbody.innerHTML =
     productionRecords
       .map(
@@ -3264,15 +2831,12 @@ function renderProductions(){
             item.products?.name ||
             "—";
 
-
           const warehouseName =
             item.warehouses?.name ||
             "—";
 
-
           let responsible =
             "—";
-
 
           try{
 
@@ -3281,14 +2845,12 @@ function renderProductions(){
                 ? JSON.parse(item.notes)
                 : null;
 
-
             responsible =
               parsed?.responsible ||
               parsed?.original_notes ||
               "—";
 
           }catch(e){}
-
 
           return `
 
@@ -3302,10 +2864,10 @@ function renderProductions(){
 
               <td>
                 ${
-                  item.production_date
+                  item.Produced_at
                   ? escapeHtml(
                       new Date(
-                        item.production_date
+                        item.Produced_at
                       ).toLocaleString("ar-EG")
                     )
                   : "—"
@@ -3426,7 +2988,6 @@ async function editItem(id){
 
   }
 
-
   const item =
     productionRecords.find(
       function(x){
@@ -3434,80 +2995,66 @@ async function editItem(id){
       }
     );
 
-
   if(!item)
     return;
 
-
-  editingId =
-    id;
-
+  editingId = id;
 
   document.getElementById(
     "productionCode"
   ).value =
     item.production_code || "";
 
-
   document.getElementById(
     "productionDate"
   ).value =
-    item.production_date
+    item.Produced_at
       ? new Date(
-          item.production_date
+          item.Produced_at
         )
         .toISOString()
         .slice(0,16)
       : "";
-
 
   document.getElementById(
     "costCode"
   ).value =
     item.cost_code || "";
 
-
   document.getElementById(
     "productId"
   ).value =
     item.product_id || "";
-
 
   document.getElementById(
     "plannedQty"
   ).value =
     item.planned_quantity || "";
 
-
   document.getElementById(
     "actualQty"
   ).value =
     item.actual_quantity || "";
-
 
   document.getElementById(
     "unit"
   ).value =
     item.unit || "";
 
-
   document.getElementById(
     "wasteQty"
   ).value =
     item.waste_quantity || "";
-
 
   document.getElementById(
     "status"
   ).value =
     item.status || "completed";
 
-
   document.getElementById(
     "storageLocation"
   ).value =
     item.warehouse_id || "";
-
 
   try{
 
@@ -3516,48 +3063,40 @@ async function editItem(id){
         ? JSON.parse(item.notes)
         : {};
 
-
     document.getElementById(
       "productionLine"
     ).value =
       meta.production_line || "";
-
 
     document.getElementById(
       "shift"
     ).value =
       meta.shift || "";
 
-
     document.getElementById(
       "responsible"
     ).value =
       meta.responsible || "";
-
 
     document.getElementById(
       "workers"
     ).value =
       meta.workers || "";
 
-
     document.getElementById(
       "workHours"
     ).value =
       meta.work_hours || "";
-
 
     document.getElementById(
       "inventoryCode"
     ).value =
       meta.inventory_code || "";
 
-
     document.getElementById(
       "notes"
     ).value =
       meta.original_notes || "";
-
 
     loadMaterials(
       meta.materials || []
@@ -3570,26 +3109,21 @@ async function editItem(id){
     ).value =
       item.notes || "";
 
-
     loadMaterials([]);
 
   }
-
 
   document.getElementById(
     "saveBtn"
   ).textContent =
     "حفظ تعديل العملية";
 
-
   document.getElementById(
     "saveBtn"
   ).disabled =
     false;
 
-
   updateLive();
-
 
   window.scrollTo({
     top:0,
@@ -3616,7 +3150,6 @@ async function deleteItem(id){
 
   }
 
-
   const item =
     productionRecords.find(
       function(x){
@@ -3624,16 +3157,13 @@ async function deleteItem(id){
       }
     );
 
-
   if(!item)
     return;
-
 
   const reason =
     prompt(
       "اكتب سبب حذف عملية الإنتاج:"
     );
-
 
   if(
     !reason ||
@@ -3648,7 +3178,6 @@ async function deleteItem(id){
     return;
 
   }
-
 
   try{
 
@@ -3672,13 +3201,8 @@ async function deleteItem(id){
           id
         );
 
-
-    if(result.error){
-
+    if(result.error)
       throw result.error;
-
-    }
-
 
     await writeHistory(
       id,
@@ -3687,7 +3211,6 @@ async function deleteItem(id){
       null,
       reason.trim()
     );
-
 
     await writeAudit(
       "production.delete",
@@ -3701,15 +3224,12 @@ async function deleteItem(id){
       }
     );
 
-
     showNotice(
       "تم حذف العملية مع الاحتفاظ بسجلها.",
       "success"
     );
 
-
     await loadProductions();
-
 
   }catch(error){
 
@@ -3717,7 +3237,6 @@ async function deleteItem(id){
       "Delete Error",
       error
     );
-
 
     showNotice(
       "تعذر حذف العملية: " +
@@ -3749,7 +3268,6 @@ async function saveProduction(){
 
     }
 
-
     if(
       !canCreateProduction &&
       !(
@@ -3764,16 +3282,13 @@ async function saveProduction(){
 
     }
 
-
     const formData =
       getFormData();
-
 
     if(!formData.productionCode){
 
       formData.productionCode =
         await generateProductionCode();
-
 
       document.getElementById(
         "productionCode"
@@ -3782,12 +3297,10 @@ async function saveProduction(){
 
     }
 
-
     if(!formData.inventoryCode){
 
       formData.inventoryCode =
         await generateInventoryCode();
-
 
       document.getElementById(
         "inventoryCode"
@@ -3796,7 +3309,6 @@ async function saveProduction(){
 
     }
 
-
     if(!formData.productId){
 
       throw new Error(
@@ -3804,7 +3316,6 @@ async function saveProduction(){
       );
 
     }
-
 
     if(
       formData.actualQty <= 0 &&
@@ -3817,29 +3328,22 @@ async function saveProduction(){
 
     }
 
-
     const saveButton =
       document.getElementById(
         "saveBtn"
       );
 
-
-    saveButton.disabled =
-      true;
-
+    saveButton.disabled = true;
 
     saveButton.textContent =
       "جاري الحفظ...";
 
-
     const wasEditing =
       Boolean(editingId);
-
 
     await saveCentralProduction(
       formData
     );
-
 
     showNotice(
       wasEditing
@@ -3848,12 +3352,9 @@ async function saveProduction(){
       "success"
     );
 
-
     await loadProductions();
 
-
     await resetForm();
-
 
   }catch(error){
 
@@ -3861,7 +3362,6 @@ async function saveProduction(){
       "Save Error",
       error
     );
-
 
     showNotice(
       "تعذر حفظ العملية: " +
@@ -3872,7 +3372,6 @@ async function saveProduction(){
       "error"
     );
 
-
   }finally{
 
     const saveButton =
@@ -3880,10 +3379,8 @@ async function saveProduction(){
         "saveBtn"
       );
 
-
     saveButton.textContent =
       "حفظ عملية الإنتاج";
-
 
     saveButton.disabled =
       !(
@@ -3905,111 +3402,76 @@ async function saveProduction(){
 
 async function resetForm(){
 
-  editingId =
-    null;
-
+  editingId = null;
 
   document.getElementById(
     "productionCode"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "inventoryCode"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "costCode"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "productionLine"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "shift"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "plannedQty"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "actualQty"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "unit"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "wasteQty"
-  ).value =
-    "0";
-
+  ).value = "0";
 
   document.getElementById(
     "status"
-  ).value =
-    "completed";
-
+  ).value = "completed";
 
   document.getElementById(
     "responsible"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "storageLocation"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "workers"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "workHours"
-  ).value =
-    "";
-
+  ).value = "";
 
   document.getElementById(
     "notes"
-  ).value =
-    "";
-
+  ).value = "";
 
   loadMaterials([]);
-
 
   document.getElementById(
     "saveBtn"
   ).textContent =
     "حفظ عملية الإنتاج";
 
-
   updateLive();
-
 
   if(
     currentUser &&
@@ -4037,7 +3499,6 @@ function updatePageReadiness(){
       "saveBtn"
     );
 
-
   if(
     currentUser &&
     (
@@ -4046,13 +3507,11 @@ function updatePageReadiness(){
     )
   ){
 
-    saveButton.disabled =
-      false;
+    saveButton.disabled = false;
 
   }else{
 
-    saveButton.disabled =
-      true;
+    saveButton.disabled = true;
 
   }
 
@@ -4070,7 +3529,6 @@ function startRealtime(){
     if(!supabaseClient)
       return;
 
-
     if(realtimeChannel){
 
       supabaseClient.removeChannel(
@@ -4079,13 +3537,11 @@ function startRealtime(){
 
     }
 
-
     realtimeChannel =
       supabaseClient
         .channel(
           "kheyrna-production-live"
         )
-
 
         .on(
           "postgres_changes",
@@ -4096,15 +3552,11 @@ function startRealtime(){
           },
           async function(){
 
-            if(currentUser){
-
+            if(currentUser)
               await loadProductions();
-
-            }
 
           }
         )
-
 
         .on(
           "postgres_changes",
@@ -4115,15 +3567,11 @@ function startRealtime(){
           },
           async function(){
 
-            if(currentUser){
-
+            if(currentUser)
               await loadProducts();
-
-            }
 
           }
         )
-
 
         .on(
           "postgres_changes",
@@ -4134,15 +3582,11 @@ function startRealtime(){
           },
           async function(){
 
-            if(currentUser){
-
+            if(currentUser)
               await loadWarehouses();
-
-            }
 
           }
         )
-
 
         .subscribe(
           function(status){
@@ -4154,7 +3598,6 @@ function startRealtime(){
 
           }
         );
-
 
   }catch(error){
 
@@ -4184,16 +3627,13 @@ function startRealtime(){
     const element =
       document.getElementById(id);
 
-
     if(!element)
       return;
-
 
     element.addEventListener(
       "input",
       updateLive
     );
-
 
     element.addEventListener(
       "change",
@@ -4216,37 +3656,18 @@ async function init(){
       "بدء تشغيل صفحة الإنتاج"
     );
 
-
     setConnectionStatus(
       "جاري تشغيل النظام المركزي..."
     );
 
-
-    /* 1 - إنشاء Supabase */
-
     await createSupabaseConnection();
-
-
-    /* 2 - اختبار Session */
 
     await testSupabaseConnection();
 
-
-    /* 3 - مراقبة Auth */
-
     startAuthListener();
-
-
-    /* 4 - تحميل Session */
 
     const loggedIn =
       await loadSession();
-
-
-    /* ================================================
-       لو مفيش Login
-       نتوقف هنا بدون Error
-    ================================================= */
 
     if(!loggedIn){
 
@@ -4260,13 +3681,7 @@ async function init(){
 
     }
 
-
-    /* 5 - الصلاحيات */
-
     await checkPermissions();
-
-
-    /* 6 - البيانات الأساسية */
 
     await Promise.all([
 
@@ -4275,9 +3690,6 @@ async function init(){
       loadWarehouses()
 
     ]);
-
-
-    /* 7 - تجهيز النموذج */
 
     if(
       canCreateProduction ||
@@ -4288,35 +3700,21 @@ async function init(){
 
     }
 
-
-    /* 8 - سجل الإنتاج */
-
     await loadProductions();
-
-
-    /* 9 - الأزرار */
 
     updatePageReadiness();
 
-
-    /* 10 - Realtime */
-
     startRealtime();
 
-
-    pageInitialized =
-      true;
-
+    pageInitialized = true;
 
     setConnectionStatus(
       "النظام المركزي متصل ✓"
     );
 
-
     debug(
       "صفحة الإنتاج جاهزة بالكامل ✓"
     );
-
 
   }catch(error){
 
@@ -4325,17 +3723,14 @@ async function init(){
       error
     );
 
-
     debug(
       "INIT ERROR",
       error
     );
 
-
     setConnectionStatus(
       "حدث خطأ أثناء تشغيل النظام"
     );
-
 
     showNotice(
       "حدث خطأ أثناء تشغيل صفحة الإنتاج: " +
@@ -4370,18 +3765,15 @@ try{
     error
   );
 
-
   debug(
     "BOOT ERROR",
     error
   );
 
-
   const status =
     document.getElementById(
       "connectionStatus"
     );
-
 
   if(status){
 
@@ -4390,12 +3782,10 @@ try{
 
   }
 
-
   const notice =
     document.getElementById(
       "notice"
     );
-
 
   if(notice){
 
